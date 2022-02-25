@@ -22,6 +22,31 @@ INTEXseas Extreme Seasons Explorer
 * Free software: BSD license
 * Documentation: https://exseas-explorer.readthedocs.io.
 
+How to install
+--------------
+
+Clone Repository
+
+.. code-block:: console
+
+    $ git clone https://github.com/romatt/exseas_explorer.git
+    $ cd exseas_explorer
+
+Set up a new python virtual environment
+
+.. code-block:: console
+
+    $ python3 -m venv <YOUR_VENV_DIR>
+    $ source <YOUR_VENV_DIR>/bin/activate
+    $ pip install -U tox-travis
+    $ python -m pip install -r requirements.txt
+    $ pytest
+
+Save new requirements
+
+.. code-block:: console
+
+    $ python -m pip freeze > requirements.txt
 
 Features
 --------
