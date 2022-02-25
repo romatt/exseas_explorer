@@ -2,15 +2,46 @@
 This sub-module contains pre-processing functionality.
 """
 
-import xarray as xr
-import numpy as np
 import geopandas as gpd
-from shapely.geometry import Polygon
-from skimage import measure
+# from shapely.geometry import Polygon
+# from skimage import measure
 import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
+from rasterio import features
 
-def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
-                   patch_file='patches_40y_era5_T2M_jja_t_ProbHot_cmip6.nc'):
+
+def extract_contours():
+    """
+    Extract contours
+    """
+
+    contour_data = []
+
+    # Make an object generator
+    contours = features.shapes(mask.sel(step=step).values,
+                               transform=self.affine_transform,
+                               connectivity=4)
+
+    # Get init time and step
+    _init_time = getattr(self.intensity.init_time, 'values',
+                         self.intensity.init_time)
+    _step = getattr(step, 'values', step)
+
+    # Iterate over object generator
+    for geom, val in contours:
+
+        # Avoid passing entire domain as final polygon
+        if val != 0:
+
+            geometry = shape(geom)
+            contour_data.append([_init_time, _step, geometry])
+
+    return contour_data
+
+
+def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
+                   patch_file='patches_40y_era5_RTOT_djf_ProbDry.nc'):
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
 
@@ -32,26 +63,28 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     lab_contours = []
 
     # Re-name key xarray
-    in_file = in_file.rename({'key':'year'})
+    in_file = in_file.rename({'key': 'year'})
 
     # Define NA
     # in_file = xr.where(in_file==0, np.NaN, in_file)
 
     for year in in_file.year:
         labels = np.unique(in_file.lab.sel(year=year).data)
-        labels = np.delete(labels, np.where(labels==0))
+        labels = np.delete(labels, np.where(labels == 0))
         for label in labels:
             contours = measure.find_contours(in_file.lab.sel(year=year), label)
             polygons = []
             for contour in contours:
                 polygons.append(Polygon(contour))
-            gdf = gpd.GeoDataFrame(index=[label], crs='epsg:4326', geometry=polygons)
-
-
+            gdf = gpd.GeoDataFrame(index=[label],
+                                   crs='epsg:4326',
+                                   geometry=polygons)
 
     # Save labels as GeoJSON file
 
-test=xr.where(in_file.lab.sel(year=year)==5073, in_file.lab.sel(year=year), 0)
+
+test = xr.where(
+    in_file.lab.sel(year=year) == 5073, in_file.lab.sel(year=year), 0)
 
 # Display the image and plot all contours found
 fig, ax = plt.subplots()
