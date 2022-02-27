@@ -3,41 +3,88 @@ This sub-module contains pre-processing functionality.
 """
 
 import geopandas as gpd
-# from shapely.geometry import Polygon
-# from skimage import measure
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import xarray as xr
+from geopandas import GeoDataFrame
+from pyproj import CRS
 from rasterio import features
+from rasterio.transform import Affine
+# from shapely.geometry import Polygon
+# from skimage import measure
+from shapely.geometry import shape
 
 
-def extract_contours():
+def affine_transform(array) -> Affine:
+    """Returns the transform operator relating index coordinates to
+    geographical coordinates of the dataset
+    Returns
+    -------
+    rasterio.transform.Affine
+        transform operator for georeferencing guidance data
+    """
+
+    mean_grid_spacing: float = (np.gradient(array.lon).mean() +
+                                np.gradient(array.lat).mean()) / 2
+
+    return Affine.translation(array.lon.values[0]
+                                    - 0.5 * mean_grid_spacing,
+                                    array.lat.values[0]
+                                    - 0.5 * mean_grid_spacing) \
+        * Affine.scale(mean_grid_spacing, mean_grid_spacing)
+
+
+def extract_contours(array: xr.DataArray):
     """
     Extract contours
+
+    Parameters
+    ----------
+    array : xr.DataArray
+        Input data array (do not pass a dataset!)
+
+    Returns
+    -------
+    GeoDataFrame
+        Polygons of input array in a geodataframe
     """
 
-    contour_data = []
+    # List holding all and land only contours
+    polygons = []
 
-    # Make an object generator
-    contours = features.shapes(mask.sel(step=step).values,
-                               transform=self.affine_transform,
-                               connectivity=4)
+    # Compute affine transformer (relating x-y to coordiantes)
+    affine = affine_transform(array)
 
-    # Get init time and step
-    _init_time = getattr(self.intensity.init_time, 'values',
-                         self.intensity.init_time)
-    _step = getattr(step, 'values', step)
+    # Iterate over years
+    for year in array.year:
 
-    # Iterate over object generator
-    for geom, val in contours:
+        print(f'Processing {int(year.data)}')
 
-        # Avoid passing entire domain as final polygon
-        if val != 0:
+        # Contour object generator
+        contours = features.shapes(array.sel(year=year).values,
+                                   transform=affine,
+                                   connectivity=4)
 
-            geometry = shape(geom)
-            contour_data.append([_init_time, _step, geometry])
+        # Iterate over object generator
+        for geom, val in contours:
 
-    return contour_data
+            # Avoid passing entire domain as final polygon
+            if val != 0:
+
+                # Extract geometry and save to large list
+                geometry = shape(geom)
+                polygons.append([int(year.data), int(val), geometry])
+
+    # Convert list to GeoDataFrame
+    gdf = GeoDataFrame(data=polygons,
+                       columns=['year', 'ID', 'geometry'],
+                       crs=CRS.from_epsg(4326))
+
+    # Combine polygons with same year and label
+    gdf = gdf.dissolve(by=['year', 'ID'])
+
+    return gdf
 
 
 def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
@@ -56,44 +103,43 @@ def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
         Input file to process
     """
 
-    # Read file
+    # Read NetCDF file
     in_file = xr.open_dataset(work_dir + patch_file)
 
-    # Convert lables to polygons
-    lab_contours = []
+    # Re-name key xarray and change data-type to work with shapes features
+    in_file = in_file.rename({'key': 'year'}).astype(np.float32)
 
-    # Re-name key xarray
-    in_file = in_file.rename({'key': 'year'})
+    # Read list with additional data
+    list_file = patch_file.replace("patches", "list").replace(".nc", ".txt")
+    test = pd.read_csv(work_dir + list_file, na_values='-999.99')
 
-    # Define NA
-    # in_file = xr.where(in_file==0, np.NaN, in_file)
+    # Extract contours
+    all_contours = extract_contours(in_file.lab)
+    land_contours = extract_contours(in_file.lab_land)
 
-    for year in in_file.year:
-        labels = np.unique(in_file.lab.sel(year=year).data)
-        labels = np.delete(labels, np.where(labels == 0))
-        for label in labels:
-            contours = measure.find_contours(in_file.lab.sel(year=year), label)
-            polygons = []
-            for contour in contours:
-                polygons.append(Polygon(contour))
-            gdf = gpd.GeoDataFrame(index=[label],
-                                   crs='epsg:4326',
-                                   geometry=polygons)
+    # Replace end of string
+    file_end = patch_file.replace("nc", "geojson")
 
-    # Save labels as GeoJSON file
+    # Save geometries to file
+    all_contours.to_file(f'{work_dir}/all_{file_end}',
+                          driver='GeoJSON',
+                          index=False)
+    land_contours.to_file(f'{work_dir}/land_{file_end}',
+                           driver='GeoJSON',
+                           index=False)
 
 
-test = xr.where(
-    in_file.lab.sel(year=year) == 5073, in_file.lab.sel(year=year), 0)
+# test = xr.where(
+#     in_file.lab.sel(year=year) == 5073, in_file.lab.sel(year=year), 0)
 
-# Display the image and plot all contours found
-fig, ax = plt.subplots()
-ax.imshow(in_file.lab.sel(year=year), cmap="Spectral")
+# # Display the image and plot all contours found
+# fig, ax = plt.subplots()
+# ax.imshow(in_file.lab.sel(year=year), cmap="Spectral")
 
-for contour in test:
-    ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
+# for contour in test:
+#     ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
 
-ax.axis('image')
-ax.set_xticks([])
-ax.set_yticks([])
-plt.show()
+# ax.axis('image')
+# ax.set_xticks([])
+# ax.set_yticks([])
+# plt.show()
