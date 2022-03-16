@@ -60,8 +60,6 @@ def extract_contours(array: xr.DataArray):
     # Iterate over years
     for year in array.year:
 
-        print(f'Processing {int(year.data)}')
-
         # Contour object generator
         contours = features.shapes(array.sel(year=year).values,
                                    transform=affine,
@@ -75,15 +73,12 @@ def extract_contours(array: xr.DataArray):
 
                 # Extract geometry and save to large list
                 geometry = shape(geom)
-                polygons.append([int(year.data), int(val), geometry])
+                polygons.append([int(val), geometry])
 
     # Convert list to GeoDataFrame
     gdf = GeoDataFrame(data=polygons,
-                       columns=['year', 'ID', 'geometry'],
+                       columns=['lab', 'geometry'],
                        crs=CRS.from_epsg(4326))
-
-    # Combine polygons with same year and label
-    gdf = gdf.dissolve(by=['year', 'ID'])
 
     return gdf
 
@@ -112,22 +107,27 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     # Re-name key xarray and change data-type to work with shapes features
     in_file = in_file.rename({'key': 'year'}).astype(np.float32)
 
-    # Read list with additional data
+    # Read dataframe with additional data on patches
     list_file = patch_file.replace("patches", "list").replace(".nc", ".txt")
-    test = pd.read_csv(work_dir + list_file, na_values='-999.99')
+    patch_data = pd.read_csv(work_dir + list_file, na_values='-999.99')
+    patch_data = patch_data.astype({'lab':'int32', 'key':'int32'})
 
     # Extract contours
-    all_contours = extract_contours(in_file.lab)
-    land_contours = extract_contours(in_file.lab_land)
+    patch_all = extract_contours(in_file.lab)
+    patch_land = extract_contours(in_file.lab_land)
+
+    # Merge DF data with geodataframe
+    patch_all_out = patch_all.merge(patch_data, on='lab')
+    patch_land_out = patch_land.merge(patch_data, on='lab')
 
     # Replace end of string
     file_end = patch_file.replace("nc", "geojson")
 
     # Save geometries to file
-    all_contours.to_file(f'{work_dir}/all_{file_end}',
+    patch_all_out.to_file(f'{work_dir}/all_{file_end}',
                           driver='GeoJSON',
                           index=False)
-    land_contours.to_file(f'{work_dir}/land_{file_end}',
+    patch_land_out.to_file(f'{work_dir}/land_{file_end}',
                            driver='GeoJSON',
                            index=False)
 
