@@ -1,7 +1,8 @@
 """
-This sub-module contains pre-processing functionality.
+Sub-module containing pre-processing functionality
 """
 
+import click
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -86,14 +87,16 @@ def extract_contours(array: xr.DataArray):
 
     return gdf
 
-
-def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
+@click.command()
+@click.option('-w', '--work_dir', default='/net/thermo/atmosdyn/maxibo/intexseas/webpage/')
+@click.option('-p', '--patch_file', default='patches_40y_era5_RTOT_djf_ProbDry.nc')
+def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
                    patch_file='patches_40y_era5_RTOT_djf_ProbDry.nc'):
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
 
     TODO
-    - Add ability to control this function using click, e.g. using different files
+    - Combine geodataframe containing shapes with the one with additional information
 
     Parameters
     ----------
@@ -128,6 +131,8 @@ def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
                            driver='GeoJSON',
                            index=False)
 
+if __name__ == '__main__':
+    update_patches()
 
 # test = xr.where(
 #     in_file.lab.sel(year=year) == 5073, in_file.lab.sel(year=year), 0)
