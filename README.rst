@@ -2,7 +2,6 @@
 Extreme Seasons Explorer
 ========================
 
-
 .. image:: https://img.shields.io/pypi/v/exseas_explorer.svg
         :target: https://pypi.python.org/pypi/exseas_explorer
 
@@ -14,16 +13,17 @@ Extreme Seasons Explorer
         :alt: Documentation Status
 
 
-
-
 INTEXseas Extreme Seasons Explorer
 
 
 * Free software: BSD license
 * Documentation: https://exseas-explorer.readthedocs.io.
 
-How to install
---------------
+Install for deployment
+----------------------
+
+How to setup for development
+----------------------------
 
 Clone Repository
 
@@ -40,18 +40,22 @@ Set up a new python virtual environment
     $ source <YOUR_VENV_DIR>/bin/activate
     $ pip install -U tox-travis
     $ python -m pip install -r requirements.txt
+    $ python -m pip install -r requirements_dev.txt
     $ pytest
 
-Save new requirements
+Save required libraries to file
 
 .. code-block:: console
 
     $ python -m pip freeze > requirements.txt
 
-Features
---------
+Running dash app locally 
+------------------------
 
-* TODO
+.. code-block:: console
+
+    $ python exseas_explorer/wsgi.py
+
 
 Credits
 -------
