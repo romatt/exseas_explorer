@@ -18,6 +18,8 @@ cycler==0.11.0
 dash==2.2.0
 dash-core-components==2.0.0
 dash-html-components==2.0.0
+dash-leaflet==0.1.23
+dash-extensions==0.0.65
 dash-table==5.0.0
 debugpy==1.5.1
 decorator==5.1.1
