@@ -81,6 +81,13 @@ LOCATION_LIST = [{
     'label': 'Land Objects Only',
     'value': 'land_patches_'
 }]
+RANKING_LIST = [{
+    'label': 'area',
+    'value': 1
+}, {
+    'label': 'return period mean',
+    'value': 2
+}]
 
 
 # FUNCTION DEFINITONS
@@ -92,7 +99,20 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
     # Load data
     in_file = open(path)
     df = geopandas.read_file(in_file)
-    df = df[0:10]
+
+    return df
+
+
+def filter_patches(df: geopandas.GeoDataFrame,
+                   criterion: int) -> geopandas.GeoDataFrame:
+    """
+    Filter patches by selected criterion
+    """
+
+    if criterion == 1:
+        df = df[df['area'] >= np.sort(df['area'])[-10]]
+    if criterion == 2:
+        df = df[df['mean_prob'] >= np.sort(df['mean_prob'])[-10]]
 
     return df
 
@@ -100,7 +120,7 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
 # By default load something?
 default_patches = load_patches(
     os.path.join(DATA_DIR, "all_patches_40y_era5_WG10_djf_ProbWindy.geojson"))
-
+default_patches = filter_patches(default_patches, 1)
 
 def generate_cbar(labels: list) -> dl.Colorbar:
     """
@@ -108,25 +128,22 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     """
 
     # Define colors
-    classes = np.arange(np.nanmin(labels), np.nanmax(labels), 1)
-    cmap = matplotlib.cm.get_cmap('Spectral', classes.size)
-    colors = [cmap(x / np.max(classes))
-              for x in classes]  # Assign colors to labels
+    # classes = np.arange(np.nanmin(labels), np.nanmax(labels), 1)
+    cmap = matplotlib.cm.get_cmap('Spectral', len(labels))
+    colors = [cmap(x / np.max(labels))
+              for x in labels]  # Assign colors to labels
     colors = [matplotlib.colors.to_hex(x)
               for x in colors]  # Convert colors to hex
 
     # Create colorbar.
     ctg = [
-        "{}+".format(cls, classes[i + 1]) for i, cls in enumerate(classes[:-1])
-    ] + ["{}+".format(classes[-1])]
+        "{}".format(cls, labels[i + 1]) for i, cls in enumerate(labels[:-1])
+    ] + ["{}".format(labels[-1])]
     return dlx.categorical_colorbar(categories=ctg,
                                     colorscale=colors,
                                     width=400,
                                     height=30,
                                     position="bottomleft")
-
-
-colorbar = generate_cbar(default_patches['lab'])
 
 style = dict(weight=2,
              opacity=1,
@@ -138,55 +155,85 @@ style = dict(weight=2,
 header = html.Div([
     dbc.Row(className='title',
             children=[
-                dbc.Col([dbc.NavbarBrand("INTEXseas Extreme Season Explorer",
-                                        className="ml-1",
-                                        style={
-                                            'font-size': 'x-large',
-                                            'padding': '10px'
-                                        })],
+                dbc.Col([
+                    dbc.NavbarBrand("INTEXseas Extreme Season Explorer",
+                                    className="ml-1",
+                                    style={
+                                        'font-size': 'x-large',
+                                        'padding': '10px'
+                                    })
+                ],
                         width=8),
-                dbc.Col([html.Img(src='/assets/eth_logo.png',
-                                 height="100px",
-                                 style={'padding': '25px', 'float': 'right'})],
+                dbc.Col([
+                    html.Img(src='/assets/eth_logo.png',
+                             height="100px",
+                             style={
+                                 'padding': '25px',
+                                 'float': 'right'
+                             })
+                ],
                         width=4),
             ])
 ],
-                    className="navbar-expand-lg navbar-light bg-light")
+                  className="navbar-expand-lg navbar-light bg-light")
 
 # Navigation pane
 navbar = html.Div([
-    dbc.Row(id='navbar', children=[
-        dbc.Col([
-            "Parameter:",
-            dcc.Dropdown(PARAMETER_LIST,
-                         'T2M',
-                         id='parameter-selector',
-                         clearable=False,
-                         searchable=False)], width=2, className='nav_column'),
-        dbc.Col([
-            "Options:",
-            dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
-                         'ProbHot',
-                         id='option-selector',
-                         clearable=False,
-                         searchable=False)], width=2, className='nav_column'),
-        dbc.Col([
-            "Season:",
-            dcc.Dropdown(SEASON_LIST,
-                         'djf',
-                         id='season-selector',
-                         clearable=False,
-                         searchable=False)], width=2, className='nav_column'),
-        dbc.Col([
-            "Location:",
-            dcc.Dropdown(LOCATION_LIST,
-                         'all_patches_',
-                         id='location-selector',
-                         clearable=False,
-                         searchable=False)], width=2, className='nav_column'),
-    ]),
+    dbc.Row(id='navbar',
+            children=[
+                dbc.Col([
+                    "Parameter:",
+                    dcc.Dropdown(PARAMETER_LIST,
+                                 'T2M',
+                                 id='parameter-selector',
+                                 clearable=False,
+                                 searchable=False)
+                ],
+                        width=2,
+                        className='nav_column'),
+                dbc.Col([
+                    "Options:",
+                    dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
+                                 'ProbHot',
+                                 id='option-selector',
+                                 clearable=False,
+                                 searchable=False)
+                ],
+                        width=2,
+                        className='nav_column'),
+                dbc.Col([
+                    "Season:",
+                    dcc.Dropdown(SEASON_LIST,
+                                 'djf',
+                                 id='season-selector',
+                                 clearable=False,
+                                 searchable=False)
+                ],
+                        width=2,
+                        className='nav_column'),
+                dbc.Col([
+                    "Location:",
+                    dcc.Dropdown(LOCATION_LIST,
+                                 'all_patches_',
+                                 id='location-selector',
+                                 clearable=False,
+                                 searchable=False)
+                ],
+                        width=2,
+                        className='nav_column'),
+                dbc.Col([
+                    "Ranking criterion:",
+                    dcc.Dropdown(RANKING_LIST,
+                                 1,
+                                 id='ranking-selector',
+                                 clearable=False,
+                                 searchable=False)
+                ],
+                        width=2,
+                        className='nav_column'),
+            ]),
 ],
-                    className="navbar-light bg-light")
+                  className="navbar-light bg-light")
 
 # Definition of app layout
 app = Dash(__name__,
@@ -200,7 +247,8 @@ app.layout = html.Div([
            children=[
                dl.TileLayer(),
                dl.GeoJSON(data=default_patches.__geo_interface__,
-                          id="patches"), colorbar
+                          id="patches"),
+               dl.LayerGroup(id="cbar", children=[])
            ],
            style={
                'padding-top': '2em',
@@ -218,15 +266,22 @@ app.layout = html.Div([
                      component_property='options'),
               Output(component_id='option-selector',
                      component_property='value'),
+              Output(component_id='cbar',
+                     component_property='children'),
               Input(component_id='parameter-selector',
                     component_property='value'),
               Input(component_id='option-selector',
                     component_property='value'),
               Input(component_id='season-selector',
                     component_property='value'),
-                Input(component_id='location-selector',
+              Input(component_id='location-selector',
+                    component_property='value'),
+              Input(component_id='ranking-selector',
                     component_property='value'))
-def draw_patches(parameter_value, parameter_option, season_value, location_value):
+def draw_patches(parameter_value, parameter_option, season_value,
+                 location_value, ranking_option):
+
+    print(ranking_option)
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
@@ -237,10 +292,17 @@ def draw_patches(parameter_value, parameter_option, season_value, location_value
     else:
         option_selected = parameter_options[0]["value"]
 
+    # Load patches
     selected_file = f'{location_value}40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
+    patches = filter_patches(patches, ranking_option)
 
-    return patches.__geo_interface__, parameter_options, option_selected
+    print(patches['lab'])
+
+    # Update colorbar
+    colorbar = generate_cbar(list(patches['lab']))
+
+    return patches.__geo_interface__, parameter_options, option_selected, colorbar
 
 
 if __name__ == '__main__':
