@@ -2,6 +2,9 @@
 Sub-module containing pre-processing functionality
 """
 
+import logging
+import sys
+
 import click
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -14,6 +17,10 @@ from rasterio import features
 from rasterio.transform import Affine
 from shapely.geometry import shape
 
+level = logging.INFO
+fmt = '[%(levelname)s] %(asctime)s - %(message)s'
+logging.basicConfig(stream=sys.stdout, level=level, format=fmt)
+logger = logging.getLogger('__NAME__')
 
 def affine_transform(array) -> Affine:
     """Returns the transform operator relating index coordinates to
@@ -108,6 +115,8 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
         Input file to process
     """
 
+    logger.info(f'Processing {work_dir}{patch_file}')
+
     # Read NetCDF file
     in_file = xr.open_dataset(work_dir + patch_file)
 
@@ -141,6 +150,7 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     patch_land_out.to_file(f'{work_dir}/land_{file_end}',
                            driver='GeoJSON',
                            index=False)
+
 
 if __name__ == '__main__':
     update_patches()
