@@ -71,6 +71,13 @@ def extract_contours(array: xr.DataArray):
 
                 # Extract geometry and save to large list
                 geometry = shape(geom)
+
+                # Buffer polygon to make it smooth
+                geometry = geometry.buffer(0.5,
+                                           join_style=3).buffer(-0.5,
+                                                                join_style=2)
+
+                # Save polygon to list of polygons
                 polygons.append([int(val), geometry])
 
     # Convert list to GeoDataFrame
@@ -123,6 +130,10 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     # Replace end of string
     file_end = patch_file.replace("nc", "geojson")
 
+    # Combine polygons with same label
+    patch_all_out = patch_all_out.dissolve(by='lab').reset_index(level=0)
+    patch_land_out = patch_land_out.dissolve(by='lab').reset_index(level=0)
+
     # Save geometries to file
     patch_all_out.to_file(f'{work_dir}/all_{file_end}',
                           driver='GeoJSON',
@@ -130,7 +141,6 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     patch_land_out.to_file(f'{work_dir}/land_{file_end}',
                            driver='GeoJSON',
                            index=False)
-
 
 if __name__ == '__main__':
     update_patches()
