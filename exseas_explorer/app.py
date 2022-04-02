@@ -1,6 +1,7 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+import base64
 import os
 
 # import plotly.express as px
@@ -60,24 +61,19 @@ PARAMETER_OPTIONS = {
         }]
     }
 }
-SEASON_LIST = [
-    {
-        'label': 'Winter',
-        'value': 'djf'
-    },
-    {
-        'label': 'Spring',
-        'value': 'mam'
-    },
-    {
-        'label': 'Summer',
-        'value': 'jja'
-    },
-    {
-        'label': 'Autumn',
-        'value': 'son'
-    }
-]
+SEASON_LIST = [{
+    'label': 'Winter',
+    'value': 'djf'
+}, {
+    'label': 'Spring',
+    'value': 'mam'
+}, {
+    'label': 'Summer',
+    'value': 'jja'
+}, {
+    'label': 'Autumn',
+    'value': 'son'
+}]
 
 
 # FUNCTION DEFINITONS
@@ -132,21 +128,26 @@ style = dict(weight=2,
              fillOpacity=0.7)
 
 # Header
-# navbar = dbc.Navbar([
-#     dbc.Row([
-#         dbc.Col(html.Img(src=LOGO, height="75px", style={'padding': '10px'})),
-#         dbc.Col(dbc.NavbarBrand("Sektorenvorhersage",
-#                                 className="ml-1",
-#                                 style={'font-size': 'x-large'})),
-
-#    ], ),
-# ],
-# className="navbar-expand-lg navbar-light bg-light")
+navbar = dbc.Navbar([
+    dbc.Row([
+        dbc.Col(
+            html.Img(
+                src='/assets/eth_logo.png', height="75px", style={'padding': '10px'})),
+        dbc.Col(
+            dbc.NavbarBrand("INTEXseas Extreme Season Explorer",
+                            className="ml-1",
+                            style={'font-size': 'x-large'})),
+    ], ),
+],
+                    className="navbar-expand-lg navbar-light bg-light")
 
 # Definition of app layout
-app = Dash(__name__)
+app = Dash(__name__,
+           update_title=None,
+           title="INTEXseas Extreme Season Explorer",
+           external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div([
-    dbc.Navbar(),
+    navbar,
     dcc.Dropdown(PARAMETER_LIST,
                  'T2M',
                  id='parameter-selector',
