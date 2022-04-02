@@ -17,6 +17,43 @@ from dash.dependencies import Input, Output
 
 # OPTIONS
 DATA_DIR = '/ytpool/data/ETH/INTEXseas'
+PARAMETER_LIST = [
+    {
+        'label': 'two meter temperature',
+        'value': 'T2M'
+    },
+    {
+        'label': 'total precipitation',
+        'value': 'RTOT'
+    },
+    {
+        'label': '10 meter wind',
+        'value': 'WG10'
+    },
+]
+PARAMETER_CONFIG = {
+    'T2M': {
+        'options': [{
+            'value': 'Hot'
+        }, {
+            'value': 'Cold'
+        }]
+    },
+    'RTOT': {
+        'options': [{
+            'value': 'Wet'
+        }, {
+            'value': 'Dry'
+        }]
+    },
+    'WG10': {
+        'options': [{
+            'value': 'Windy'
+        }, {
+            'value': 'Calm'
+        }]
+    }
+}
 
 # FUNCTION DEFINITONS
 def load_patches(path: str) -> geopandas.GeoDataFrame:
@@ -86,6 +123,11 @@ style = dict(weight=2,
 app = Dash(__name__)
 app.layout = html.Div([
     dbc.Navbar(),
+    dcc.Dropdown(PARAMETER_LIST,
+                 'T2M',
+                 id='parameter-selector',
+                 clearable=False,
+                 searchable=False),
     dl.Map(center=[0, 0],
            zoom=2,
            children=[
@@ -101,6 +143,17 @@ app.layout = html.Div([
            },
            id="map")
 ])
+
+
+@app.callback(Output(component_id='patches', component_property='data'),
+              Input(component_id='parameter-selector',
+                    component_property='value'))
+def draw_patches(parameter_value):
+
+    selected_file = f'all_patches_40y_era5_{parameter_value}_djf_t_ProbWindy.geojson'
+    patches = load_patches(os.path.join(DATA_DIR, selected_file))
+
+    return patches.__geo_interface__
 
 if __name__ == '__main__':
     app.run_server(debug=True)
