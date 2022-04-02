@@ -74,6 +74,13 @@ SEASON_LIST = [{
     'label': 'Autumn',
     'value': 'son'
 }]
+LOCATION_LIST = [{
+    'label': 'All Objects',
+    'value': 'all_patches_'
+}, {
+    'label': 'Land Objects Only',
+    'value': 'land_patches_'
+}]
 
 
 # FUNCTION DEFINITONS
@@ -170,6 +177,13 @@ navbar = html.Div([
                          id='season-selector',
                          clearable=False,
                          searchable=False)], width=2, className='nav_column'),
+        dbc.Col([
+            "Location:",
+            dcc.Dropdown(LOCATION_LIST,
+                         'all_patches_',
+                         id='location-selector',
+                         clearable=False,
+                         searchable=False)], width=2, className='nav_column'),
     ]),
 ],
                     className="navbar-light bg-light")
@@ -209,8 +223,10 @@ app.layout = html.Div([
               Input(component_id='option-selector',
                     component_property='value'),
               Input(component_id='season-selector',
+                    component_property='value'),
+                Input(component_id='location-selector',
                     component_property='value'))
-def draw_patches(parameter_value, parameter_option, season_value):
+def draw_patches(parameter_value, parameter_option, season_value, location_value):
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
@@ -221,7 +237,7 @@ def draw_patches(parameter_value, parameter_option, season_value):
     else:
         option_selected = parameter_options[0]["value"]
 
-    selected_file = f'all_patches_40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
+    selected_file = f'{location_value}40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
 
     return patches.__geo_interface__, parameter_options, option_selected
