@@ -31,29 +31,36 @@ PARAMETER_LIST = [
         'value': 'WG10'
     },
 ]
-PARAMETER_CONFIG = {
+PARAMETER_OPTIONS = {
     'T2M': {
         'options': [{
-            'value': 'Hot'
+            'label': 'Hot',
+            'value': 'ProbHot'
         }, {
-            'value': 'Cold'
+            'label': 'Cold',
+            'value': 'ProbCold'
         }]
     },
     'RTOT': {
         'options': [{
-            'value': 'Wet'
+            'label': 'Wet',
+            'value': 'ProbWet'
         }, {
-            'value': 'Dry'
+            'label': 'Dry',
+            'value': 'ProbDry'
         }]
     },
     'WG10': {
         'options': [{
-            'value': 'Windy'
+            'label': 'Windy',
+            'value': 'ProbWindy'
         }, {
-            'value': 'Calm'
+            'label': 'Calm',
+            'value': 'ProbCalm'
         }]
     }
 }
+
 
 # FUNCTION DEFINITONS
 def load_patches(path: str) -> geopandas.GeoDataFrame:
@@ -71,8 +78,7 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
 
 # By default load something?
 default_patches = load_patches(
-    os.path.join(DATA_DIR,
-                 "all_patches_40y_era5_WG10_djf_t_ProbWindy.geojson"))
+    os.path.join(DATA_DIR, "all_patches_40y_era5_WG10_djf_ProbWindy.geojson"))
 
 
 def generate_cbar(labels: list) -> dl.Colorbar:
@@ -128,6 +134,11 @@ app.layout = html.Div([
                  id='parameter-selector',
                  clearable=False,
                  searchable=False),
+    dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
+                 'ProbHot',
+                 id='option-selector',
+                 clearable=False,
+                 searchable=False),
     dl.Map(center=[0, 0],
            zoom=2,
            children=[
@@ -146,14 +157,31 @@ app.layout = html.Div([
 
 
 @app.callback(Output(component_id='patches', component_property='data'),
+              Output(component_id='option-selector',
+                     component_property='options'),
+              Output(component_id='option-selector',
+                     component_property='value'),
               Input(component_id='parameter-selector',
+                    component_property='value'),
+              Input(component_id='option-selector',
                     component_property='value'))
-def draw_patches(parameter_value):
+def draw_patches(parameter_value, parameter_option):
 
-    selected_file = f'all_patches_40y_era5_{parameter_value}_djf_t_ProbWindy.geojson'
+    parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
+
+    # Check if parameter_option is contained in parameter_options
+    if parameter_option in [d['value'] for d in parameter_options]:
+        option_selected = parameter_option
+        selected_file = f'all_patches_40y_era5_{parameter_value}_djf_{parameter_option}.geojson'
+    # Otherwise, use the first parameter option
+    else:
+        option_selected = parameter_options[0]["value"]
+        selected_file = f'all_patches_40y_era5_{parameter_value}_djf_{option_selected}.geojson'
+
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
 
-    return patches.__geo_interface__
+    return patches.__geo_interface__, parameter_options, option_selected
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
