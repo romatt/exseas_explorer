@@ -20,15 +20,15 @@ from dash.dependencies import Input, Output
 DATA_DIR = '/ytpool/data/ETH/INTEXseas'
 PARAMETER_LIST = [
     {
-        'label': 'two meter temperature',
+        'label': '2m Temperature',
         'value': 'T2M'
     },
     {
-        'label': 'total precipitation',
+        'label': 'Total Precipitation',
         'value': 'RTOT'
     },
     {
-        'label': '10 meter wind',
+        'label': '10m Win',
         'value': 'WG10'
     },
 ]
@@ -128,41 +128,59 @@ style = dict(weight=2,
              fillOpacity=0.7)
 
 # Header
-navbar = dbc.Navbar([
-    dbc.Row([
-        dbc.Col(
-            html.Img(
-                src='/assets/eth_logo.png', height="75px", style={'padding': '10px'})),
-        dbc.Col(
-            dbc.NavbarBrand("INTEXseas Extreme Season Explorer",
-                            className="ml-1",
-                            style={'font-size': 'x-large'})),
-    ], ),
+header = html.Div([
+    dbc.Row(className='title',
+            children=[
+                dbc.Col([dbc.NavbarBrand("INTEXseas Extreme Season Explorer",
+                                        className="ml-1",
+                                        style={
+                                            'font-size': 'x-large',
+                                            'padding': '10px'
+                                        })],
+                        width=8),
+                dbc.Col([html.Img(src='/assets/eth_logo.png',
+                                 height="100px",
+                                 style={'padding': '25px', 'float': 'right'})],
+                        width=4),
+            ])
 ],
                     className="navbar-expand-lg navbar-light bg-light")
+
+# Navigation pane
+navbar = html.Div([
+    dbc.Row(id='navbar', children=[
+        dbc.Col([
+            "Parameter:",
+            dcc.Dropdown(PARAMETER_LIST,
+                         'T2M',
+                         id='parameter-selector',
+                         clearable=False,
+                         searchable=False)], width=2, className='nav_column'),
+        dbc.Col([
+            "Options:",
+            dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
+                         'ProbHot',
+                         id='option-selector',
+                         clearable=False,
+                         searchable=False)], width=2, className='nav_column'),
+        dbc.Col([
+            "Season:",
+            dcc.Dropdown(SEASON_LIST,
+                         'djf',
+                         id='season-selector',
+                         clearable=False,
+                         searchable=False)], width=2, className='nav_column'),
+    ]),
+],
+                    className="navbar-light bg-light")
 
 # Definition of app layout
 app = Dash(__name__,
            update_title=None,
            title="INTEXseas Extreme Season Explorer",
-           external_stylesheets=[dbc.themes.BOOTSTRAP])
+           external_stylesheets=[dbc.themes.BOOTSTRAP, 'assets/style.css'])
 app.layout = html.Div([
-    navbar,
-    dcc.Dropdown(PARAMETER_LIST,
-                 'T2M',
-                 id='parameter-selector',
-                 clearable=False,
-                 searchable=False),
-    dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
-                 'ProbHot',
-                 id='option-selector',
-                 clearable=False,
-                 searchable=False),
-    dcc.Dropdown(SEASON_LIST,
-                 'djf',
-                 id='season-selector',
-                 clearable=False,
-                 searchable=False),
+    header, navbar,
     dl.Map(center=[0, 0],
            zoom=2,
            children=[
@@ -171,6 +189,7 @@ app.layout = html.Div([
                           id="patches"), colorbar
            ],
            style={
+               'padding-top': '2em',
                'width': '90%',
                'height': '70vh',
                'margin': "auto",
