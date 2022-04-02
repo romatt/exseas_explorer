@@ -5,6 +5,7 @@
 # import pandas as pd
 import dash
 import dash_leaflet as dl
+import dash_bootstrap_components as dbc
 import geopandas
 from dash import Dash, dcc, html
 
@@ -13,13 +14,14 @@ file = open(filename)
 df = geopandas.read_file(file)
 
 filtered = df[df['key'] < 1952]
-geo_j = filtered['geometry'].to_json()
+# geo_j = filtered['geometry'].to_json()
 
 app = Dash(__name__)
 app.layout = html.Div([
+    dbc.Navbar(),
     dl.Map(center=[0, 0], zoom=2,
            children=[dl.TileLayer(),
-           dl.GeoJSON(data=geo_j, id="patches")],
+           dl.GeoJSON(data=filtered.__geo_interface__, id="patches")],
            style={
                'width': '90%',
                'height': '70vh',
