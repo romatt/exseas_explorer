@@ -12,8 +12,6 @@ from geopandas import GeoDataFrame
 from pyproj import CRS
 from rasterio import features
 from rasterio.transform import Affine
-# from shapely.geometry import Polygon
-# from skimage import measure
 from shapely.geometry import shape
 
 
@@ -82,16 +80,18 @@ def extract_contours(array: xr.DataArray):
 
     return gdf
 
+
 @click.command()
-@click.option('-w', '--work_dir', default='/net/thermo/atmosdyn/maxibo/intexseas/webpage/')
-@click.option('-p', '--patch_file', default='patches_40y_era5_RTOT_djf_ProbDry.nc')
+@click.option('-w',
+              '--work_dir',
+              default='/net/thermo/atmosdyn/maxibo/intexseas/webpage/')
+@click.option('-p',
+              '--patch_file',
+              default='patches_40y_era5_RTOT_djf_ProbDry.nc')
 def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
                    patch_file='patches_40y_era5_RTOT_djf_ProbDry.nc'):
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
-
-    TODO
-    - Combine geodataframe containing shapes with the one with additional information
 
     Parameters
     ----------
@@ -110,7 +110,7 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     # Read dataframe with additional data on patches
     list_file = patch_file.replace("patches", "list").replace(".nc", ".txt")
     patch_data = pd.read_csv(work_dir + list_file, na_values='-999.99')
-    patch_data = patch_data.astype({'lab':'int32', 'key':'int32'})
+    patch_data = patch_data.astype({'lab': 'int32', 'key': 'int32'})
 
     # Extract contours
     patch_all = extract_contours(in_file.lab)
@@ -131,20 +131,6 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
                            driver='GeoJSON',
                            index=False)
 
+
 if __name__ == '__main__':
     update_patches()
-
-# test = xr.where(
-#     in_file.lab.sel(year=year) == 5073, in_file.lab.sel(year=year), 0)
-
-# # Display the image and plot all contours found
-# fig, ax = plt.subplots()
-# ax.imshow(in_file.lab.sel(year=year), cmap="Spectral")
-
-# for contour in test:
-#     ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
-
-# ax.axis('image')
-# ax.set_xticks([])
-# ax.set_yticks([])
-# plt.show()

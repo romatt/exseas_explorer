@@ -54,7 +54,7 @@ Running dash app locally
 
 .. code-block:: console
 
-    $ python exseas_explorer/wsgi.py
+    $ python exseas_explorer/app.py
 
 
 Credits
