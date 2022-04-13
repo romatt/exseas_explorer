@@ -19,9 +19,6 @@ INTEXseas Extreme Seasons Explorer
 * Free software: BSD license
 * Documentation: https://exseas-explorer.readthedocs.io.
 
-Install for deployment
-----------------------
-
 How to setup for development
 ----------------------------
 
@@ -32,7 +29,7 @@ Clone Repository
     $ git clone https://github.com/romatt/exseas_explorer.git
     $ cd exseas_explorer
 
-Set up a new python virtual environment
+a) Set up a new python virtual environment using venv & pip
 
 .. code-block:: console
 
@@ -43,11 +40,29 @@ Set up a new python virtual environment
     $ python -m pip install -r requirements_dev.txt
     $ pytest
 
+b) Set up a new python virtual environment using pyenv & poetry
+
+.. code-block:: console
+
+    $ pyenv install 3.9.12
+    $ pyenv global 3.9.12
+    $ poetry shell
+    $ poetry install
+    $ pytest
+
 Save required libraries to file
 
 .. code-block:: console
 
     $ python -m pip freeze > requirements.txt
+
+Update documentation
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+
+    $ cd doc
+    $ make html
 
 Running dash app locally 
 ------------------------
