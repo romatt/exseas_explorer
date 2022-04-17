@@ -66,16 +66,16 @@ PARAMETER_OPTIONS = {
     }
 }
 SEASON_LIST = [{
-    'label': 'Winter',
+    'label': 'DJF',
     'value': 'djf'
 }, {
-    'label': 'Spring',
+    'label': 'MAM',
     'value': 'mam'
 }, {
-    'label': 'Summer',
+    'label': 'JJA',
     'value': 'jja'
 }, {
-    'label': 'Autumn',
+    'label': 'SON',
     'value': 'son'
 }]
 LOCATION_LIST = [{
@@ -86,14 +86,14 @@ LOCATION_LIST = [{
     'value': 'land_patches_'
 }]
 RANKING_LIST = [{
-    'label': 'area',
+    'label': 'all area',
     'value': 1
 }, {
-    'label': 'return period mean',
+    'label': 'land area',
     'value': 2
 }]
 
-# COLORMAP
+# COLORMAP DEFINITON
 greys=plt.cm.Greys    # 1950er
 pinks=plt.cm.RdPu     # 1960er
 purp = plt.cm.Purples # 1970er
@@ -125,23 +125,40 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
 
 
 def filter_patches(df: geopandas.GeoDataFrame,
-                   criterion: int) -> geopandas.GeoDataFrame:
+                   criterion: int,
+                   nvals: int = 10) -> geopandas.GeoDataFrame:
     """
     Filter patches by selected criterion
+
+    Parameters
+    ----------
+    df : GeoDataFrame
+        Unfiltered dataframe
+    criterion : int
+        Criterion used to filter dataframe
+    nvals : int, default: 10
+        Number of most intense events to filter by
+
+    Returns
+    -------
+    df : GeoDataFrame
+        Filtered dataframe with the `nvals` most intense events 
     """
 
     if criterion == 1:
-        df = df[df['area'] >= np.sort(df['area'])[-10]]
+        df = df[df['area'] >= np.sort(df['area'])[-nvals]]
     if criterion == 2:
-        df = df[df['mean_prob'] >= np.sort(df['mean_prob'])[-10]]
+        # Remove instances where land_area is NAN
+        df = df[~np.isnan(df['land_area'])]
+        df = df[df['land_area'] >= np.sort(df['land_area'])[-nvals]]
 
     return df
 
 
 # By default load something?
 default_patches = load_patches(
-    os.path.join(DATA_DIR, "all_patches_40y_era5_WG10_djf_ProbWindy.geojson"))
-default_patches = filter_patches(default_patches, 1)
+    os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
+default_patches = filter_patches(default_patches, 1, 10)
 
 def generate_cbar(labels: list) -> dl.Colorbar:
     """
@@ -158,16 +175,8 @@ def generate_cbar(labels: list) -> dl.Colorbar:
 
     # Define colors
     colors = [matplotlib.colors.to_hex(cols(norm(x))) for x in labels]
-    
-    # Create colorbar
-    ctg = [
-        "{}".format(cls, labels[i + 1]) for i, cls in enumerate(labels[:-1])
-    ] + ["{}".format(labels[-1])]
-    return dlx.categorical_colorbar(categories=ctg,
-                                    colorscale=colors,
-                                    width=400,
-                                    height=30,
-                                    position="bottomleft")
+
+    return colors
 
 style = dict(weight=2,
              opacity=1,
@@ -216,9 +225,9 @@ navbar = html.Div([
                         width=2,
                         className='nav_column'),
                 dbc.Col([
-                    "Options:",
+                    "Option:",
                     dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
-                                 'ProbHot',
+                                 'ProbCold',
                                  id='option-selector',
                                  clearable=False,
                                  searchable=False)
@@ -236,12 +245,8 @@ navbar = html.Div([
                         width=2,
                         className='nav_column'),
                 dbc.Col([
-                    "Location:",
-                    dcc.Dropdown(LOCATION_LIST,
-                                 'all_patches_',
-                                 id='location-selector',
-                                 clearable=False,
-                                 searchable=False)
+                    "X-Most intense:",
+                    dcc.Input(value=10, id='nval-selector', type='number', min=10, max=20, step=1)
                 ],
                         width=2,
                         className='nav_column'),
@@ -298,12 +303,12 @@ app.layout = html.Div([
                     component_property='value'),
               Input(component_id='season-selector',
                     component_property='value'),
-              Input(component_id='location-selector',
+              Input(component_id='nval-selector',
                     component_property='value'),
               Input(component_id='ranking-selector',
                     component_property='value'))
 def draw_patches(parameter_value, parameter_option, season_value,
-                 location_value, ranking_option):
+                 nval_value, ranking_option):
 
     print(ranking_option)
 
@@ -317,14 +322,20 @@ def draw_patches(parameter_value, parameter_option, season_value,
         option_selected = parameter_options[0]["value"]
 
     # Load patches
-    selected_file = f'{location_value}40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
+    selected_file = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
-    patches = filter_patches(patches, ranking_option)
+    patches = filter_patches(patches, ranking_option, nval_value)
 
-    print(patches['key'])
-
+    labels = list(patches['key'])
     # Update colorbar
-    colorbar = generate_cbar(list(patches['key']))
+    colors = generate_cbar(labels)
+
+    # Create colorbar
+    colorbar = dlx.categorical_colorbar(categories=[str(y) for y in labels],
+                                        colorscale=colors,
+                                        width=20,
+                                        height=500,
+                                        position="bottomleft")
 
     return patches.__geo_interface__, parameter_options, option_selected, colorbar
 
