@@ -25,6 +25,7 @@ logger = logging.getLogger('__NAME__')
 def affine_transform(array) -> Affine:
     """Returns the transform operator relating index coordinates to
     geographical coordinates of the dataset
+    
     Returns
     -------
     rasterio.transform.Affine
@@ -113,6 +114,12 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
         Working directory
     patch_file : str
         Input file to process
+
+    Examples
+    --------
+
+    >>> files=*.nc
+    >>> for file in $files; do python /home/roman/projects/exseas_explorer/exseas_explorer/preproc/preproc.py -w /ytpool/data/ETH/INTEXseas/ -p $file; done
     """
 
     logger.info(f'Processing {work_dir}{patch_file}')
@@ -129,27 +136,27 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     patch_data = patch_data.astype({'lab': 'int32', 'key': 'int32'})
 
     # Extract contours
-    patch_all = extract_contours(in_file.lab)
-    patch_land = extract_contours(in_file.lab_land)
+    patch = extract_contours(in_file.lab)
+    # patch_land = extract_contours(in_file.lab_land)
 
     # Merge DF data with geodataframe
-    patch_all_out = patch_all.merge(patch_data, on='lab')
-    patch_land_out = patch_land.merge(patch_data, on='lab')
+    patch_out = patch.merge(patch_data, on='lab')
+    # patch_land_out = patch_land.merge(patch_data, on='lab')
 
     # Replace end of string
     file_end = patch_file.replace("nc", "geojson")
 
     # Combine polygons with same label
-    patch_all_out = patch_all_out.dissolve(by='lab').reset_index(level=0)
-    patch_land_out = patch_land_out.dissolve(by='lab').reset_index(level=0)
+    patch_out = patch_out.dissolve(by='lab').reset_index(level=0)
+    # patch_land_out = patch_land_out.dissolve(by='lab').reset_index(level=0)
 
     # Save geometries to file
-    patch_all_out.to_file(f'{work_dir}/all_{file_end}',
+    patch_out.to_file(f'{work_dir}/{file_end}',
                           driver='GeoJSON',
                           index=False)
-    patch_land_out.to_file(f'{work_dir}/land_{file_end}',
-                           driver='GeoJSON',
-                           index=False)
+    # patch_land_out.to_file(f'{work_dir}/land_{file_end}',
+    #                        driver='GeoJSON',
+    #                        index=False)
 
 
 if __name__ == '__main__':
