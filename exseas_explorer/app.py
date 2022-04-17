@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
+from dash_extensions.javascript import assign
 from matplotlib.colors import BoundaryNorm, ListedColormap
 
 # OPTIONS
@@ -178,11 +179,29 @@ def generate_cbar(labels: list) -> dl.Colorbar:
 
     return colors
 
-style = dict(weight=2,
-             opacity=1,
-             color='white',
-             dashArray='3',
-             fillOpacity=0.7)
+classes = list(default_patches['key'])
+colorscale = generate_cbar(classes)
+
+# Define a default style dict while loading
+style = dict(fillColor='red', color='white', fillOpacity=0.5, weight=1.5)
+
+# Geojson rendering logic, must be JavaScript as it is executed in clientside.
+style_handle = assign("""function(feature, context){
+    const {classes, colorscale, style, colorProp} = context.props.hideout;  // get props from hideout
+    const value = feature.properties[colorProp];  // get value the determines the color
+    for (let i = 0; i < classes.length; ++i) {
+        if (value > classes[i]) {
+            style.fillColor = colorscale[i];  // set the fill color according to the class
+            style.color = colorscale[i];  // set the border color according to the class
+        }
+    }
+    return style;
+}""")
+
+hideout_dict = dict(colorscale=colorscale,
+                                                     classes=classes,
+                                                     style=style,
+                                                     colorProp="key")
 
 # Header row
 header = html.Div([
@@ -274,7 +293,9 @@ maprow = html.Div([
                         children=[
                             dl.TileLayer(),
                             dl.GeoJSON(data=default_patches.__geo_interface__,
-                                        id="patches"),
+                                        id="patches", options=dict(style=style_handle),
+                                        hideout=hideout_dict
+                                        ),
                             dl.LayerGroup(id="cbar", children=[])
                         ],
                         style={
@@ -306,6 +327,7 @@ app.layout = html.Div([
 
 
 @app.callback(Output(component_id='patches', component_property='data'),
+              Output(component_id='patches', component_property='hideout'),
               Output(component_id='option-selector',
                      component_property='options'),
               Output(component_id='option-selector',
@@ -339,18 +361,23 @@ def draw_patches(parameter_value, parameter_option, season_value,
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
     patches = filter_patches(patches, ranking_option, nval_value)
 
-    labels = list(patches['key'])
+    classes = list(patches['key'])
     # Update colorbar
-    colors = generate_cbar(labels)
+    colorscale = generate_cbar(classes)
 
     # Create colorbar
-    colorbar = dlx.categorical_colorbar(categories=[str(y) for y in labels],
-                                        colorscale=colors,
+    colorbar = dlx.categorical_colorbar(categories=[str(y) for y in classes],
+                                        colorscale=colorscale,
                                         width=20,
                                         height=500,
                                         position="bottomleft")
 
-    return patches.__geo_interface__, parameter_options, option_selected, colorbar
+    hideout_dict = dict(colorscale=colorscale,
+                        classes=classes,
+                        style=style,
+                        colorProp="key")
+
+    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar
 
 
 if __name__ == '__main__':
