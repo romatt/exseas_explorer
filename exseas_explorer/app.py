@@ -184,7 +184,7 @@ style = dict(weight=2,
              dashArray='3',
              fillOpacity=0.7)
 
-# Header
+# Header row
 header = html.Div([
     dbc.Row(className='title',
             children=[
@@ -210,7 +210,7 @@ header = html.Div([
 ],
                   className="navbar-expand-lg navbar-light bg-light")
 
-# Navigation pane
+# Navigation row
 navbar = html.Div([
     dbc.Row(id='navbar',
             children=[
@@ -264,29 +264,44 @@ navbar = html.Div([
 ],
                   className="navbar-light bg-light")
 
+# Map row
+maprow = html.Div([
+    dbc.Row(id='maprow',
+            children=[
+                dbc.Col([
+                    dl.Map(center=[0, 0],
+                        zoom=2,
+                        children=[
+                            dl.TileLayer(),
+                            dl.GeoJSON(data=default_patches.__geo_interface__,
+                                        id="patches"),
+                            dl.LayerGroup(id="cbar", children=[])
+                        ],
+                        style={
+                            'padding-top': '2em',
+                            'width': '100%',
+                            'height': '70vh',
+                            "display": "block"
+                        },
+                        id="map")
+                ],
+                        width=9,
+                        className='map_column'),
+                dbc.Col([
+                    "Details:",
+                ],
+                        width=3,
+                        className='sidebar_column')
+            ])
+])
+
 # Definition of app layout
 app = Dash(__name__,
            update_title=None,
            title="INTEXseas Extreme Season Explorer",
            external_stylesheets=[dbc.themes.BOOTSTRAP, 'assets/style.css'])
 app.layout = html.Div([
-    header, navbar,
-    dl.Map(center=[0, 0],
-           zoom=2,
-           children=[
-               dl.TileLayer(),
-               dl.GeoJSON(data=default_patches.__geo_interface__,
-                          id="patches"),
-               dl.LayerGroup(id="cbar", children=[])
-           ],
-           style={
-               'padding-top': '2em',
-               'width': '90%',
-               'height': '70vh',
-               'margin': "auto",
-               "display": "block"
-           },
-           id="map")
+    header, navbar, maprow
 ])
 
 
@@ -309,8 +324,6 @@ app.layout = html.Div([
                     component_property='value'))
 def draw_patches(parameter_value, parameter_option, season_value,
                  nval_value, ranking_option):
-
-    print(ranking_option)
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
