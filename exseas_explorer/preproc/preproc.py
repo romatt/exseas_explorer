@@ -22,6 +22,7 @@ fmt = '[%(levelname)s] %(asctime)s - %(message)s'
 logging.basicConfig(stream=sys.stdout, level=level, format=fmt)
 logger = logging.getLogger('__NAME__')
 
+
 def affine_transform(array) -> Affine:
     """Returns the transform operator relating index coordinates to
     geographical coordinates of the dataset
@@ -103,7 +104,7 @@ def extract_contours(array: xr.DataArray):
 @click.option('-p',
               '--patch_file',
               default='patches_40y_era5_RTOT_djf_ProbDry.nc')
-def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
+def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
                    patch_file='patches_40y_era5_RTOT_djf_ProbDry.nc'):
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
@@ -131,9 +132,16 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     in_file = in_file.rename({'key': 'year'}).astype(np.float32)
 
     # Read dataframe with additional data on patches
-    list_file = patch_file.replace("patches", "list").replace(".nc", ".txt")
+    list_file = patch_file.replace("patches",
+                                   "list").replace(".nc",
+                                                   ".txt").replace("Prob", "")
     patch_data = pd.read_csv(work_dir + list_file, na_values='-999.99')
     patch_data = patch_data.astype({'lab': 'int32', 'key': 'int32'})
+
+    # Read dataframe with literature information
+    # lit_file = patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob","")
+    # lit_data = pd.read_csv(work_dir + lit_file, na_values='-999.99')
+    # lit_data = lit_data.astype({'lab': 'int32', 'key': 'int32'})
 
     # Extract contours
     patch = extract_contours(in_file.lab)
@@ -151,9 +159,7 @@ def update_patches(work_dir='/net/thermo/atmosdyn/maxibo/intexseas/webpage/',
     # patch_land_out = patch_land_out.dissolve(by='lab').reset_index(level=0)
 
     # Save geometries to file
-    patch_out.to_file(f'{work_dir}/{file_end}',
-                          driver='GeoJSON',
-                          index=False)
+    patch_out.to_file(f'{work_dir}/{file_end}', driver='GeoJSON', index=False)
     # patch_land_out.to_file(f'{work_dir}/land_{file_end}',
     #                        driver='GeoJSON',
     #                        index=False)
