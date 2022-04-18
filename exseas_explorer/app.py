@@ -101,8 +101,8 @@ default_patches = filter_patches(default_patches, 1, 10)
 classes = list(default_patches['key'])
 colorscale = generate_cbar(classes)
 
-# Define a default style dict while loading
-style = dict(fillColor='red', color='white', fillOpacity=0.5, weight=1.5)
+# POLYGON STYLE DEFINITIONS
+style = dict(fillOpacity=0.7, weight=1)
 
 # Geojson rendering logic, must be JavaScript as it is executed in clientside.
 style_handle = assign("""function(feature, context){
