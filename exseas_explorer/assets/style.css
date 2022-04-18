@@ -5,3 +5,7 @@
 #navbar {
     margin-bottom:2em;
 }
+
+#longitude-selector, #latitude-selector {
+    padding-top:40px !important;
+}

@@ -150,8 +150,7 @@ header = html.Div([
 
 # Navigation row
 navbar = html.Div([
-    dbc.Row(id='navbar',
-            children=[
+    dbc.Row(children=[
                 dbc.Col([
                     "Parameter:",
                     dcc.Dropdown(PARAMETER_LIST,
@@ -160,7 +159,8 @@ navbar = html.Div([
                                  clearable=False,
                                  searchable=False)
                 ],
-                        width=2,
+                        xl=1,
+                        xs=6,
                         className='nav_column'),
                 dbc.Col([
                     "Option:",
@@ -170,7 +170,8 @@ navbar = html.Div([
                                  clearable=False,
                                  searchable=False)
                 ],
-                        width=2,
+                        xl=1,
+                        xs=6,
                         className='nav_column'),
                 dbc.Col([
                     "Season:",
@@ -180,30 +181,47 @@ navbar = html.Div([
                                  clearable=False,
                                  searchable=False)
                 ],
-                        width=2,
+                        xl=1,
+                        xs=6,
                         className='nav_column'),
                 dbc.Col([
-                    "X-Most intense:",
+                    "# of events:",
                     dcc.Input(value=10,
                               id='nval-selector',
                               type='number',
-                              min=10,
+                              min=5,
                               max=20,
                               step=1)
                 ],
-                        width=2,
+                        xl=1,
+                        xs=6,
                         className='nav_column'),
                 dbc.Col([
-                    "Ranking criterion:",
+                    "Ranking:",
                     dcc.Dropdown(RANKING_LIST,
                                  1,
                                  id='ranking-selector',
                                  clearable=False,
                                  searchable=False)
                 ],
-                        width=2,
+                        xl=1,
+                        xs=6,
                         className='nav_column'),
             ]),
+    dbc.Row(children=[
+                dbc.Col([
+                    "Longitude:",
+                    dcc.RangeSlider(min=-180, max=180, step=0.5, marks=None, value=[-180, 180], tooltip={"placement": "top", "always_visible": True}, id="longitude-selector")
+                ],
+                        width=3,
+                        className='nav_column'),
+                dbc.Col([
+                    "Latitude:",
+                    dcc.RangeSlider(min=-90, max=90, step=0.5, marks=None, value=[-90, 90], tooltip={"placement": "top", "always_visible": True}, id="latitude-selector")
+                ],
+                        width=3,
+                        className='nav_column')
+    ]),
 ],
                   className="navbar-light bg-light")
 
