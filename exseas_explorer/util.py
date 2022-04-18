@@ -24,8 +24,10 @@ cols=ListedColormap([greys(20),greys(40),greys(60),greys(80),greys(100),greys(12
 norm = BoundaryNorm(np.arange(1950, 2020 + 1, 1), cols.N)
 
 def filter_patches(df: geopandas.GeoDataFrame,
-                   criterion: int,
-                   nvals: int = 10) -> geopandas.GeoDataFrame:
+                   criterion: int = 1,
+                   nvals: int = 10,
+                   lon_range: list = [-180, 180],
+                   lat_range: list = [-90, 90]) -> geopandas.GeoDataFrame:
     """
     Filter patches by selected criterion
 
@@ -33,10 +35,14 @@ def filter_patches(df: geopandas.GeoDataFrame,
     ----------
     df : GeoDataFrame
         Unfiltered dataframe
-    criterion : int
+    criterion : int, default: 1
         Criterion used to filter dataframe
     nvals : int, default: 10
         Number of most intense events to filter by
+    lon_range : list, default: [-180, 180]
+        List of longitude range
+    lat_range : list, default: [-90, 90]
+        List of latitude range
 
     Returns
     -------
@@ -44,6 +50,11 @@ def filter_patches(df: geopandas.GeoDataFrame,
         Filtered dataframe with the `nvals` most intense events 
     """
 
+    # Filter for coordinate
+    df = df[(df['lonmean']>=lon_range[0]) & (df['lonmean']<=lon_range[1])]
+    df = df[(df['latmean']>=lat_range[0]) & (df['latmean']<=lat_range[1])]
+
+    # Filter for criterion and number of values
     if criterion == 1:
         df = df[df['area'] >= np.sort(df['area'])[-nvals]]
     if criterion == 2:

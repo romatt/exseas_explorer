@@ -97,7 +97,7 @@ RANKING_LIST = [{
 # LOAD DEFAULT PATCHES
 default_patches = load_patches(
     os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
-default_patches = filter_patches(default_patches, 1, 10)
+default_patches = filter_patches(default_patches)
 classes = list(default_patches['key'])
 colorscale = generate_cbar(classes)
 
@@ -282,9 +282,13 @@ app.layout = html.Div([header, navbar, maprow])
                     component_property='value'),
               Input(component_id='nval-selector', component_property='value'),
               Input(component_id='ranking-selector',
+                    component_property='value'),
+              Input(component_id='longitude-selector',
+                    component_property='value'),
+              Input(component_id='latitude-selector',
                     component_property='value'))
 def draw_patches(parameter_value, parameter_option, season_value, nval_value,
-                 ranking_option):
+                 ranking_option, longitude_values, latitude_values):
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
@@ -298,7 +302,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Load patches
     selected_file = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
-    patches = filter_patches(patches, ranking_option, nval_value)
+    patches = filter_patches(patches, ranking_option, nval_value, longitude_values, latitude_values)
 
     classes = list(patches['key'])
     # Update colorbar
