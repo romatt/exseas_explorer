@@ -211,13 +211,25 @@ navbar = html.Div([
     dbc.Row(children=[
                 dbc.Col([
                     "Longitude:",
-                    dcc.RangeSlider(min=-180, max=180, step=0.5, marks=None, value=[-180, 180], tooltip={"placement": "top", "always_visible": True}, id="longitude-selector")
+                    dcc.RangeSlider(min=-180,
+                                    max=180,
+                                    step=0.5,
+                                    marks={-180:"-180",0:"0",180:"180"},
+                                    value=[-180, 180],
+                                    tooltip={"placement": "top", "always_visible": True},
+                                    id="longitude-selector")
                 ],
                         width=3,
                         className='nav_column'),
                 dbc.Col([
                     "Latitude:",
-                    dcc.RangeSlider(min=-90, max=90, step=0.5, marks=None, value=[-90, 90], tooltip={"placement": "top", "always_visible": True}, id="latitude-selector")
+                    dcc.RangeSlider(min=-90,
+                                    max=90,
+                                    step=0.5,
+                                    marks={-90:"-90",0:"0",90:"90"},
+                                    value=[-90, 90],
+                                    tooltip={"placement": "top", "always_visible": True},
+                                    id="latitude-selector")
                 ],
                         width=3,
                         className='nav_column')
