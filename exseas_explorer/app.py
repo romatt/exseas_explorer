@@ -95,13 +95,13 @@ RANKING_LIST = [{
 }]
 
 # COLORMAP DEFINITON
-greys=plt.cm.Greys    # 1950er
-pinks=plt.cm.RdPu     # 1960er
-purp = plt.cm.Purples # 1970er
-blues=plt.cm.Blues    # 1980er
-greens=plt.cm.Greens  # 1990er
-ylors=plt.cm.Oranges #YlOrBr   # 2000er 
-reds=plt.cm.Reds      # 2010er 
+greys = plt.cm.Greys  # 1950er
+pinks = plt.cm.RdPu  # 1960er
+purp = plt.cm.Purples  # 1970er
+blues = plt.cm.Blues  # 1980er
+greens = plt.cm.Greens  # 1990er
+ylors = plt.cm.Oranges  #YlOrBr   # 2000er
+reds = plt.cm.Reds  # 2010er
 cols=ListedColormap([greys(20),greys(40),greys(60),greys(80),greys(100),greys(120),greys(140),greys(160),greys(180),greys(200),   \
              pinks(20),pinks(40),pinks(60),pinks(80),pinks(100),pinks(120),pinks(140),pinks(160),pinks(180),pinks(200),   \
                      purp(20),purp(40),purp(60),purp(80),purp(100),purp(120),purp(140),purp(160),purp(180),purp(200),   \
@@ -110,7 +110,8 @@ cols=ListedColormap([greys(20),greys(40),greys(60),greys(80),greys(100),greys(12
                      ylors(20),ylors(40),ylors(60),ylors(80),ylors(100),ylors(120),ylors(140),ylors(160),ylors(180),ylors(200),\
                     reds(20),reds(40),reds(60),reds(80),reds(100),reds(120),reds(140),reds(160),reds(180),reds(200),\
                      plt.cm.YlOrRd(60)])
-norm=BoundaryNorm(np.arange(1950,2020+1,1),cols.N)
+norm = BoundaryNorm(np.arange(1950, 2020 + 1, 1), cols.N)
+
 
 # FUNCTION DEFINITONS
 def load_patches(path: str) -> geopandas.GeoDataFrame:
@@ -161,6 +162,7 @@ default_patches = load_patches(
     os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
 default_patches = filter_patches(default_patches, 1, 10)
 
+
 def generate_cbar(labels: list) -> dl.Colorbar:
     """
     Generate colorbar for provided year labels
@@ -178,6 +180,7 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     colors = [matplotlib.colors.to_hex(cols(norm(x))) for x in labels]
 
     return colors
+
 
 classes = list(default_patches['key'])
 colorscale = generate_cbar(classes)
@@ -199,9 +202,9 @@ style_handle = assign("""function(feature, context){
 }""")
 
 hideout_dict = dict(colorscale=colorscale,
-                                                     classes=classes,
-                                                     style=style,
-                                                     colorProp="key")
+                    classes=classes,
+                    style=style,
+                    colorProp="key")
 
 # Header row
 header = html.Div([
@@ -265,7 +268,12 @@ navbar = html.Div([
                         className='nav_column'),
                 dbc.Col([
                     "X-Most intense:",
-                    dcc.Input(value=10, id='nval-selector', type='number', min=10, max=20, step=1)
+                    dcc.Input(value=10,
+                              id='nval-selector',
+                              type='number',
+                              min=10,
+                              max=20,
+                              step=1)
                 ],
                         width=2,
                         className='nav_column'),
@@ -285,35 +293,34 @@ navbar = html.Div([
 
 # Map row
 maprow = html.Div([
-    dbc.Row(id='maprow',
-            children=[
-                dbc.Col([
-                    dl.Map(center=[0, 0],
-                        zoom=2,
-                        children=[
-                            dl.TileLayer(),
-                            dl.GeoJSON(data=default_patches.__geo_interface__,
-                                        id="patches", options=dict(style=style_handle),
-                                        hideout=hideout_dict
-                                        ),
-                            dl.LayerGroup(id="cbar", children=[])
-                        ],
-                        style={
-                            'padding-top': '2em',
-                            'width': '100%',
-                            'height': '70vh',
-                            "display": "block"
-                        },
-                        id="map")
-                ],
-                        width=9,
-                        className='map_column'),
-                dbc.Col([
-                    "Details:",
-                ],
-                        width=3,
-                        className='sidebar_column')
-            ])
+    dbc.Row(
+        id='maprow',
+        children=[
+            dbc.Col([
+                dl.Map(center=[0, 0],
+                       zoom=2,
+                       children=[
+                           dl.TileLayer(),
+                           dl.GeoJSON(data=default_patches.__geo_interface__,
+                                      id="patches",
+                                      options=dict(style=style_handle),
+                                      hideout=hideout_dict),
+                           dl.LayerGroup(id="cbar", children=[])
+                       ],
+                       style={
+                           'padding-top': '2em',
+                           'width': '100%',
+                           'height': '70vh',
+                           "display": "block"
+                       },
+                       id="map")
+            ],
+                    width=9,
+                    className='map_column'),
+            dbc.Col([
+                "Details:",
+            ], width=3, className='sidebar_column')
+        ])
 ])
 
 # Definition of app layout
@@ -321,9 +328,7 @@ app = Dash(__name__,
            update_title=None,
            title="INTEXseas Extreme Season Explorer",
            external_stylesheets=[dbc.themes.BOOTSTRAP, 'assets/style.css'])
-app.layout = html.Div([
-    header, navbar, maprow
-])
+app.layout = html.Div([header, navbar, maprow])
 
 
 @app.callback(Output(component_id='patches', component_property='data'),
@@ -332,20 +337,18 @@ app.layout = html.Div([
                      component_property='options'),
               Output(component_id='option-selector',
                      component_property='value'),
-              Output(component_id='cbar',
-                     component_property='children'),
+              Output(component_id='cbar', component_property='children'),
               Input(component_id='parameter-selector',
                     component_property='value'),
               Input(component_id='option-selector',
                     component_property='value'),
               Input(component_id='season-selector',
                     component_property='value'),
-              Input(component_id='nval-selector',
-                    component_property='value'),
+              Input(component_id='nval-selector', component_property='value'),
               Input(component_id='ranking-selector',
                     component_property='value'))
-def draw_patches(parameter_value, parameter_option, season_value,
-                 nval_value, ranking_option):
+def draw_patches(parameter_value, parameter_option, season_value, nval_value,
+                 ranking_option):
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
