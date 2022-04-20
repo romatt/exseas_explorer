@@ -245,6 +245,8 @@ maprow = html.Div([
             dbc.Col([
                 dl.Map(center=[0, 0],
                        zoom=2,
+                       worldCopyJump=True,
+                       minZoom=2,
                        children=[
                            dl.TileLayer(),
                            dl.GeoJSON(data=default_patches.__geo_interface__,
