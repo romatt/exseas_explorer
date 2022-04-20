@@ -13,11 +13,12 @@ import dash_leaflet.express as dlx
 # import geopandas
 # import matplotlib
 import numpy as np
-from dash import Dash, dash_table, dcc, html
+from dash import Dash, State, dash_table, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import assign
 
-from exseas_explorer.util import filter_patches, generate_cbar, load_patches
+from exseas_explorer.util import (filter_patches, generate_cbar,
+                                  generate_table, load_patches)
 
 # OPTIONS
 MIN_YEAR = 1950
@@ -98,6 +99,7 @@ RANKING_LIST = [{
 default_patches = load_patches(
     os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
 default_patches = filter_patches(default_patches)
+poly_table = generate_table(default_patches)
 classes = list(default_patches['key'])
 colorscale = generate_cbar(classes)
 
@@ -143,7 +145,7 @@ header = html.Div([
                                  'float': 'right'
                              })
                 ],
-                        width=4),
+                        width=3),
             ])
 ],
                   className="navbar-expand-lg navbar-light bg-light")
@@ -247,6 +249,7 @@ maprow = html.Div([
                        zoom=2,
                        worldCopyJump=True,
                        minZoom=2,
+                       zoomSnap=0.25,
                        children=[
                            dl.TileLayer(),
                            dl.GeoJSON(data=default_patches.__geo_interface__,
@@ -255,21 +258,36 @@ maprow = html.Div([
                                       hideout=hideout_dict),
                            dl.LayerGroup(id="cbar", children=[])
                        ],
-                       style={
-                           'padding-top': '2em',
-                           'width': '100%',
-                           'height': '70vh',
-                           "display": "block"
-                       },
                        id="map")
-            ],
-                    width=9,
-                    className='map_column'),
+                    ],
+                    id='map_column',
+                    style={
+                           'width': '80%',
+                           'height': '70vh',
+                           'display': 'block',
+                           'flex': 'none',
+                       }
+                    ),
+            dbc.Button(">",
+                       color="primary",
+                       id="toggle-sidebar",
+                       n_clicks=0,
+                       style={
+                           'left': '75%'
+                       }),
             dbc.Col([
-                "Details:"
+                html.Div(
+                        title="Polygon details",
+                        children=[poly_table],
+                        id="right-collapse",
+                )
             ],
-                    width=3,
-                    className='sidebar_column')
+                    id='sidebar_column',
+                    style={
+                            'width': '20%',
+                            'display': 'block',
+                            'flex': 'none',
+                        })
         ])
 ])
 
@@ -288,6 +306,7 @@ app.layout = html.Div([header, navbar, maprow])
               Output(component_id='option-selector',
                      component_property='value'),
               Output(component_id='cbar', component_property='children'),
+              Output("right-collapse", "children"),
               Input(component_id='parameter-selector',
                     component_property='value'),
               Input(component_id='option-selector',
@@ -334,8 +353,33 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
                         style=style,
                         colorProp="key")
 
-    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar
+    # Generate table
+    poly_table = generate_table(patches)
 
+    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [poly_table]
+
+@app.callback(
+    Output("map_column", "style"),
+    Output("sidebar_column", "style"),
+    Output("toggle-sidebar", "style"),
+    Input("toggle-sidebar", "n_clicks"),
+    Input("map_column", "style"),
+    Input("sidebar_column", "style"),
+    Input("toggle-sidebar", "style")
+)
+def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style):
+    if n_clicks:
+        if sidebar_style['display'] == "none":
+            sidebar_style['display'] = "block"
+            toggle_style['left'] = "75%"
+            map_style['width'] = "80%"
+        else:
+            sidebar_style['display'] = "none"
+            toggle_style['left'] = "95%"
+            map_style['width'] = "100%"
+        return map_style, sidebar_style, toggle_style
+
+    return map_style, sidebar_style, toggle_style
 
 if __name__ == '__main__':
     app.run_server(debug=True)

@@ -2,10 +2,34 @@
     margin:10px;
 }
 
+.row {
+    margin:0;
+}
+
 #navbar {
     margin-bottom:2em;
 }
 
 #longitude-selector, #latitude-selector {
     padding-top:40px !important;
+}
+
+#maprow {
+    position:relative;
+}
+
+#map_column {
+    padding:0;
+}
+
+#toggle-sidebar {
+    width:40px;
+    height:40px;
+    position: absolute;
+    z-index: 9999;
+    top:2.5%;
+}
+
+#sidebar_column {
+    padding:0;
 }

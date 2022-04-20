@@ -3,7 +3,9 @@ import geopandas
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import BoundaryNorm, ListedColormap
+import pandas as pd
+from dash import dash_table
+from matplotlib.colors import BoundaryNorm, Colormap, ListedColormap
 
 # COLORMAP DEFINITON
 greys = plt.cm.Greys  # 1950er
@@ -80,7 +82,7 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     Generate colorbar for provided year labels
 
     Test years
-    years = [1952,1963,1964,1966,1969,1971,1979,1983,1987,2010]
+    labels = [1952,1963,1964,1966,1969,1971,1979,1983,1987,2010]
 
     Parameters
     ----------
@@ -91,4 +93,27 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     # Define colors
     colors = [matplotlib.colors.to_hex(cols(norm(x))) for x in labels]
 
+    cmap = plt.get_cmap("turbo", len(labels))
+    colors = [matplotlib.colors.to_hex(cmap(x)) for x in np.arange(len(labels))]
+
     return colors
+
+def generate_table(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Generate table for provided years
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input dataframe
+
+    Returns
+    -------
+    dash_table.DataTable
+        Table with relevant columns
+    """
+
+    # Only return relevant columns
+    df = df[['key','area']]
+
+    return dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns])
