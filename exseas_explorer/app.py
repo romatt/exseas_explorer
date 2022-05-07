@@ -142,22 +142,28 @@ header = html.Div([
                                     className="ml-1",
                                     style={
                                         'font-size': 'x-large',
-                                        'padding': '10px'
+                                        'padding': '10px',
+                                        'line-height': '60px',
+                                        'color': 'white'
                                     })
-                ],
-                        width=8),
+                        ]),
                 dbc.Col([
                     html.Img(src='/assets/eth_logo.png',
-                             height="100px",
+                             height="60px",
                              style={
-                                 'padding': '25px',
+                                 'padding': '10px',
+                                 'float': 'right'
+                             }),
+                    html.Img(src='/assets/iac_logo.png',
+                             height="60px",
+                             style={
+                                 'padding': '10px',
                                  'float': 'right'
                              })
-                ],
-                        width=3),
+                    ])
             ])
-],
-                  className="navbar-expand-lg navbar-light bg-light")
+    ],
+    className="navbar-expand-lg navbar-light bg-primary")
 
 # Navigation row
 navbar = html.Div([
@@ -169,9 +175,7 @@ navbar = html.Div([
                                  id='parameter-selector',
                                  clearable=False,
                                  searchable=False)
-                ],
-                        xl=1,
-                        xs=6,
+                        ],
                         className='nav_column'),
                 dbc.Col([
                     "Option:",
@@ -180,9 +184,7 @@ navbar = html.Div([
                                  id='option-selector',
                                  clearable=False,
                                  searchable=False)
-                ],
-                        xl=1,
-                        xs=6,
+                        ],
                         className='nav_column'),
                 dbc.Col([
                     "Season:",
@@ -191,21 +193,7 @@ navbar = html.Div([
                                  id='season-selector',
                                  clearable=False,
                                  searchable=False)
-                ],
-                        xl=1,
-                        xs=6,
-                        className='nav_column'),
-                dbc.Col([
-                    "# of events:", html.Br(),
-                    dcc.Input(value=10,
-                              id='nval-selector',
-                              type='number',
-                              min=MIN_NUM_EVENTS,
-                              max=MAX_NUM_EVENTS,
-                              step=1)
-                ],
-                        xl=1,
-                        xs=6,
+                        ],
                         className='nav_column'),
                 dbc.Col([
                     "Filter by:",
@@ -214,10 +202,19 @@ navbar = html.Div([
                                  id='ranking-selector',
                                  clearable=False,
                                  searchable=False)
-                ],
-                        xl=2,
-                        xs=6,
-                        className='nav_column')
+                        ],
+                        className='nav_column'),
+                dbc.Col([
+                    "Numer of events:", html.Br(),
+                    dcc.Input(value=10,
+                              id='nval-selector',
+                              type='number',
+                              min=MIN_NUM_EVENTS,
+                              max=MAX_NUM_EVENTS,
+                              step=1)
+                        ],
+
+                        className='nav_column')                
             ]),
     dbc.Row(children=[
                 dbc.Col([
@@ -230,8 +227,6 @@ navbar = html.Div([
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="longitude-selector")
                         ],
-                        xl=3,
-                        xs=7,
                         className='nav_column'),
                 dbc.Col([
                     "Latitude:",
@@ -243,8 +238,6 @@ navbar = html.Div([
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="latitude-selector")
                         ],
-                        xl=3,
-                        xs=7,
                         className='nav_column'),
                 dbc.Col([
                     "Interval:",
@@ -256,12 +249,10 @@ navbar = html.Div([
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="year-selector")
                         ],
-                        xl=3,
-                        xs=7,
                         className='nav_column')
-    ]),
-],
-                  className="navbar-light bg-light")
+        ]),
+    ],
+    className="navbar-light bg-light")
 
 # Map row
 maprow = html.Div([
@@ -287,7 +278,7 @@ maprow = html.Div([
                     id='map_column',
                     style={
                            'width': '80%',
-                           'height': 'calc(100vh - 303px)',
+                           'height': 'calc(100vh - 263px)',
                            'display': 'block',
                            'flex': 'none',
                        }
