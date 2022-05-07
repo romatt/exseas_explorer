@@ -139,30 +139,32 @@ def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
     patch_data = patch_data.astype({'lab': 'int32', 'key': 'int32'})
 
     # Read dataframe with literature information
-    # lit_file = patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob","")
-    # lit_data = pd.read_csv(work_dir + lit_file, na_values='-999.99')
-    # lit_data = lit_data.astype({'lab': 'int32', 'key': 'int32'})
+    lit_file = patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob","")
+    lit_data = pd.read_csv(work_dir + lit_file, na_values='-999.99', skip_blank_lines=True, sep=";")
+    lit_data = lit_data.astype({'Label': 'int32', 'Year': 'int32'})
+    lit_data = lit_data.drop(columns=['Year', 'Season'])
+    # Some labels have multiple citations, need to aggreate  those into lists
+    lit_data = lit_data.groupby('Label').agg(dict)
 
     # Extract contours
     patch = extract_contours(in_file.lab)
-    # patch_land = extract_contours(in_file.lab_land)
 
-    # Merge DF data with geodataframe
+    # Merge contour data with geodataframe
     patch_out = patch.merge(patch_data, on='lab')
-    # patch_land_out = patch_land.merge(patch_data, on='lab')
+    patch_out = patch_out.rename(columns={"lab": "Label", "key": "Year"})
 
-    # Replace end of string
-    file_end = patch_file.replace("nc", "geojson")
+    # Merge literature data with DF
+    patch_out = patch_out.merge(lit_data, on='Label', how='left')
+
+    # Drop unused columns
+    patch_out = patch_out.drop(columns=['ngp', 'land_ngp', 'median_prob', 'land_median_prob', 'median_ano', 'land_median_ano'])
 
     # Combine polygons with same label
-    patch_out = patch_out.dissolve(by='lab').reset_index(level=0)
-    # patch_land_out = patch_land_out.dissolve(by='lab').reset_index(level=0)
+    patch_out = patch_out.dissolve(by='Label').reset_index(level=0)
 
     # Save geometries to file
+    file_end = patch_file.replace("nc", "geojson")
     patch_out.to_file(f'{work_dir}/{file_end}', driver='GeoJSON', index=False)
-    # patch_land_out.to_file(f'{work_dir}/land_{file_end}',
-    #                        driver='GeoJSON',
-    #                        index=False)
 
 
 if __name__ == '__main__':
