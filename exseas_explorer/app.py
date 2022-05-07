@@ -397,4 +397,4 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style):
     return map_style, sidebar_style, toggle_style
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8050)
