@@ -196,7 +196,7 @@ navbar = html.Div([
                         xs=6,
                         className='nav_column'),
                 dbc.Col([
-                    "# of events:",
+                    "# of events:", html.Br(),
                     dcc.Input(value=10,
                               id='nval-selector',
                               type='number',
@@ -225,7 +225,7 @@ navbar = html.Div([
                     dcc.RangeSlider(min=-180,
                                     max=180,
                                     step=0.5,
-                                    marks={-180:"-180",0:"0",180:"180"},
+                                    marks={-180:"-180",-90:"-90",0:"0",90:"90",180:"180"},
                                     value=[-180, 180],
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="longitude-selector")
@@ -238,7 +238,7 @@ navbar = html.Div([
                     dcc.RangeSlider(min=-90,
                                     max=90,
                                     step=0.5,
-                                    marks={-90:"-90",0:"0",90:"90"},
+                                    marks={-90:"-90",-45:"-45",0:"0",45:"45",90:"90"},
                                     value=[-90, 90],
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="latitude-selector")
