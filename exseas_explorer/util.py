@@ -159,6 +159,7 @@ def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
     table = dash_table.DataTable(
         data=df.to_dict('records'),
         columns=[{'id': c, 'name': c} for c in df.columns],
-        style_data_conditional=list)
+        style_data_conditional=list,
+        sort_action='native')
 
     return table
