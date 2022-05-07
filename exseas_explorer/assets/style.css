@@ -10,7 +10,7 @@
     margin-bottom:2em;
 }
 
-#longitude-selector, #latitude-selector {
+#longitude-selector, #latitude-selector, #year-selector {
     padding-top:40px !important;
 }
 

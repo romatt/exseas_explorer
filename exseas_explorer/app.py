@@ -2,6 +2,7 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import os
+from datetime import date
 
 import dash
 import dash_bootstrap_components as dbc
@@ -207,16 +208,16 @@ navbar = html.Div([
                         xs=6,
                         className='nav_column'),
                 dbc.Col([
-                    "Ranking:",
+                    "Filter by:",
                     dcc.Dropdown(RANKING_LIST,
                                  1,
                                  id='ranking-selector',
                                  clearable=False,
                                  searchable=False)
                 ],
-                        xl=1,
+                        xl=2,
                         xs=6,
-                        className='nav_column'),
+                        className='nav_column')
             ]),
     dbc.Row(children=[
                 dbc.Col([
@@ -228,8 +229,9 @@ navbar = html.Div([
                                     value=[-180, 180],
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="longitude-selector")
-                ],
-                        width=3,
+                        ],
+                        xl=3,
+                        xs=7,
                         className='nav_column'),
                 dbc.Col([
                     "Latitude:",
@@ -240,8 +242,22 @@ navbar = html.Div([
                                     value=[-90, 90],
                                     tooltip={"placement": "top", "always_visible": True},
                                     id="latitude-selector")
-                ],
-                        width=3,
+                        ],
+                        xl=3,
+                        xs=7,
+                        className='nav_column'),
+                dbc.Col([
+                    "Interval:",
+                    dcc.RangeSlider(min=1950,
+                                    max=2020,
+                                    step=1,
+                                    marks={1950:"1950",1960:"1960",1970:"1970",1980:"1980",1990:"1990",2000:"2000",2010:"2010",2020:"2020"},
+                                    value=[1950, 2020],
+                                    tooltip={"placement": "top", "always_visible": True},
+                                    id="year-selector")
+                        ],
+                        xl=3,
+                        xs=7,
                         className='nav_column')
     ]),
 ],
@@ -327,9 +343,11 @@ app.layout = html.Div([header, navbar, maprow])
               Input(component_id='longitude-selector',
                     component_property='value'),
               Input(component_id='latitude-selector',
+                    component_property='value'),
+              Input(component_id='year-selector',
                     component_property='value'))
 def draw_patches(parameter_value, parameter_option, season_value, nval_value,
-                 ranking_option, longitude_values, latitude_values):
+                 ranking_option, longitude_values, latitude_values, year_values):
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
@@ -343,7 +361,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Load patches
     selected_file = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
-    patches = filter_patches(patches, ranking_option, nval_value, longitude_values, latitude_values)
+    patches = filter_patches(patches, ranking_option, nval_value, longitude_values, latitude_values, year_values)
 
     classes = list(patches['Label'])
     labels = list(patches['Year'])

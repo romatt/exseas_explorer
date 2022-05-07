@@ -29,9 +29,10 @@ def filter_patches(df: geopandas.GeoDataFrame,
                    criterion: int = 1,
                    nvals: int = 10,
                    lon_range: list = [-180, 180],
-                   lat_range: list = [-90, 90]) -> geopandas.GeoDataFrame:
+                   lat_range: list = [-90, 90],
+                   year_range: list = [1950, 2020]) -> geopandas.GeoDataFrame:
     """
-    Filter patches by selected criterion
+    Filter patches
 
     Parameters
     ----------
@@ -45,6 +46,8 @@ def filter_patches(df: geopandas.GeoDataFrame,
         List of longitude range
     lat_range : list, default: [-90, 90]
         List of latitude range
+    year_range : list, default: [1950, 2020]
+        List of year range
 
     Returns
     -------
@@ -55,6 +58,9 @@ def filter_patches(df: geopandas.GeoDataFrame,
     # Filter for coordinate
     df = df[(df['lonmean']>=lon_range[0]) & (df['lonmean']<=lon_range[1])]
     df = df[(df['latmean']>=lat_range[0]) & (df['latmean']<=lat_range[1])]
+
+    # Filter for years
+    df = df[(df['Year']>=year_range[0]) & (df['Year']<=year_range[1])]
 
     # Filter for criterion and number of values
     if criterion == 1:
@@ -163,3 +169,12 @@ def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
         sort_action='native')
 
     return table
+
+def generate_poly():
+    """
+    Generate a polygon with extensions of currently selected lon/lat restrictions
+    """
+
+    polygon = dl.Polygon(positions=[[57, 10], [57, 11], [56, 11], [57, 10]])
+
+    return None
