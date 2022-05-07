@@ -271,12 +271,12 @@ maprow = html.Div([
                     id='map_column',
                     style={
                            'width': '80%',
-                           'height': '70vh',
+                           'height': 'calc(100vh - 303px)',
                            'display': 'block',
                            'flex': 'none',
                        }
                     ),
-            dbc.Button(">",
+            dbc.Button(children=["❯"],
                        color="primary",
                        id="toggle-sidebar",
                        n_clicks=0,
@@ -371,24 +371,28 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     Output("map_column", "style"),
     Output("sidebar_column", "style"),
     Output("toggle-sidebar", "style"),
+    Output("toggle-sidebar", "children"),
     Input("toggle-sidebar", "n_clicks"),
     Input("map_column", "style"),
     Input("sidebar_column", "style"),
-    Input("toggle-sidebar", "style")
+    Input("toggle-sidebar", "style"),
+    Input("toggle-sidebar", "children")
 )
-def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style):
+def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
     if n_clicks:
         if sidebar_style['display'] == "none":
             sidebar_style['display'] = "block"
             toggle_style['left'] = "75%"
             map_style['width'] = "80%"
+            button = ["❯"]
         else:
             sidebar_style['display'] = "none"
             toggle_style['left'] = "95%"
             map_style['width'] = "100%"
-        return map_style, sidebar_style, toggle_style
+            button = ["❮"]
+        return map_style, sidebar_style, toggle_style, button
 
-    return map_style, sidebar_style, toggle_style
+    return map_style, sidebar_style, toggle_style, button
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8050)
