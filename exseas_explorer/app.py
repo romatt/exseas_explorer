@@ -23,6 +23,8 @@ from exseas_explorer.util import (filter_patches, generate_cbar,
 # OPTIONS
 MIN_YEAR = 1950
 MAX_YEAR = 2020
+MIN_NUM_EVENTS = 1
+MAX_NUM_EVENTS = 20
 DATA_DIR = '/ytpool/data/ETH/INTEXseas'
 PARAMETER_LIST = [
     {
@@ -203,8 +205,8 @@ navbar = html.Div([
                     dcc.Input(value=10,
                               id='nval-selector',
                               type='number',
-                              min=5,
-                              max=20,
+                              min=MIN_NUM_EVENTS,
+                              max=MAX_NUM_EVENTS,
                               step=1)
                 ],
                         xl=1,
