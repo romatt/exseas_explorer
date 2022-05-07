@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import dash_bootstrap_components as dbc
 from matplotlib.colors import BoundaryNorm, Colormap, ListedColormap
+from dash import dash_table
 
 # COLORMAP DEFINITON
 greys = plt.cm.Greys  # 1950er
@@ -106,7 +107,7 @@ def generate_cbar(labels: list) -> dl.Colorbar:
 
     return colors
 
-def generate_table(df: pd.DataFrame) -> pd.DataFrame:
+def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
     """
     Generate table for provided years
 
@@ -114,6 +115,8 @@ def generate_table(df: pd.DataFrame) -> pd.DataFrame:
     ----------
     df : pandas.DataFrame
         Input dataframe
+    colors : list
+        List of colors for each row
 
     Returns
     -------
@@ -139,6 +142,35 @@ def generate_table(df: pd.DataFrame) -> pd.DataFrame:
     # Sort by year in reverse order
     df = df.sort_values(by='Year', ascending=False)
 
-    table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
+    # Invert colors
+    colors = colors[::-1]
+
+    # Generate dict with colors for table
+    list = []
+    for i, color in enumerate(colors):
+        list.append({
+                'if': {
+                    'row_index': i,
+                    'column_id': 'Year',
+                },
+                'backgroundColor': str(color),
+                'color': 'white'
+            })
+
+    table = dash_table.DataTable(
+        data=df.to_dict('records'),
+        columns=[{'id': c, 'name': c} for c in df.columns],
+        style_data_conditional=list)
+
+
+    # table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, style_data_conditional=[
+    #     {
+    #         'if': {
+    #             'row_index': 1,
+    #             'column_id': 'Year',
+    #         },
+    #         'backgroundColor': 'dodgerblue',
+    #         'color': 'white'
+    #     }])
 
     return table

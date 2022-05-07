@@ -113,9 +113,9 @@ RANKING_LIST = [{
 default_patches = load_patches(
     os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
 default_patches = filter_patches(default_patches)
-poly_table = generate_table(default_patches)
 classes = list(default_patches['Label'])
 colorscale = generate_cbar(list(default_patches['Year']))
+poly_table = generate_table(default_patches, colorscale)
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
@@ -369,7 +369,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
                         colorProp="Label")
 
     # Generate table
-    poly_table = generate_table(patches)
+    poly_table = generate_table(patches, colorscale)
 
     return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [poly_table]
 
