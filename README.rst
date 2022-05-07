@@ -49,8 +49,24 @@ b) Set up a new python virtual environment using pyenv & poetry
     $ poetry install --no-dev
     $ pytest
 
+Running dash application locally 
+--------------------------------
+
+For testing purposes, the dash application can be run locally on port 8050. If port 8050 is not available, change the port specified at the very bottom of `exseas_explorer\app.py`.
+
+.. code-block:: console
+
+    $ python exseas_explorer/app.py
+
 How to setup for development
 ----------------------------
+
+Clone Repository
+
+.. code-block:: console
+
+    $ git clone https://github.com/romatt/exseas_explorer.git
+    $ cd exseas_explorer
 
 a) Using venv & pip
 
@@ -80,14 +96,6 @@ Update documentation
 
     $ cd doc
     $ make html
-
-Running dash app locally 
-------------------------
-
-.. code-block:: console
-
-    $ python exseas_explorer/app.py
-
 
 Credits
 -------
