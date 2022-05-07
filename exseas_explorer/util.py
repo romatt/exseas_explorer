@@ -4,7 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from dash import dash_table
+import dash_bootstrap_components as dbc
 from matplotlib.colors import BoundaryNorm, Colormap, ListedColormap
 
 # COLORMAP DEFINITON
@@ -121,7 +121,21 @@ def generate_table(df: pd.DataFrame) -> pd.DataFrame:
         Table with relevant columns
     """
 
-    # Only return relevant columns
-    df = df[['Year','area']]
+    pd.options.mode.chained_assignment = None
 
-    return dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns])
+    # Only return relevant columns
+    df = df[['Year', 'area', 'land_area']]
+
+    # Convert from m^2 to km^2
+    df['area'] = df['area'].div(1e+6)
+    df['land_area'] = df['land_area'].div(1e+6)
+
+    df['area'] = df['area'].round(2)
+    df['land_area'] = df['land_area'].round(2)
+
+    # Make useful names
+    df = df.rename(columns={"area": "Area", "land_area": "Land Area"})        
+
+    table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
+
+    return table
