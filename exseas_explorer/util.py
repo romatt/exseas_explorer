@@ -134,7 +134,10 @@ def generate_table(df: pd.DataFrame) -> pd.DataFrame:
     df['land_area'] = df['land_area'].round(2)
 
     # Make useful names
-    df = df.rename(columns={"area": "Area", "land_area": "Land Area"})        
+    df = df.rename(columns={"area": "Area", "land_area": "Land Area"})
+
+    # Sort by year in reverse order
+    df = df.sort_values(by='Year', ascending=False)
 
     table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
 
