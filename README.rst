@@ -19,8 +19,8 @@ INTEXseas Extreme Seasons Explorer
 * Free software: BSD license
 * Documentation: https://exseas-explorer.readthedocs.io.
 
-How to setup for development
-----------------------------
+How to setup for usage
+------------------------
 
 Clone Repository
 
@@ -37,7 +37,6 @@ a) Set up a new python virtual environment using venv & pip
     $ source <YOUR_VENV_DIR>/bin/activate
     $ pip install -U tox-travis
     $ python -m pip install -r requirements.txt
-    $ python -m pip install -r requirements_dev.txt
     $ pytest
 
 b) Set up a new python virtual environment using pyenv & poetry
@@ -47,14 +46,32 @@ b) Set up a new python virtual environment using pyenv & poetry
     $ pyenv install 3.9.12
     $ pyenv global 3.9.12
     $ poetry shell
-    $ poetry install
+    $ poetry install --no-dev
     $ pytest
 
-Save required libraries to file
+How to setup for development
+----------------------------
+
+a) Using venv & pip
 
 .. code-block:: console
 
-    $ python -m pip freeze > requirements.txt
+    $ # Follow the steps described above
+    $ python -m pip install -r requirements_dev.txt
+
+b) Using poetry 
+
+.. code-block:: console
+
+    $ # Follow the steps described above
+    $ poetry install --no-dev
+
+Update requirements file needed for installing this library with pip
+
+.. code-block:: console
+
+    $ poetry export -f requirements.txt --output requirements.txt --without-hashes
+    $ poetry export -f requirements.txt --output requirements_dev.txt --without-hashes --dev
 
 Update documentation
 ~~~~~~~~~~~~~~~~~~~~
