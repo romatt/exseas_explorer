@@ -114,8 +114,8 @@ default_patches = load_patches(
     os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
 default_patches = filter_patches(default_patches)
 poly_table = generate_table(default_patches)
-classes = list(default_patches['Year'])
-colorscale = generate_cbar(classes)
+classes = list(default_patches['Label'])
+colorscale = generate_cbar(list(default_patches['Year']))
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
@@ -136,7 +136,7 @@ style_handle = assign("""function(feature, context){
 hideout_dict = dict(colorscale=colorscale,
                     classes=classes,
                     style=style,
-                    colorProp="Year")
+                    colorProp="Label")
 
 # Header row
 header = html.Div([
@@ -351,12 +351,13 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
     patches = filter_patches(patches, ranking_option, nval_value, longitude_values, latitude_values)
 
-    classes = list(patches['Year'])
+    classes = list(patches['Label'])
+    labels = list(patches['Year'])
     # Update colorbar
-    colorscale = generate_cbar(classes)
+    colorscale = generate_cbar(labels)
 
     # Create colorbar
-    colorbar = dlx.categorical_colorbar(categories=[str(y) for y in classes],
+    colorbar = dlx.categorical_colorbar(categories=[str(y) for y in labels],
                                         colorscale=colorscale,
                                         width=20,
                                         height=500,
@@ -365,7 +366,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     hideout_dict = dict(colorscale=colorscale,
                         classes=classes,
                         style=style,
-                        colorProp="Year")
+                        colorProp="Label")
 
     # Generate table
     poly_table = generate_table(patches)
