@@ -88,11 +88,23 @@ LOCATION_LIST = [{
     'value': 'land_patches_'
 }]
 RANKING_LIST = [{
-    'label': 'all area',
+    'label': 'Area',
     'value': 1
 }, {
-    'label': 'land area',
+    'label': 'Area over Land',
     'value': 2
+}, {
+    'label': 'Mean Anomaly',
+    'value': 3
+}, {
+    'label': 'Mean Anomaly over Land',
+    'value': 4
+}, {
+    'label': 'Integrated Anomaly',
+    'value': 5
+}, {
+    'label': 'Integrated Anomaly over Land',
+    'value': 6
 }]
 
 # LOAD DEFAULT PATCHES
@@ -100,11 +112,11 @@ default_patches = load_patches(
     os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
 default_patches = filter_patches(default_patches)
 poly_table = generate_table(default_patches)
-classes = list(default_patches['key'])
+classes = list(default_patches['Year'])
 colorscale = generate_cbar(classes)
 
 # POLYGON STYLE DEFINITIONS
-style = dict(fillOpacity=0.7, weight=1)
+style = dict(fillOpacity=0.5, weight=2)
 
 # Geojson rendering logic, must be JavaScript as it is executed in clientside.
 style_handle = assign("""function(feature, context){
@@ -122,7 +134,7 @@ style_handle = assign("""function(feature, context){
 hideout_dict = dict(colorscale=colorscale,
                     classes=classes,
                     style=style,
-                    colorProp="key")
+                    colorProp="Year")
 
 # Header row
 header = html.Div([
@@ -337,7 +349,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
     patches = filter_patches(patches, ranking_option, nval_value, longitude_values, latitude_values)
 
-    classes = list(patches['key'])
+    classes = list(patches['Year'])
     # Update colorbar
     colorscale = generate_cbar(classes)
 
@@ -351,7 +363,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     hideout_dict = dict(colorscale=colorscale,
                         classes=classes,
                         style=style,
-                        colorProp="key")
+                        colorProp="Year")
 
     # Generate table
     poly_table = generate_table(patches)

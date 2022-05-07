@@ -59,10 +59,18 @@ def filter_patches(df: geopandas.GeoDataFrame,
     # Filter for criterion and number of values
     if criterion == 1:
         df = df[df['area'] >= np.sort(df['area'])[-nvals]]
-    if criterion == 2:
+    elif criterion == 2:
         # Remove instances where land_area is NAN
         df = df[~np.isnan(df['land_area'])]
         df = df[df['land_area'] >= np.sort(df['land_area'])[-nvals]]
+    elif criterion == 3:
+        df = df[df['mean_ano'] >= np.sort(df['mean_ano'])[-nvals]]
+    elif criterion == 4:
+        df = df[df['land_mean_ano'] >= np.sort(df['land_mean_ano'])[-nvals]]
+    elif criterion == 5:
+        df = df[df['integrated_ano'] >= np.sort(df['integrated_ano'])[-nvals]]
+    elif criterion == 6:
+        df = df[df['land_integrated_ano'] >= np.sort(df['land_integrated_ano'])[-nvals]]
 
     return df
 
@@ -114,6 +122,6 @@ def generate_table(df: pd.DataFrame) -> pd.DataFrame:
     """
 
     # Only return relevant columns
-    df = df[['key','area']]
+    df = df[['Year','area']]
 
     return dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns])
