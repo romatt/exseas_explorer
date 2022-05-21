@@ -5,4 +5,4 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0,".")
 
-from FlaskApp import server as application
+from app import server as application
