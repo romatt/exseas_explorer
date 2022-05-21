@@ -12,8 +12,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import assign
 
-from exseas_explorer.util import (filter_patches, generate_cbar,
-                                  generate_table, load_patches)
+from util import (filter_patches, generate_cbar, generate_table, load_patches)
 
 # OPTIONS
 MIN_YEAR = 1950
@@ -402,6 +401,8 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
         return map_style, sidebar_style, toggle_style, button
 
     return map_style, sidebar_style, toggle_style, button
+
+server = app.server
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8050)
