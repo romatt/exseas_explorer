@@ -22,13 +22,12 @@ INTEXseas Extreme Seasons Explorer
 Setup for production
 ---------------------
 
-1. Clone Repository directly to `/var/www/` or any directory that the web server has access to. Additionally, manually copy the raw data into the /data sub-directory.
+1. Clone Repository directly to `/var/www/` or any directory that the web server has access to
 
 .. code-block:: console
 
     $ cd /var/www/
     $ git clone https://github.com/romatt/exseas_explorer.git
-    $ cd exseas_explorer
     
 2. Set up permissions
 
@@ -36,8 +35,11 @@ Setup for production
 
     $ cd /var/www/
     $ sudo chown -R www-data:www-data exseas_explorer
+    $ cd exseas_explorer
 
-3. Set up a new Python virtual environment where all required libraries are installed. Note that the system wide installed Python version must be used to avoid issues with shared libraries (i.e. don't use Python installed through pyenv or it will not work!).
+3. Manually copy the raw data into the /data sub-directory of the library
+
+4. Set up a new Python virtual environment where all required libraries are installed. Note that the system wide installed Python version must be used to avoid issues with shared libraries (i.e. don't use Python installed through pyenv or it will not work!).
 
 .. code-block:: console
 
@@ -46,7 +48,7 @@ Setup for production
     $ pip install -U tox-travis
     $ python -m pip install -r requirements.txt
 
-4. The apache configuration needs to contain the virtual environment directory
+5. The apache configuration needs to contain the virtual environment directory
 
 .. code-block:: ApacheConf
 
@@ -71,7 +73,7 @@ Setup for production
             </VirtualHost>
     </IfModule>
 
-5. Reload Apache
+6. Reload Apache
 
 .. code-block:: console
 
