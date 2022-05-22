@@ -63,7 +63,7 @@ Setup for production
                     SSLCertificateKeyFile /etc/letsencrypt/live/<URL>/privkey.pem
                     SSLCertificateChainFile /etc/letsencrypt/live/<URL>/chain.pem
 
-                    WSGIDaemonProcess intexseas python-home=<YOUR_VENV_DIR>
+                    WSGIDaemonProcess intexseas processes=4 python-home=<YOUR_VENV_DIR>
                     WSGIProcessGroup intexseas
                     WSGIApplicationGroup %{GLOBAL}
                     WSGIScriptAlias / /var/www/exseas_explorer/exseas_explorer/FlaskApp.wsgi
