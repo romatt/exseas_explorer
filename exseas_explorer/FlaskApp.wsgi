@@ -1,4 +1,3 @@
-#!/home/roman/dash_test/bin/python3
 import sys
 import logging
 
