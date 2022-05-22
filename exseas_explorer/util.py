@@ -124,16 +124,18 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     return colors
 
 
-def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
+def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1) -> pd.DataFrame:
     """
     Generate table for provided years
 
     Parameters
     ----------
     df : pandas.DataFrame
-        Input dataframe
+        Filtered input dataframe
     colors : list
         List of colors for each row
+    criterion : int, default: 1
+        Criterion used to filter dataframe
 
     Returns
     -------
@@ -144,17 +146,34 @@ def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
     pd.options.mode.chained_assignment = None
 
     # Only return relevant columns
-    df = df[['Year', 'area', 'land_area']]
+    if criterion == 1:
+        df = df[['Year', 'area']]
+        df['area'] = df['area'].round(2)
+        df = df.rename(columns={"area": "Area (km^2)"})
+    elif criterion == 2:
+        df = df[['Year', 'land_area']]
+        df['land_area'] = df['land_area'].round(2)
+        df = df.rename(columns={"land_area": "Land Area (km^2)"})
+    elif criterion == 3:
+        df = df[['Year', 'mean_ano']]
+        df['mean_ano'] = df['mean_ano'].round(2)
+        df = df.rename(columns={"mean_ano": "Mean Anom. (XXX)"})
+    elif criterion == 4:
+        df = df[['Year', 'land_mean_ano']]
+        df['land_mean_ano'] = df['land_mean_ano'].round(2)
+        df = df.rename(columns={"land_mean_ano": "Mean Land Anom. (XXX)"})
+    elif criterion == 5:
+        df = df[['Year', 'integrated_ano']]
+        df['integrated_ano'] = df['integrated_ano'].round(2)
+        df = df.rename(columns={"integrated_ano": "Int. Anom. (XXX)"})
+    elif criterion == 6:
+        df = df[['Year', 'land_integrated_ano']]
+        df['land_integrated_ano'] = df['land_integrated_ano'].round(2)
+        df = df.rename(columns={"land_integrated_ano": "Int. Land Anom. (XXX)"})
 
     # Convert from m^2 to km^2
     # df['area'] = df['area'].div(1e+6)
     # df['land_area'] = df['land_area'].div(1e+6)
-
-    df['area'] = df['area'].round(2)
-    df['land_area'] = df['land_area'].round(2)
-
-    # Make useful names
-    df = df.rename(columns={"area": "Area", "land_area": "Land Area"})
 
     # Sort by year in reverse order
     df = df.sort_values(by='Year', ascending=False)
