@@ -10,9 +10,11 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
-from dash_extensions.javascript import assign
+from dash_extensions.javascript import Namespace
 
 from util import (filter_patches, generate_cbar, generate_table, load_patches)
+
+ns = Namespace("myNamespace", "mySubNamespace")
 
 # OPTIONS
 MIN_YEAR = 1950
@@ -113,9 +115,6 @@ poly_table = generate_table(default_patches, colorscale)
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
-
-
-
 hideout_dict = dict(colorscale=colorscale,
                     classes=classes,
                     style=style,
@@ -257,6 +256,7 @@ maprow = html.Div([
                            dl.TileLayer(),
                            dl.GeoJSON(data=default_patches.__geo_interface__,
                                       id="patches",
+                                      options=dict(style=ns("color_polys")),
                                       hideout=hideout_dict),
                            dl.LayerGroup(id="cbar", children=[])
                        ],
@@ -297,7 +297,8 @@ maprow = html.Div([
 app = Dash(__name__,
            update_title=None,
            title="INTEXseas Extreme Season Explorer",
-           external_stylesheets=[dbc.themes.BOOTSTRAP, 'assets/style.css'])
+           external_stylesheets=[dbc.themes.BOOTSTRAP, 'assets/style.css'],
+           external_scripts=['assets/color.js'])
 app.layout = html.Div([header, navbar, maprow])
 
 
