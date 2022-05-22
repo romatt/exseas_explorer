@@ -1,6 +1,6 @@
-window.dashExtensions = Object.assign({}, window.dashExtensions, {
-    default: {
-        function0: function(feature, context) {
+window.myNamespace = Object.assign({}, window.myNamespace, {  
+    mySubNamespace: {  
+        color_polys: function(feature, context) {
             const {
                 classes,
                 colorscale,
