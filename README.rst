@@ -19,8 +19,84 @@ INTEXseas Extreme Seasons Explorer
 * Free software: BSD license
 * Documentation: https://exseas-explorer.readthedocs.io.
 
-How to setup for usage
-------------------------
+Setup for production
+---------------------
+
+1. Clone Repository directly to `/var/www/` or any directory that the web server has access to. Additionally, manually copy the raw data into the /data sub-directory.
+
+.. code-block:: console
+
+    $ cd /var/www/
+    $ git clone https://github.com/romatt/exseas_explorer.git
+    $ cd exseas_explorer
+    
+2. Set up permissions
+
+.. code-block:: console
+
+    $ cd /var/www/
+    $ sudo chown -R www-data:www-data exseas_explorer
+
+3. Set up a new Python virtual environment where all required libraries are installed. Note that the system wide installed Python version must be used to avoid issues with shared libraries (i.e. don't use Python installed through pyenv or it will not work!).
+
+.. code-block:: console
+
+    $ python3 -m venv <YOUR_VENV_DIR>
+    $ source <YOUR_VENV_DIR>/bin/activate
+    $ pip install -U tox-travis
+    $ python -m pip install -r requirements.txt
+
+4. The apache configuration needs to contain the virtual environment directory
+
+.. code-block:: ApacheConf
+
+    <IfModule mod_ssl.c>
+            <VirtualHost *:443>
+                <VirtualHost *:443>
+                    ServerName <URL>
+                    SSLEngine On
+                    SSLProxyEngine On
+
+                    SSLCertificateFile /etc/letsencrypt/live/<URL>/cert.pem
+                    SSLCertificateKeyFile /etc/letsencrypt/live/<URL>/privkey.pem
+                    SSLCertificateChainFile /etc/letsencrypt/live/<URL>/chain.pem
+
+                    WSGIDaemonProcess intexseas python-home=<YOUR_VENV_DIR>
+                    WSGIProcessGroup intexseas
+                    WSGIApplicationGroup %{GLOBAL}
+                    WSGIScriptAlias / /var/www/exseas_explorer/exseas_explorer/FlaskApp.wsgi
+                    ErrorLog ${APACHE_LOG_DIR}/FlaskApp-error.log
+                    LogLevel warn
+                    CustomLog ${APACHE_LOG_DIR}/FlaskApp-access.log combined
+            </VirtualHost>
+    </IfModule>
+
+5. Reload Apache
+
+.. code-block:: console
+
+    $ sudo service apache2 restart
+
+Troubleshooting
+~~~~~~~~~~~~~~~~
+
+If you get an Internal Server Error and the Apache2 logs show an `UnicodeDecodeError`
+
+.. code-block:: console
+
+    File "/usr/lib/python3.8/encodings/ascii.py", line 26, in decode
+    return codecs.ascii_decode(input, self.errors)[0]
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc5 in position 375347: ordinal not in range(128)
+
+Simply change uncomment the following line under `/etc/apache2/envvars`
+
+.. code-block:: console
+
+    ## Uncomment the following line to use the system default locale instead:
+    . /etc/default/locale
+
+Setup for development
+---------------------
 
 Clone Repository
 
@@ -29,25 +105,32 @@ Clone Repository
     $ git clone https://github.com/romatt/exseas_explorer.git
     $ cd exseas_explorer
 
-a) Set up a new python virtual environment using venv & pip
+**EITHER** set up a new python virtual environment using venv & pip
 
 .. code-block:: console
 
     $ python3 -m venv <YOUR_VENV_DIR>
     $ source <YOUR_VENV_DIR>/bin/activate
     $ pip install -U tox-travis
-    $ python -m pip install -r requirements.txt
+    $ python -m pip install -r requirements_dev.txt
     $ pytest
 
-b) Set up a new python virtual environment using pyenv & poetry
+**OR** Set up a new python virtual environment using pyenv & poetry
 
 .. code-block:: console
 
     $ pyenv install 3.9.12
     $ pyenv global 3.9.12
     $ poetry shell
-    $ poetry install --no-dev
+    $ poetry install
     $ pytest
+
+Update requirements file needed for installing this library with pip
+
+.. code-block:: console
+
+    $ poetry export -f requirements.txt --output requirements.txt --without-hashes
+    $ poetry export -f requirements.txt --output requirements_dev.txt --without-hashes --dev
 
 Running dash application locally 
 --------------------------------
@@ -57,37 +140,6 @@ For testing purposes, the dash application can be run locally on port 8050. If p
 .. code-block:: console
 
     $ python exseas_explorer/app.py
-
-How to setup for development
-----------------------------
-
-Clone Repository
-
-.. code-block:: console
-
-    $ git clone https://github.com/romatt/exseas_explorer.git
-    $ cd exseas_explorer
-
-a) Using venv & pip
-
-.. code-block:: console
-
-    $ # Follow the steps described above
-    $ python -m pip install -r requirements_dev.txt
-
-b) Using poetry 
-
-.. code-block:: console
-
-    $ # Follow the steps described above
-    $ poetry install --no-dev
-
-Update requirements file needed for installing this library with pip
-
-.. code-block:: console
-
-    $ poetry export -f requirements.txt --output requirements.txt --without-hashes
-    $ poetry export -f requirements.txt --output requirements_dev.txt --without-hashes --dev
 
 Update documentation
 ~~~~~~~~~~~~~~~~~~~~
