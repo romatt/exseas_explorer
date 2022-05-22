@@ -19,7 +19,7 @@ MIN_YEAR = 1950
 MAX_YEAR = 2020
 MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
-DATA_DIR = '/ytpool/data/ETH/INTEXseas'
+DATA_DIR = '/var/www/exseas_explorer/exseas_explorer/data/'
 PARAMETER_LIST = [
     {
         'label': '2m Temperature',
