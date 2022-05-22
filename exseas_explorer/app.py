@@ -264,7 +264,7 @@ maprow = html.Div([
                     ],
                     id='map_column',
                     style={
-                           'width': '80%',
+                           'width': 'calc(100vw - 251px)',
                            'height': 'calc(100vh - 263px)',
                            'display': 'block',
                            'flex': 'none',
@@ -275,7 +275,7 @@ maprow = html.Div([
                        id="toggle-sidebar",
                        n_clicks=0,
                        style={
-                           'left': '75%'
+                           'right': '260px'
                        }),
             dbc.Col([
                 html.Div(
@@ -286,7 +286,7 @@ maprow = html.Div([
             ],
                     id='sidebar_column',
                     style={
-                            'width': '20%',
+                            'width': '250px',
                             'display': 'block',
                             'flex': 'none',
                         })
@@ -360,7 +360,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
                         colorProp="Label")
 
     # Generate table
-    poly_table = generate_table(patches, colorscale)
+    poly_table = generate_table(patches, colorscale, ranking_option)
 
     return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [poly_table]
 
@@ -379,12 +379,12 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
     if n_clicks:
         if sidebar_style['display'] == "none":
             sidebar_style['display'] = "block"
-            toggle_style['left'] = "75%"
-            map_style['width'] = "80%"
+            toggle_style['right'] = "260px"
+            map_style['width'] = "calc(100vw - 251px)"
             button = ["❯"]
         else:
             sidebar_style['display'] = "none"
-            toggle_style['left'] = "95%"
+            toggle_style['right'] = "10px"
             map_style['width'] = "100%"
             button = ["❮"]
         return map_style, sidebar_style, toggle_style, button

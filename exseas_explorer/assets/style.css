@@ -23,13 +23,32 @@
 }
 
 #toggle-sidebar {
-    width:40px;
-    height:40px;
+    width:30px;
+    height:30px;
     position: absolute;
     z-index: 9999;
-    top:2.5%;
+    top:10px;
+    background-color: white;
+    color: black;
+    border: 0px;
+    line-height: 30px;
+    padding: 0px;
+    box-shadow: 0 0 0 2px rgb(0 0 0 / 20%);
 }
+
+#toggle-sidebar:focus {
+    box-shadow: 0 0 0 2px rgb(0 0 0 / 20%);
+}
+
+#toggle-sidebar:hover {
+    background-color: #f4f4f4;
+}
+
 
 #sidebar_column {
     padding:0;
+}
+
+#ranking-selector .Select-menu-outer {
+    height:300px;
 }
