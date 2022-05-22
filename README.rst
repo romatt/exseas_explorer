@@ -48,7 +48,13 @@ Setup for production
     $ pip install -U tox-travis
     $ python -m pip install -r requirements.txt
 
-5. The apache configuration needs to contain the virtual environment directory
+5. Install the mod_wsgi Apache module for Python 3
+
+.. code-block:: console
+
+    $ sudo apt install libapache2-mod-wsgi-py3
+
+6. The apache configuration needs to contain the virtual environment directory
 
 .. code-block:: ApacheConf
 
@@ -73,7 +79,7 @@ Setup for production
             </VirtualHost>
     </IfModule>
 
-6. Reload Apache
+7. Reload Apache
 
 .. code-block:: console
 
