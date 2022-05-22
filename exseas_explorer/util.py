@@ -25,6 +25,7 @@ cols=ListedColormap([greys(20),greys(40),greys(60),greys(80),greys(100),greys(12
                      plt.cm.YlOrRd(60)])
 norm = BoundaryNorm(np.arange(1950, 2020 + 1, 1), cols.N)
 
+
 def filter_patches(df: geopandas.GeoDataFrame,
                    criterion: int = 1,
                    nvals: int = 10,
@@ -56,11 +57,11 @@ def filter_patches(df: geopandas.GeoDataFrame,
     """
 
     # Filter for coordinate
-    df = df[(df['lonmean']>=lon_range[0]) & (df['lonmean']<=lon_range[1])]
-    df = df[(df['latmean']>=lat_range[0]) & (df['latmean']<=lat_range[1])]
+    df = df[(df['lonmean'] >= lon_range[0]) & (df['lonmean'] <= lon_range[1])]
+    df = df[(df['latmean'] >= lat_range[0]) & (df['latmean'] <= lat_range[1])]
 
     # Filter for years
-    df = df[(df['Year']>=year_range[0]) & (df['Year']<=year_range[1])]
+    df = df[(df['Year'] >= year_range[0]) & (df['Year'] <= year_range[1])]
 
     # Filter for criterion and number of values
     if criterion == 1:
@@ -70,15 +71,22 @@ def filter_patches(df: geopandas.GeoDataFrame,
         df = df[~np.isnan(df['land_area'])]
         df = df[df['land_area'] >= np.sort(df['land_area'])[-nvals]]
     elif criterion == 3:
-        df = df[df['mean_ano'] >= np.sort(df['mean_ano'])[-nvals]]
+        df = df[
+            np.abs(df['mean_ano']) >= np.sort(np.abs(df['mean_ano']))[-nvals]]
     elif criterion == 4:
-        df = df[df['land_mean_ano'] >= np.sort(df['land_mean_ano'])[-nvals]]
+        df = df[~np.isnan(df['land_mean_ano'])]
+        df = df[np.abs(df['land_mean_ano']) >= np.sort(
+            np.abs(df['land_mean_ano']))[-nvals]]
     elif criterion == 5:
-        df = df[df['integrated_ano'] >= np.sort(df['integrated_ano'])[-nvals]]
+        df = df[np.abs(df['integrated_ano']) >= np.sort(
+            np.abs(df['integrated_ano']))[-nvals]]
     elif criterion == 6:
-        df = df[df['land_integrated_ano'] >= np.sort(df['land_integrated_ano'])[-nvals]]
+        df = df[~np.isnan(df['land_integrated_ano'])]
+        df = df[np.abs(df['land_integrated_ano']) >= np.sort(
+            np.abs(df['land_integrated_ano']))[-nvals]]
 
     return df
+
 
 def load_patches(path: str) -> geopandas.GeoDataFrame:
     """
@@ -90,6 +98,7 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
     df = geopandas.read_file(in_file)
 
     return df
+
 
 def generate_cbar(labels: list) -> dl.Colorbar:
     """
@@ -108,9 +117,12 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     colors = [matplotlib.colors.to_hex(cols(norm(x))) for x in labels]
 
     cmap = plt.get_cmap("turbo", len(labels))
-    colors = [matplotlib.colors.to_hex(cmap(x)) for x in np.arange(len(labels))]
+    colors = [
+        matplotlib.colors.to_hex(cmap(x)) for x in np.arange(len(labels))
+    ]
 
     return colors
+
 
 def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
     """
@@ -135,8 +147,8 @@ def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
     df = df[['Year', 'area', 'land_area']]
 
     # Convert from m^2 to km^2
-    df['area'] = df['area'].div(1e+6)
-    df['land_area'] = df['land_area'].div(1e+6)
+    # df['area'] = df['area'].div(1e+6)
+    # df['land_area'] = df['land_area'].div(1e+6)
 
     df['area'] = df['area'].round(2)
     df['land_area'] = df['land_area'].round(2)
@@ -154,21 +166,24 @@ def generate_table(df: pd.DataFrame, colors: list) -> pd.DataFrame:
     list = []
     for i, color in enumerate(colors):
         list.append({
-                'if': {
-                    'row_index': i,
-                    'column_id': 'Year',
-                },
-                'backgroundColor': str(color),
-                'color': 'white'
-            })
+            'if': {
+                'row_index': i,
+                'column_id': 'Year',
+            },
+            'backgroundColor': str(color),
+            'color': 'white'
+        })
 
-    table = dash_table.DataTable(
-        data=df.to_dict('records'),
-        columns=[{'id': c, 'name': c} for c in df.columns],
-        style_data_conditional=list,
-        sort_action='native')
+    table = dash_table.DataTable(data=df.to_dict('records'),
+                                 columns=[{
+                                     'id': c,
+                                     'name': c
+                                 } for c in df.columns],
+                                 style_data_conditional=list,
+                                 sort_action='native')
 
     return table
+
 
 def generate_poly():
     """
