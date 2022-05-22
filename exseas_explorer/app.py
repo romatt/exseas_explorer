@@ -114,18 +114,7 @@ poly_table = generate_table(default_patches, colorscale)
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
 
-# Geojson rendering logic, must be JavaScript as it is executed in clientside.
-style_handle = assign("""function(feature, context){
-    const {classes, colorscale, style, colorProp} = context.props.hideout;  // get props from hideout
-    const value = feature.properties[colorProp];  // get value the determines the color
-    for (let i = 0; i < classes.length; ++i) {
-        if (value > classes[i]) {
-            style.fillColor = colorscale[i];  // set the fill color according to the class
-            style.color = colorscale[i];  // set the border color according to the class
-        }
-    }
-    return style;
-}""")
+
 
 hideout_dict = dict(colorscale=colorscale,
                     classes=classes,
@@ -268,7 +257,6 @@ maprow = html.Div([
                            dl.TileLayer(),
                            dl.GeoJSON(data=default_patches.__geo_interface__,
                                       id="patches",
-                                      options=dict(style=style_handle),
                                       hideout=hideout_dict),
                            dl.LayerGroup(id="cbar", children=[])
                        ],
