@@ -1,3 +1,6 @@
+exseas_explorer/data/*
+!exseas_explorer/data/README.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
