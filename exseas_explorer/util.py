@@ -94,8 +94,7 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
     """
 
     # Load data
-    in_file = open(path)
-    df = geopandas.read_file(in_file)
+    df = geopandas.read_file(path, encoding="utf8")
 
     return df
 
