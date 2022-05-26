@@ -91,6 +91,16 @@ def filter_patches(df: geopandas.GeoDataFrame,
 def load_patches(path: str) -> geopandas.GeoDataFrame:
     """
     Load selected patches and return geopandas object with patches
+
+    Parameters
+    ----------
+    path : str
+        Path to the GeoJSON file
+    
+    Returns
+    -------
+    df : geopandas.GeoDataFrame
+        Geopandas geodataframe
     """
 
     # Load data
