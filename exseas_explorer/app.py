@@ -289,6 +289,8 @@ maprow = html.Div([
                             'width': '250px',
                             'display': 'block',
                             'flex': 'none',
+                            'position': 'absolute',
+                            'right': '0px'
                         })
         ])
 ])
