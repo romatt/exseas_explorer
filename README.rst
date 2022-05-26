@@ -28,7 +28,7 @@ Setup for production
 
     $ cd /var/www/
     $ git clone https://github.com/romatt/exseas_explorer.git
-
+    
 2. Set up permissions
 
 .. code-block:: console
@@ -85,6 +85,24 @@ Setup for production
 
     $ sudo service apache2 restart
 
+Troubleshooting
+~~~~~~~~~~~~~~~~
+
+If you get an Internal Server Error and the Apache2 logs show an `UnicodeDecodeError`
+
+.. code-block:: console
+
+    File "/usr/lib/python3.8/encodings/ascii.py", line 26, in decode
+    return codecs.ascii_decode(input, self.errors)[0]
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc5 in position 375347: ordinal not in range(128)
+
+Simply change uncomment the following line under `/etc/apache2/envvars`
+
+.. code-block:: console
+
+    ## Uncomment the following line to use the system default locale instead:
+    . /etc/default/locale
+
 Setup for development
 ---------------------
 
@@ -122,7 +140,7 @@ Update requirements file needed for installing this library with pip
     $ poetry export -f requirements.txt --output requirements.txt --without-hashes
     $ poetry export -f requirements.txt --output requirements_dev.txt --without-hashes --dev
 
-Running dash application locally
+Running dash application locally 
 --------------------------------
 
 For testing purposes, the dash application can be run locally on port 8050. If port 8050 is not available, change the port specified at the very bottom of `exseas_explorer\app.py`.
