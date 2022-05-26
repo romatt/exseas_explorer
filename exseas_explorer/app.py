@@ -133,7 +133,7 @@ header = html.Div([
                                         'line-height': '60px',
                                         'color': 'white'
                                     })
-                        ]),
+                ]),
                 dbc.Col([
                     html.Img(src='/assets/eth_logo.png',
                              height="60px",
@@ -147,152 +147,181 @@ header = html.Div([
                                  'padding': '10px',
                                  'float': 'right'
                              })
-                    ])
+                ])
             ])
-    ],
-    className="navbar-expand-lg navbar-light bg-primary")
+],
+                  className="navbar-expand-lg navbar-light bg-primary")
 
 # Navigation row
 navbar = html.Div([
     dbc.Row(children=[
-                dbc.Col([
-                    "Parameter:",
-                    dcc.Dropdown(PARAMETER_LIST,
-                                 'T2M',
-                                 id='parameter-selector',
-                                 clearable=False,
-                                 searchable=False)
-                        ],
-                        className='nav_column'),
-                dbc.Col([
-                    "Option:",
-                    dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
-                                 'ProbCold',
-                                 id='option-selector',
-                                 clearable=False,
-                                 searchable=False)
-                        ],
-                        className='nav_column'),
-                dbc.Col([
-                    "Season:",
-                    dcc.Dropdown(SEASON_LIST,
-                                 'djf',
-                                 id='season-selector',
-                                 clearable=False,
-                                 searchable=False)
-                        ],
-                        className='nav_column'),
-                dbc.Col([
-                    "Filter by:",
-                    dcc.Dropdown(RANKING_LIST,
-                                 1,
-                                 id='ranking-selector',
-                                 clearable=False,
-                                 searchable=False)
-                        ],
-                        className='nav_column'),
-                dbc.Col([
-                    "Numer of events:", html.Br(),
-                    dcc.Input(value=10,
-                              id='nval-selector',
-                              type='number',
-                              min=MIN_NUM_EVENTS,
-                              max=MAX_NUM_EVENTS,
-                              step=1)
-                        ],
-
-                        className='nav_column')                
-            ]),
+        dbc.Col([
+            "Parameter:",
+            dcc.Dropdown(PARAMETER_LIST,
+                         'T2M',
+                         id='parameter-selector',
+                         clearable=False,
+                         searchable=False)
+        ],
+                className='nav_column'),
+        dbc.Col([
+            "Option:",
+            dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
+                         'ProbCold',
+                         id='option-selector',
+                         clearable=False,
+                         searchable=False)
+        ],
+                className='nav_column'),
+        dbc.Col([
+            "Season:",
+            dcc.Dropdown(SEASON_LIST,
+                         'djf',
+                         id='season-selector',
+                         clearable=False,
+                         searchable=False)
+        ],
+                className='nav_column'),
+        dbc.Col([
+            "Filter by:",
+            dcc.Dropdown(RANKING_LIST,
+                         1,
+                         id='ranking-selector',
+                         clearable=False,
+                         searchable=False)
+        ],
+                className='nav_column'),
+        dbc.Col([
+            "Numer of events:",
+            html.Br(),
+            dcc.Input(value=10,
+                      id='nval-selector',
+                      type='number',
+                      min=MIN_NUM_EVENTS,
+                      max=MAX_NUM_EVENTS,
+                      step=1)
+        ],
+                className='nav_column')
+    ]),
     dbc.Row(children=[
-                dbc.Col([
-                    "Longitude:",
-                    dcc.RangeSlider(min=-180,
-                                    max=180,
-                                    step=0.5,
-                                    marks={-180:"-180",-90:"-90",0:"0",90:"90",180:"180"},
-                                    value=[-180, 180],
-                                    tooltip={"placement": "top", "always_visible": True},
-                                    id="longitude-selector")
-                        ],
-                        className='nav_column'),
-                dbc.Col([
-                    "Latitude:",
-                    dcc.RangeSlider(min=-90,
-                                    max=90,
-                                    step=0.5,
-                                    marks={-90:"-90",-45:"-45",0:"0",45:"45",90:"90"},
-                                    value=[-90, 90],
-                                    tooltip={"placement": "top", "always_visible": True},
-                                    id="latitude-selector")
-                        ],
-                        className='nav_column'),
-                dbc.Col([
-                    "Interval:",
-                    dcc.RangeSlider(min=1950,
-                                    max=2020,
-                                    step=1,
-                                    marks={1950:"1950",1960:"1960",1970:"1970",1980:"1980",1990:"1990",2000:"2000",2010:"2010",2020:"2020"},
-                                    value=[1950, 2020],
-                                    tooltip={"placement": "top", "always_visible": True},
-                                    id="year-selector")
-                        ],
-                        className='nav_column')
-        ]),
-    ],
-    className="navbar-light bg-light")
+        dbc.Col([
+            "Longitude:",
+            dcc.RangeSlider(min=-180,
+                            max=180,
+                            step=0.5,
+                            marks={
+                                -180: "-180",
+                                -90: "-90",
+                                0: "0",
+                                90: "90",
+                                180: "180"
+                            },
+                            value=[-180, 180],
+                            tooltip={
+                                "placement": "top",
+                                "always_visible": True
+                            },
+                            id="longitude-selector")
+        ],
+                className='nav_column'),
+        dbc.Col([
+            "Latitude:",
+            dcc.RangeSlider(min=-90,
+                            max=90,
+                            step=0.5,
+                            marks={
+                                -90: "-90",
+                                -45: "-45",
+                                0: "0",
+                                45: "45",
+                                90: "90"
+                            },
+                            value=[-90, 90],
+                            tooltip={
+                                "placement": "top",
+                                "always_visible": True
+                            },
+                            id="latitude-selector")
+        ],
+                className='nav_column'),
+        dbc.Col([
+            "Interval:",
+            dcc.RangeSlider(min=1950,
+                            max=2020,
+                            step=1,
+                            marks={
+                                1950: "1950",
+                                1960: "1960",
+                                1970: "1970",
+                                1980: "1980",
+                                1990: "1990",
+                                2000: "2000",
+                                2010: "2010",
+                                2020: "2020"
+                            },
+                            value=[1950, 2020],
+                            tooltip={
+                                "placement": "top",
+                                "always_visible": True
+                            },
+                            id="year-selector")
+        ],
+                className='nav_column')
+    ]),
+],
+                  className="navbar-light bg-light")
 
 # Map row
 maprow = html.Div([
-    dbc.Row(
-        id='maprow',
-        children=[
-            dbc.Col([
-                dl.Map(center=[0, 0],
-                       zoom=2,
-                       worldCopyJump=True,
-                       minZoom=2,
-                       zoomSnap=0.25,
-                       children=[
-                           dl.TileLayer(),
-                           dl.GeoJSON(data=default_patches.__geo_interface__,
-                                      id="patches",
-                                      options=dict(style=ns("color_polys")),
-                                      hideout=hideout_dict),
-                           dl.LayerGroup(id="cbar", children=[])
-                       ],
-                       id="map")
+    dbc.Row(id='maprow',
+            children=[
+                dbc.Col(
+                    [
+                        dl.Map(center=[0, 0],
+                               zoom=2,
+                               worldCopyJump=True,
+                               minZoom=2,
+                               zoomSnap=0.25,
+                               children=[
+                                   dl.TileLayer(),
+                                   dl.GeoJSON(
+                                       data=default_patches.__geo_interface__,
+                                       id="patches",
+                                       options=dict(style=ns("color_polys")),
+                                       hideout=hideout_dict),
+                                   dl.LayerGroup(id="cbar", children=[])
+                               ],
+                               id="map")
                     ],
                     id='map_column',
                     style={
-                           'width': 'calc(100vw - 251px)',
-                           'height': 'calc(100vh - 263px)',
-                           'display': 'block',
-                           'flex': 'none',
-                       }
-                    ),
-            dbc.Button(children=["❯"],
-                       color="primary",
-                       id="toggle-sidebar",
-                       n_clicks=0,
-                       style={
-                           'right': '260px'
-                       }),
-            dbc.Col([
-                html.Div(
-                        title="Polygon details",
-                        children=[poly_table],
-                        id="right-collapse",
-                )
-            ],
+                        'width': 'calc(100vw - 251px)',
+                        'height': 'calc(100vh - 263px)',
+                        'display': 'block',
+                        'flex': 'none',
+                    }),
+                dbc.Button(children=["❯"],
+                           color="primary",
+                           id="toggle-sidebar",
+                           n_clicks=0,
+                           style={'right': '260px'}),
+                dbc.Col(
+                    [
+                        html.Div(
+                            title="Polygon details",
+                            children=[poly_table],
+                            id="right-collapse",
+                        )
+                    ],
                     id='sidebar_column',
                     style={
-                            'width': '250px',
-                            'display': 'block',
-                            'flex': 'none',
-                            'position': 'absolute',
-                            'right': '0px'
-                        })
-        ])
+                        'width': '250px',
+                        'display': 'block',
+                        'flex': 'none',
+                        'position': 'absolute',
+                        'right': '0px'
+                    })
+            ])
 ])
 
 # Definition of app layout
@@ -304,31 +333,21 @@ app = Dash(__name__,
 app.layout = html.Div([header, navbar, maprow])
 
 
-@app.callback(Output(component_id='patches', component_property='data'),
-              Output(component_id='patches', component_property='hideout'),
-              Output(component_id='option-selector',
-                     component_property='options'),
-              Output(component_id='option-selector',
-                     component_property='value'),
-              Output(component_id='cbar', component_property='children'),
-              Output("right-collapse", "children"),
-              Input(component_id='parameter-selector',
-                    component_property='value'),
-              Input(component_id='option-selector',
-                    component_property='value'),
-              Input(component_id='season-selector',
-                    component_property='value'),
-              Input(component_id='nval-selector', component_property='value'),
-              Input(component_id='ranking-selector',
-                    component_property='value'),
-              Input(component_id='longitude-selector',
-                    component_property='value'),
-              Input(component_id='latitude-selector',
-                    component_property='value'),
-              Input(component_id='year-selector',
-                    component_property='value'))
+@app.callback(Output('patches', 'data'), Output('patches', 'hideout'),
+              Output('option-selector', 'options'),
+              Output('option-selector', 'value'), Output('cbar', 'children'),
+              Output('right-collapse', 'children'),
+              Input('parameter-selector', 'value'),
+              Input('option-selector', 'value'),
+              Input('season-selector', 'value'), Input('nval-selector',
+                                                       'value'),
+              Input('ranking-selector', 'value'),
+              Input('longitude-selector', 'value'),
+              Input('latitude-selector', 'value'),
+              Input('year-selector', 'value'))
 def draw_patches(parameter_value, parameter_option, season_value, nval_value,
-                 ranking_option, longitude_values, latitude_values, year_values):
+                 ranking_option, longitude_values, latitude_values,
+                 year_values):
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
@@ -342,7 +361,8 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Load patches
     selected_file = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
     patches = load_patches(os.path.join(DATA_DIR, selected_file))
-    patches = filter_patches(patches, ranking_option, nval_value, longitude_values, latitude_values, year_values)
+    patches = filter_patches(patches, ranking_option, nval_value,
+                             longitude_values, latitude_values, year_values)
 
     classes = list(patches['Label'])
     labels = list(patches['Year'])
@@ -364,19 +384,18 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Generate table
     poly_table = generate_table(patches, colorscale, ranking_option)
 
-    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [poly_table]
+    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [
+        poly_table
+    ]
 
-@app.callback(
-    Output("map_column", "style"),
-    Output("sidebar_column", "style"),
-    Output("toggle-sidebar", "style"),
-    Output("toggle-sidebar", "children"),
-    Input("toggle-sidebar", "n_clicks"),
-    Input("map_column", "style"),
-    Input("sidebar_column", "style"),
-    Input("toggle-sidebar", "style"),
-    Input("toggle-sidebar", "children")
-)
+
+@app.callback(Output("map_column", "style"), Output("sidebar_column", "style"),
+              Output("toggle-sidebar", "style"),
+              Output("toggle-sidebar", "children"),
+              Input("toggle-sidebar", "n_clicks"),
+              Input("map_column", "style"), Input("sidebar_column", "style"),
+              Input("toggle-sidebar", "style"),
+              Input("toggle-sidebar", "children"))
 def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
     if n_clicks:
         if sidebar_style['display'] == "none":
@@ -392,6 +411,7 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
         return map_style, sidebar_style, toggle_style, button
 
     return map_style, sidebar_style, toggle_style, button
+
 
 server = app.server
 
