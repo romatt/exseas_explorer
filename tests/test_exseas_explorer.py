@@ -5,7 +5,7 @@
 import pytest
 
 
-from exseas_explorer import exseas_explorer
+import exseas_explorer
 
 
 @pytest.fixture
