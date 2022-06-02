@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.colors import BoundaryNorm, Colormap, ListedColormap
-from dash import dash_table
+from dash import dash_table, html
 
 # COLORMAP DEFINITON
 greys = plt.cm.Greys  # 1950er
@@ -222,3 +222,49 @@ def generate_poly():
     polygon = dl.Polygon(positions=[[57, 10], [57, 11], [56, 11], [57, 10]])
 
     return None
+
+# def generate_details(df: pd.DataFrame):
+#     """
+#     """
+
+#     df = df[['area', 'latmean', 'lonmean']]
+
+#     # df = df.transpose()
+
+#     details = dash_table.DataTable(data=df.to_dict('records'),
+#                                    columns=[{
+#                                                 'id': c,
+#                                                 'name': c
+#                                             } for c in df.columns])
+
+#     return details
+
+def generate_details(feature: dict):
+    """
+    """
+
+    if feature is not None:
+        if feature['properties']['Link'] is not None:
+            literature = html.P(f"Literature")
+        else:
+            literature = html.P(f"No literature for this feature")
+
+        details = html.Div([
+            html.P(f"Statistics on patch {feature['id']}"),
+            html.P(f"Year {feature['properties']['Year']}"),
+            html.P(f"Area {feature['properties']['area']}"),
+            html.P(f"Land area {feature['properties']['land_area']}"),
+            literature
+        ])
+    else:
+        details = html.Div([html.P(f"You have not clicked on anything yet!")])
+    return details
+
+def generate_dl(df: pd.DataFrame, patch_name: str):
+    """
+    """  
+
+    return html.Div([
+        html.A('DOWNLOAD GEOJSON', download=f'{patch_name}.geojson', href=f'./data/{patch_name}.geojson', className="btn btn-danger btn-download",),
+        html.A('DOWNLOAD NETCDF', download=f'{patch_name}.nc', href=f'./data/{patch_name}.nc', className="btn btn-danger btn-download")
+    ], id='download')

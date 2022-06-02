@@ -12,7 +12,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 
-from util import (filter_patches, generate_cbar, generate_table, load_patches)
+from util import (filter_patches, generate_cbar, generate_table, load_patches, generate_details, generate_dl)
 
 ns = Namespace("myNamespace", "mySubNamespace")
 
@@ -22,6 +22,7 @@ MAX_YEAR = 2020
 MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
 DATA_DIR = '/var/www/exseas_explorer/exseas_explorer/data/'
+DEFAULT_SETTING = 'patches_40y_era5_T2M_djf_ProbCold'
 PARAMETER_LIST = [
     {
         'label': '2m Temperature',
@@ -107,11 +108,13 @@ RANKING_LIST = [{
 
 # LOAD DEFAULT PATCHES
 default_patches = load_patches(
-    os.path.join(DATA_DIR, "patches_40y_era5_T2M_djf_ProbCold.geojson"))
+    os.path.join(DATA_DIR, f'{DEFAULT_SETTING}.geojson'))
 default_patches = filter_patches(default_patches)
 classes = list(default_patches['Label'])
 colorscale = generate_cbar(list(default_patches['Year']))
 poly_table = generate_table(default_patches, colorscale)
+poly_details = generate_details(None)
+poly_download = generate_dl(default_patches, DEFAULT_SETTING)
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
@@ -295,7 +298,7 @@ maprow = html.Div([
                     ],
                     id='map_column',
                     style={
-                        'width': 'calc(100vw - 251px)',
+                        'width': 'calc(100vw - 250px)',
                         'height': 'calc(100vh - 263px)',
                         'display': 'block',
                         'flex': 'none',
@@ -309,7 +312,7 @@ maprow = html.Div([
                     [
                         html.Div(
                             title="Polygon details",
-                            children=[poly_table],
+                            children=[poly_table, poly_details, poly_download],
                             id="right-collapse",
                         )
                     ],
@@ -329,7 +332,10 @@ app = Dash(__name__,
            update_title=None,
            title="INTEXseas Extreme Season Explorer",
            external_stylesheets=[dbc.themes.BOOTSTRAP, 'assets/style.css'],
-           external_scripts=['assets/color.js'])
+           external_scripts=['assets/color.js'],
+               meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+    ])
 app.layout = html.Div([header, navbar, maprow])
 
 
@@ -344,10 +350,11 @@ app.layout = html.Div([header, navbar, maprow])
               Input('ranking-selector', 'value'),
               Input('longitude-selector', 'value'),
               Input('latitude-selector', 'value'),
-              Input('year-selector', 'value'))
+              Input('year-selector', 'value'),
+              Input('patches', 'click_feature'))
 def draw_patches(parameter_value, parameter_option, season_value, nval_value,
                  ranking_option, longitude_values, latitude_values,
-                 year_values):
+                 year_values, feature):
 
     parameter_options = PARAMETER_OPTIONS[f'{parameter_value}']['options']
 
@@ -359,8 +366,8 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
         option_selected = parameter_options[0]["value"]
 
     # Load patches
-    selected_file = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}.geojson'
-    patches = load_patches(os.path.join(DATA_DIR, selected_file))
+    selected_patch = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}'
+    patches = load_patches(os.path.join(DATA_DIR, f'{selected_patch}.geojson'))
     patches = filter_patches(patches, ranking_option, nval_value,
                              longitude_values, latitude_values, year_values)
 
@@ -384,8 +391,14 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Generate table
     poly_table = generate_table(patches, colorscale, ranking_option)
 
+    # Generate details
+    poly_details = generate_details(feature)
+
+    # Generate download buttons
+    poly_download = generate_dl(patches, selected_patch)
+
     return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [
-        poly_table
+        poly_table, poly_details, poly_download
     ]
 
 
@@ -401,7 +414,7 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
         if sidebar_style['display'] == "none":
             sidebar_style['display'] = "block"
             toggle_style['right'] = "260px"
-            map_style['width'] = "calc(100vw - 251px)"
+            map_style['width'] = "calc(100vw - 250px)"
             button = ["❯"]
         else:
             sidebar_style['display'] = "none"
