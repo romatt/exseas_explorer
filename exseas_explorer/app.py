@@ -12,7 +12,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 
-from util import (filter_patches, generate_cbar, generate_table, load_patches, generate_details, generate_dl)
+from util import (filter_patches, generate_cbar, generate_table, load_patches, generate_dl)
 
 ns = Namespace("myNamespace", "mySubNamespace")
 
@@ -113,7 +113,6 @@ default_patches = filter_patches(default_patches)
 classes = list(default_patches['Label'])
 colorscale = generate_cbar(list(default_patches['Year']))
 poly_table = generate_table(default_patches, colorscale)
-poly_details = generate_details(None)
 poly_download = generate_dl(default_patches, DEFAULT_SETTING)
 
 # POLYGON STYLE DEFINITIONS
@@ -390,9 +389,6 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
 
     # Generate table
     poly_table = generate_table(patches, colorscale, ranking_option, parameter_value)
-
-    # Generate details
-    poly_details = generate_details(feature)
 
     # Generate download buttons
     poly_download = generate_dl(patches, selected_patch)
