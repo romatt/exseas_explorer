@@ -165,7 +165,7 @@ navbar = html.Div([
                          clearable=False,
                          searchable=False)
         ],
-                className='nav_column'),
+                className='nav_column_top'),
         dbc.Col([
             "Option:",
             dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
@@ -174,7 +174,7 @@ navbar = html.Div([
                          clearable=False,
                          searchable=False)
         ],
-                className='nav_column'),
+                className='nav_column_top'),
         dbc.Col([
             "Season:",
             dcc.Dropdown(SEASON_LIST,
@@ -183,7 +183,7 @@ navbar = html.Div([
                          clearable=False,
                          searchable=False)
         ],
-                className='nav_column'),
+                className='nav_column_top'),
         dbc.Col([
             "Filter by:",
             dcc.Dropdown(RANKING_LIST,
@@ -192,7 +192,7 @@ navbar = html.Div([
                          clearable=False,
                          searchable=False)
         ],
-                className='nav_column'),
+                className='nav_column_top'),
         dbc.Col([
             "Numer of events:",
             html.Br(),
@@ -203,7 +203,7 @@ navbar = html.Div([
                       max=MAX_NUM_EVENTS,
                       step=1)
         ],
-                className='nav_column')
+                className='nav_column_top')
     ]),
     dbc.Row(children=[
         dbc.Col([
@@ -225,7 +225,7 @@ navbar = html.Div([
                             },
                             id="longitude-selector")
         ],
-                className='nav_column'),
+                className='nav_column_bottom'),
         dbc.Col([
             "Latitude:",
             dcc.RangeSlider(min=-90,
@@ -245,7 +245,7 @@ navbar = html.Div([
                             },
                             id="latitude-selector")
         ],
-                className='nav_column'),
+                className='nav_column_bottom'),
         dbc.Col([
             "Interval:",
             dcc.RangeSlider(min=1950,
@@ -268,7 +268,7 @@ navbar = html.Div([
                             },
                             id="year-selector")
         ],
-                className='nav_column')
+                className='nav_column_bottom')
     ]),
 ],
                   className="navbar-light bg-light")
