@@ -134,7 +134,7 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     return colors
 
 
-def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1, parameter: str = 'T2M') -> pd.DataFrame:
+def generate_table(df: pd.DataFrame, colors: list, labels: list, criterion: int = 1, parameter: str = 'T2M') -> pd.DataFrame:
     """
     Generate table for provided years
 
@@ -144,6 +144,8 @@ def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1, parameter
         Filtered input dataframe
     colors : list
         List of colors for each row
+    labels : list
+        List of labels
     criterion : int, default: 1
         Criterion used to filter dataframe
     parameter : str, default: 'T2M'
@@ -166,59 +168,62 @@ def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1, parameter
 
     # Only return relevant columns
     if criterion == 1:
-        df = df[['Year', 'area']]
+        df = df[['Label', 'Year', 'area']]
         df['area'] = df['area'].round(2)
+        df = df.sort_values(by='area', ascending=False)
         df = df.rename(columns={"area": "Area (km^2)"})
     elif criterion == 2:
-        df = df[['Year', 'land_area']]
+        df = df[['Label', 'Year', 'land_area']]
         df['land_area'] = df['land_area'].round(2)
+        df = df.sort_values(by='land_area', ascending=False)
         df = df.rename(columns={"land_area": "Land Area (km^2)"})
     elif criterion == 3:
-        df = df[['Year', 'mean_ano']]
+        df = df[['Label', 'Year', 'mean_ano']]
         df['mean_ano'] = df['mean_ano'].round(2)
+        df = df.sort_values(by='mean_ano', ascending=False)
         df = df.rename(columns={"mean_ano": f'Mean Anom. ({units})'})
     elif criterion == 4:
-        df = df[['Year', 'land_mean_ano']]
+        df = df[['Label', 'Year', 'land_mean_ano']]
         df['land_mean_ano'] = df['land_mean_ano'].round(2)
+        df = df.sort_values(by='land_mean_ano', ascending=False)
         df = df.rename(columns={"land_mean_ano": f'Mean Land Anom. ({units})'})
     elif criterion == 5:
-        df = df[['Year', 'integrated_ano']]
+        df = df[['Label', 'Year', 'integrated_ano']]
         df['integrated_ano'] = df['integrated_ano'].round(2)
+        df = df.sort_values(by='integrated_ano', ascending=False)
         df = df.rename(columns={"integrated_ano": f'Int. Anom. ({units})'})
     elif criterion == 6:
-        df = df[['Year', 'land_integrated_ano']]
+        df = df[['Label', 'Year', 'land_integrated_ano']]
         df['land_integrated_ano'] = df['land_integrated_ano'].round(2)
+        df = df.sort_values(by='land_integrated_ano', ascending=False)
         df = df.rename(columns={"land_integrated_ano": f'Int. Land Anom. ({units})'})
-
-    # Convert from m^2 to km^2
-    # df['area'] = df['area'].div(1e+6)
-    # df['land_area'] = df['land_area'].div(1e+6)
-
-    # Sort by year in reverse order
-    df = df.sort_values(by='Year', ascending=False)
-
-    # Invert colors
-    colors = colors[::-1]
 
     # Generate dict with colors for table
     list = []
-    for i, color in enumerate(colors):
+
+    # Convert dataframe year to list    
+    df_label = df['Label'].tolist()
+
+    for ind, label in enumerate(labels):
+        row = df_label.index(label)
         list.append({
             'if': {
-                'row_index': i,
+                'row_index': row,
                 'column_id': 'Year',
             },
-            'backgroundColor': str(color),
+            'backgroundColor': str(colors[ind]),
             'color': 'white'
         })
+
+    # Drop label column before showing
+    df = df.drop(columns=["Label"])
 
     table = dash_table.DataTable(data=df.to_dict('records'),
                                  columns=[{
                                      'id': c,
                                      'name': c
                                  } for c in df.columns],
-                                 style_data_conditional=list,
-                                 sort_action='native')
+                                 style_data_conditional=list)
 
     return table
 

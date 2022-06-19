@@ -112,7 +112,7 @@ default_patches = load_patches(
 default_patches = filter_patches(default_patches)
 classes = list(default_patches['Label'])
 colorscale = generate_cbar(list(default_patches['Year']))
-poly_table = generate_table(default_patches, colorscale)
+poly_table = generate_table(default_patches, colorscale, classes)
 poly_download = generate_dl(default_patches, DEFAULT_SETTING)
 
 # POLYGON STYLE DEFINITIONS
@@ -298,7 +298,7 @@ maprow = html.Div([
                     id='map_column',
                     style={
                         'width': 'calc(100vw - 250px)',
-                        'height': 'calc(100vh - 263px)',
+                        'height': 'calc(100vh - 240px)',
                         'display': 'block',
                         'flex': 'none',
                     }),
@@ -388,7 +388,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
                         colorProp="Label")
 
     # Generate table
-    poly_table = generate_table(patches, colorscale, ranking_option, parameter_value)
+    poly_table = generate_table(patches, colorscale, classes, ranking_option, parameter_value)
 
     # Generate download buttons
     poly_download = generate_dl(patches, selected_patch)
