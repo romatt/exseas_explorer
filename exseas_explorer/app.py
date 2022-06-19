@@ -22,7 +22,7 @@ MAX_YEAR = 2020
 MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
 DATA_DIR = '/var/www/exseas_explorer/exseas_explorer/data/'
-DEFAULT_SETTING = 'patches_40y_era5_T2M_djf_ProbCold'
+DEFAULT_SETTING = 'patches_T2M_djf_ProbCold'
 PARAMETER_LIST = [
     {
         'label': '2m Temperature',
@@ -366,7 +366,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
         option_selected = parameter_options[0]["value"]
 
     # Load patches
-    selected_patch = f'patches_40y_era5_{parameter_value}_{season_value}_{option_selected}'
+    selected_patch = f'patches_{parameter_value}_{season_value}_{option_selected}'
     patches = load_patches(os.path.join(DATA_DIR, f'{selected_patch}.geojson'))
     patches = filter_patches(patches, ranking_option, nval_value,
                              longitude_values, latitude_values, year_values)
