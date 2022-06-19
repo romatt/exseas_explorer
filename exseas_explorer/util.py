@@ -134,7 +134,7 @@ def generate_cbar(labels: list) -> dl.Colorbar:
     return colors
 
 
-def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1) -> pd.DataFrame:
+def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1, parameter: str = 'T2M') -> pd.DataFrame:
     """
     Generate table for provided years
 
@@ -146,6 +146,8 @@ def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1) -> pd.Dat
         List of colors for each row
     criterion : int, default: 1
         Criterion used to filter dataframe
+    parameter : str, default: 'T2M'
+        Parameter selected
 
     Returns
     -------
@@ -154,6 +156,13 @@ def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1) -> pd.Dat
     """
 
     pd.options.mode.chained_assignment = None
+
+    if parameter == 'T2M':
+        units = 'K'
+    elif parameter == 'RTOT':
+        units = 'm^3'
+    elif parameter == 'WG10':
+        units = 'm/s'
 
     # Only return relevant columns
     if criterion == 1:
@@ -167,19 +176,19 @@ def generate_table(df: pd.DataFrame, colors: list, criterion: int = 1) -> pd.Dat
     elif criterion == 3:
         df = df[['Year', 'mean_ano']]
         df['mean_ano'] = df['mean_ano'].round(2)
-        df = df.rename(columns={"mean_ano": "Mean Anom. (XXX)"})
+        df = df.rename(columns={"mean_ano": f'Mean Anom. ({units})'})
     elif criterion == 4:
         df = df[['Year', 'land_mean_ano']]
         df['land_mean_ano'] = df['land_mean_ano'].round(2)
-        df = df.rename(columns={"land_mean_ano": "Mean Land Anom. (XXX)"})
+        df = df.rename(columns={"land_mean_ano": f'Mean Land Anom. ({units})'})
     elif criterion == 5:
         df = df[['Year', 'integrated_ano']]
         df['integrated_ano'] = df['integrated_ano'].round(2)
-        df = df.rename(columns={"integrated_ano": "Int. Anom. (XXX)"})
+        df = df.rename(columns={"integrated_ano": f'Int. Anom. ({units})'})
     elif criterion == 6:
         df = df[['Year', 'land_integrated_ano']]
         df['land_integrated_ano'] = df['land_integrated_ano'].round(2)
-        df = df.rename(columns={"land_integrated_ano": "Int. Land Anom. (XXX)"})
+        df = df.rename(columns={"land_integrated_ano": f'Int. Land Anom. ({units})'})
 
     # Convert from m^2 to km^2
     # df['area'] = df['area'].div(1e+6)

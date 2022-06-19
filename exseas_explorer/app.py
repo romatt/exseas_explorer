@@ -389,7 +389,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
                         colorProp="Label")
 
     # Generate table
-    poly_table = generate_table(patches, colorscale, ranking_option)
+    poly_table = generate_table(patches, colorscale, ranking_option, parameter_value)
 
     # Generate details
     poly_details = generate_details(feature)
