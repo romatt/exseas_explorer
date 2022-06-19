@@ -23,7 +23,7 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
             const year = JSON.stringify(props.Year);
             const area = parseFloat(JSON.stringify(props.area)).toFixed(2);
             const land_area = parseFloat(JSON.stringify(props.land_area)).toFixed(2);
-            layer.bindPopup("Patch "+patch+"<br>Year: "+year+"<br>"+"Area: "+area+"km^2<br>"+"Land Area: "+land_area+"km^2");
+            layer.bindPopup("<h6>Patch "+patch+"</h6>Year: "+year+"<br>"+"Area: "+area+"km^2<br>"+"Land Area: "+land_area+"km^2");
         }
     }
 });
