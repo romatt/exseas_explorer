@@ -290,7 +290,7 @@ maprow = html.Div([
                                    dl.GeoJSON(
                                        data=default_patches.__geo_interface__,
                                        id="patches",
-                                       options=dict(style=ns("color_polys")),
+                                       options=dict(style=ns("color_polys"), onEachFeature=ns("bindPopup")),
                                        hideout=hideout_dict),
                                    dl.LayerGroup(id="cbar", children=[])
                                ],
@@ -312,7 +312,7 @@ maprow = html.Div([
                     [
                         html.Div(
                             title="Polygon details",
-                            children=[poly_table, poly_details, poly_download],
+                            children=[poly_table, poly_download],
                             id="right-collapse",
                         )
                     ],
@@ -373,14 +373,14 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
 
     classes = list(patches['Label'])
     labels = list(patches['Year'])
-    # Update colorbar
-    colorscale = generate_cbar(labels)
 
-    # Create colorbar
+    # Update and create colorbar
+    colorscale = generate_cbar(labels)
+    cbar_height = nval_value*32
     colorbar = dlx.categorical_colorbar(categories=[str(y) for y in labels],
                                         colorscale=colorscale,
                                         width=20,
-                                        height=500,
+                                        height=cbar_height,
                                         position="bottomleft")
 
     hideout_dict = dict(colorscale=colorscale,
@@ -398,7 +398,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     poly_download = generate_dl(patches, selected_patch)
 
     return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [
-        poly_table, poly_details, poly_download
+        poly_table, poly_download
     ]
 
 
@@ -429,4 +429,4 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
 server = app.server
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8050)
+    app.run_server(debug=True, port=8060)
