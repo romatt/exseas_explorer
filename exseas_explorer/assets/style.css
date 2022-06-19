@@ -1,5 +1,6 @@
 body {
     font-size:15px;
+    font-family: 'Roboto', sans-serif;
 }
 
 h6 {
@@ -66,6 +67,19 @@ h6 {
 
 #ranking-selector .Select-menu-outer {
     height:300px;
+}
+
+.cell-table {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 14px !important;
+}
+
+.cell-table .column-0 {
+    width:30%;
+}
+
+.cell-table .column-1 {
+    width:70%;
 }
 
 #download {
