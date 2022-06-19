@@ -228,14 +228,14 @@ def generate_table(df: pd.DataFrame, colors: list, labels: list, criterion: int 
     return table
 
 
-def generate_poly():
+def generate_poly(lon_range, lat_range):
     """
     Generate a polygon with extensions of currently selected lon/lat restrictions
     """
 
-    polygon = dl.Polygon(positions=[[57, 10], [57, 11], [56, 11], [57, 10]])
+    polygon = dl.Polygon(positions=[[lat_range[0], lon_range[0]], [lat_range[0], lon_range[1]], [lat_range[1], lon_range[1]], [lat_range[1], lon_range[0]], [lat_range[0], lon_range[0]]])
 
-    return None
+    return polygon
 
 # def generate_details(df: pd.DataFrame):
 #     """

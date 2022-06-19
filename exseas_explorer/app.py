@@ -3,6 +3,7 @@
 
 import os
 from datetime import date
+import re
 
 import dash
 import dash_bootstrap_components as dbc
@@ -12,7 +13,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 
-from util import (filter_patches, generate_cbar, generate_table, load_patches, generate_dl)
+from util import (filter_patches, generate_cbar, generate_table, load_patches, generate_dl, generate_poly)
 
 ns = Namespace("myNamespace", "mySubNamespace")
 
@@ -105,6 +106,25 @@ RANKING_LIST = [{
     'label': 'Integrated Anomaly over Land',
     'value': 6
 }]
+REGION_LIST = [{
+    'label': 'World',
+    'value': 'world'
+}, {
+    'label': 'Northern Hemisphere',
+    'value': 'nh'
+}, {
+    'label': 'Southern Hemisphere',
+    'value': 'sh'
+}, {
+    'label': 'Europe',
+    'value': 'europe'
+}, {
+    'label': 'North America',
+    'value': 'na'
+}, {
+    'label': 'Asia',
+    'value': 'asia'
+}]
 
 # LOAD DEFAULT PATCHES
 default_patches = load_patches(
@@ -189,6 +209,15 @@ navbar = html.Div([
             dcc.Dropdown(RANKING_LIST,
                          1,
                          id='ranking-selector',
+                         clearable=False,
+                         searchable=False)
+        ],
+                className='nav_column_top'),
+        dbc.Col([
+            "Region:",
+            dcc.Dropdown(REGION_LIST,
+                         'world',
+                         id='region-selector',
                          clearable=False,
                          searchable=False)
         ],
@@ -285,13 +314,13 @@ maprow = html.Div([
                                minZoom=2,
                                zoomSnap=0.25,
                                children=[
-                                   dl.TileLayer(),
-                                   dl.GeoJSON(
+                                    dl.TileLayer(),
+                                    dl.GeoJSON(
                                        data=default_patches.__geo_interface__,
                                        id="patches",
                                        options=dict(style=ns("color_polys"), onEachFeature=ns("bindPopup")),
                                        hideout=hideout_dict),
-                                   dl.LayerGroup(id="cbar", children=[])
+                                    dl.LayerGroup(id="cbar", children=[])
                                ],
                                id="map")
                     ],
@@ -338,6 +367,35 @@ app = Dash(__name__,
 app.layout = html.Div([header, navbar, maprow])
 
 
+@app.callback(Output('longitude-selector', 'value'),
+              Output('latitude-selector', 'value'),
+              Input('region-selector', 'value'))
+def subset_region(region_value):
+
+    if region_value == 'world':
+        longitude_range = [-180, 180]
+        latitude_range = [-90, 90]
+    elif region_value == 'nh':
+        longitude_range = [-180, 180]
+        latitude_range = [0, 90]
+    elif region_value == 'sh':
+        longitude_range = [-180, 180]
+        latitude_range = [-90, 0]
+    elif region_value == 'europe':
+        longitude_range = [-20, 30]
+        latitude_range = [30, 80]
+    elif region_value == 'asia':
+        longitude_range = [-180, 180]
+        latitude_range = [-90, 0]
+    elif region_value == 'na':
+        longitude_range = [-180, -100]
+        latitude_range = [0, 90]    
+    else:
+        longitude_range = [-180, 180]
+        latitude_range = [-90, 90]
+
+    return longitude_range, latitude_range
+
 @app.callback(Output('patches', 'data'), Output('patches', 'hideout'),
               Output('option-selector', 'options'),
               Output('option-selector', 'value'), Output('cbar', 'children'),
@@ -373,6 +431,11 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     classes = list(patches['Label'])
     labels = list(patches['Year'])
 
+    # Update area of interest
+    aio = generate_poly(longitude_values, latitude_values)
+
+    print(aio)
+
     # Update and create colorbar
     colorscale = generate_cbar(labels)
     cbar_height = nval_value*32
@@ -393,7 +456,7 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Generate download buttons
     poly_download = generate_dl(patches, selected_patch)
 
-    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, colorbar, [
+    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, [colorbar, aio], [
         poly_table, poly_download
     ]
 
