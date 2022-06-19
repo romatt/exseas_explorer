@@ -4,6 +4,7 @@ Sub-module containing pre-processing functionality
 
 import logging
 import sys
+import os
 
 import click
 import geopandas as gpd
@@ -96,6 +97,27 @@ def extract_contours(array: xr.DataArray):
 
     return gdf
 
+def extend_domain(da: xr.DataArray):
+    """
+    Extend domain both east and west by another 360 degrees to avoid polygons
+    getting cut off at the date-line
+
+    Parameters
+    ----------
+    ds : xr.DataArray
+        Input data array
+
+    Returns
+    -------
+    out : xr.DataArray
+        Output data array with extended domain
+    """
+
+    out = xr.concat([da[:, :, :-1], da[:, :, :-1], da], dim="lon")
+    out.coords['lon'] = np.linspace(-540,540,2161)
+
+    return out
+
 
 @click.command()
 @click.option('-w',
@@ -105,7 +127,7 @@ def extract_contours(array: xr.DataArray):
               '--patch_file',
               default='patches_40y_era5_RTOT_djf_ProbDry.nc')
 def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
-                   patch_file='patches_40y_era5_RTOT_djf_ProbDry.nc'):
+                   patch_file='patches_T2M_jja_ProbHot.nc'):
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
 
@@ -126,7 +148,7 @@ def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
     logger.info(f'Processing {work_dir}{patch_file}')
 
     # Read NetCDF file
-    in_file = xr.open_dataset(work_dir + patch_file)
+    in_file = xr.open_dataset(os.path.join(work_dir, patch_file))
 
     # Re-name key xarray and change data-type to work with shapes features
     in_file = in_file.rename({'key': 'year'}).astype(np.float32)
@@ -135,19 +157,20 @@ def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
     list_file = patch_file.replace("patches",
                                    "list").replace(".nc",
                                                    ".txt").replace("Prob", "")
-    patch_data = pd.read_csv(work_dir + list_file, na_values='-999.99')
+    patch_data = pd.read_csv(os.path.join(work_dir, list_file), na_values='-999.99')
     patch_data = patch_data.astype({'lab': 'int32', 'key': 'int32'})
 
     # Read dataframe with literature information
     lit_file = patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob","")
-    lit_data = pd.read_csv(work_dir + lit_file, na_values='-999.99', skip_blank_lines=True, sep=";")
+    lit_data = pd.read_csv(os.path.join(work_dir, lit_file), na_values='-999.99', skip_blank_lines=True, sep=";")
     lit_data = lit_data.astype({'Label': 'int32', 'Year': 'int32'})
     lit_data = lit_data.drop(columns=['Year', 'Season'])
-    # Some labels have multiple citations, need to aggreate  those into lists
+    # Some labels have multiple citations, need to aggreate those into lists
     lit_data = lit_data.groupby('Label').agg(dict)
 
-    # Extract contours
-    patch = extract_contours(in_file.lab)
+    # Expand domain and extract contours
+    label = extend_domain(in_file.label)
+    patch = extract_contours(label)
 
     # Merge contour data with geodataframe
     patch_out = patch.merge(patch_data, on='lab')
@@ -157,14 +180,14 @@ def update_patches(work_dir='/ytpool/data/ETH/INTEXseas/',
     patch_out = patch_out.merge(lit_data, on='Label', how='left')
 
     # Drop unused columns
-    patch_out = patch_out.drop(columns=['ngp', 'land_ngp', 'median_prob', 'land_median_prob', 'median_ano', 'land_median_ano'])
+    patch_out = patch_out.drop(columns=['ngp', 'land_ngp', 'median_prob', 'mean_prob', 'land_median_prob', 'land_mean_prob', 'median_ano', 'land_median_ano'])
 
     # Combine polygons with same label
     patch_out = patch_out.dissolve(by='Label').reset_index(level=0)
 
     # Save geometries to file
     file_end = patch_file.replace("nc", "geojson")
-    patch_out.to_file(f'{work_dir}/{file_end}', driver='GeoJSON', index=False)
+    patch_out.to_file(os.path.join(work_dir, file_end), driver='GeoJSON', index=False)
 
 
 if __name__ == '__main__':
