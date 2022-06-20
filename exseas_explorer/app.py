@@ -385,11 +385,11 @@ def subset_region(region_value):
         longitude_range = [-20, 30]
         latitude_range = [30, 80]
     elif region_value == 'asia':
-        longitude_range = [-180, 180]
-        latitude_range = [-90, 0]
+        longitude_range = [40, 180]
+        latitude_range = [10, 80]
     elif region_value == 'na':
-        longitude_range = [-180, -100]
-        latitude_range = [0, 90]    
+        longitude_range = [-170, -50]
+        latitude_range = [20, 80]    
     else:
         longitude_range = [-180, 180]
         latitude_range = [-90, 90]
@@ -433,8 +433,6 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
 
     # Update area of interest
     aio = generate_poly(longitude_values, latitude_values)
-
-    print(aio)
 
     # Update and create colorbar
     colorscale = generate_cbar(labels)
