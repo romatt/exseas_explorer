@@ -488,4 +488,4 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
 server = app.server
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8060)
+    app.run_server(debug=True, port=8050)
