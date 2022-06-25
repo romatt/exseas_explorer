@@ -211,7 +211,7 @@ def generate_poly(lon_range, lat_range):
     Generate a polygon with extensions of currently selected lon/lat restrictions
     """
 
-    polygon = dl.Polygon(positions=[[lat_range[0], lon_range[0]], [lat_range[0], lon_range[1]], [lat_range[1], lon_range[1]], [lat_range[1], lon_range[0]], [lat_range[0], lon_range[0]]])
+    polygon = dl.Polygon(fill=False, dashArray='7', color="gray", weight=2, positions=[[lat_range[0], lon_range[0]], [lat_range[0], lon_range[1]], [lat_range[1], lon_range[1]], [lat_range[1], lon_range[0]], [lat_range[0], lon_range[0]]])
 
     return polygon
 
