@@ -187,7 +187,7 @@ navbar = html.Div([
         ],
                 className='nav_column_top'),
         dbc.Col([
-            "Option:",
+            "Type of extreme:",
             dcc.Dropdown(PARAMETER_OPTIONS['T2M']['options'],
                          'ProbCold',
                          id='option-selector',
@@ -205,7 +205,7 @@ navbar = html.Div([
         ],
                 className='nav_column_top'),
         dbc.Col([
-            "Filter by:",
+            "Sort by:",
             dcc.Dropdown(RANKING_LIST,
                          1,
                          id='ranking-selector',
@@ -223,7 +223,7 @@ navbar = html.Div([
         ],
                 className='nav_column_top'),
         dbc.Col([
-            "Numer of events:",
+            "Number of events:",
             html.Br(),
             dcc.Input(value=10,
                       id='nval-selector',
@@ -276,7 +276,7 @@ navbar = html.Div([
         ],
                 className='nav_column_bottom'),
         dbc.Col([
-            "Interval:",
+            "Time period:",
             dcc.RangeSlider(min=1950,
                             max=2020,
                             step=1,
