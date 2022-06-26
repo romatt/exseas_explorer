@@ -30,6 +30,14 @@ h6 {
     padding-top:40px !important;
 }
 
+#nval-selector {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    height: 35px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 #maprow {
     position:relative;
 }
