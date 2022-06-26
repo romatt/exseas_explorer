@@ -242,7 +242,7 @@ def generate_poly(lon_range, lat_range):
             )
         ]
     )
-    
+
     return rect
 
 
