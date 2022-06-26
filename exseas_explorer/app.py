@@ -518,12 +518,12 @@ def draw_patches(
     )
 
     hideout_dict = dict(
-        colorscale=colorscale, classes=classes, style=style, colorProp="Label"
+        colorscale=colorscale, classes=classes, style=style, colorProp="Label", parameter=parameter_value
     )
 
     # Generate table
     poly_table = generate_table(
-        patches, colorscale, classes, ranking_option, parameter_value
+        patches, colorscale, classes, ranking_option, parameter_value, parameter_option
     )
 
     return (
