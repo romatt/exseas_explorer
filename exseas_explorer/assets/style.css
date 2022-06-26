@@ -68,7 +68,6 @@ h6 {
     background-color: #f4f4f4;
 }
 
-
 #sidebar_column {
     padding:0;
 }
@@ -103,7 +102,13 @@ h6 {
 }
 
 .btn-download {
-    margin: 10px;
+    margin: auto;
+    
+}
+
+.download_button {
+    text-align: center !important;
+    padding-top: 10px;
 }
 
 /* SMALL SCREENS */

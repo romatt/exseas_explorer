@@ -128,11 +128,13 @@ header = html.Div(
                             src="/assets/eth_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
+                            id="eth_logo",
                         ),
                         html.Img(
                             src="/assets/iac_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
+                            id="iac_logo",
                         ),
                     ]
                 ),
@@ -356,7 +358,35 @@ maprow = html.Div(
                     [
                         html.Div(
                             title="Polygon details",
-                            children=[poly_table, poly_download],
+                            children=[
+                                html.Div(
+                                    children=[poly_table],
+                                    id="polygon-table",
+                                    style={"height": "calc(100vh - 350px)"},
+                                ),
+                                html.Div(
+                                    [
+                                        html.A(
+                                            "Download NetCDF (all)",
+                                            className="btn btn-danger btn-download",
+                                            id="btn-netcdf",
+                                        ),
+                                        dcc.Download(id="netcdf-download"),
+                                    ],
+                                    className="download_button",
+                                ),
+                                html.Div(
+                                    [
+                                        html.A(
+                                            "Download GeoJSON (sel)",
+                                            className="btn btn-danger btn-download",
+                                            id="btn-geojson",
+                                        ),
+                                        dcc.Download(id="geojson-download"),
+                                    ],
+                                    className="download_button",
+                                ),
+                            ],
                             id="right-collapse",
                         )
                     ],
@@ -374,6 +404,8 @@ maprow = html.Div(
     ]
 )
 
+hidden = html.Div([html.Div(id="file_name", children=[], style=dict(display="none"))])
+
 # Definition of app layout
 app = Dash(
     __name__,
@@ -383,7 +415,7 @@ app = Dash(
     external_scripts=["assets/color.js"],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
 )
-app.layout = html.Div([header, navbar, maprow])
+app.layout = html.Div([header, navbar, maprow, hidden])
 
 
 @app.callback(
@@ -424,8 +456,9 @@ def subset_region(region_value):
     Output("option-selector", "options"),
     Output("option-selector", "value"),
     Output("cbar", "children"),
-    Output("right-collapse", "children"),
+    Output("polygon-table", "children"),
     Output("aio", "data"),
+    Output("file_name", "children"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -433,7 +466,7 @@ def subset_region(region_value):
     Input("ranking-selector", "value"),
     Input("longitude-selector", "value"),
     Input("latitude-selector", "value"),
-    Input("year-selector", "value")
+    Input("year-selector", "value"),
 )
 def draw_patches(
     parameter_value,
@@ -443,7 +476,7 @@ def draw_patches(
     ranking_option,
     longitude_values,
     latitude_values,
-    year_values
+    year_values,
 ):
 
     parameter_options = PARAMETER_OPTIONS[f"{parameter_value}"]["options"]
@@ -493,18 +526,39 @@ def draw_patches(
         patches, colorscale, classes, ranking_option, parameter_value
     )
 
-    # Generate download buttons
-    poly_download = generate_dl(patches, selected_patch)
-
     return (
         patches.__geo_interface__,
         hideout_dict,
         parameter_options,
         option_selected,
         [colorbar],
-        [poly_table, poly_download],
+        poly_table,
         aio,
+        selected_patch,
     )
+
+
+# @app.callback(
+#     Output("netcdf-download", "data"),
+#     Input("btn-netcdf", "n_clicks"),
+#     Input("file_name", "children"),
+#     prevent_initial_call=True,
+# )
+# def dl_netcdf(n_clicks, file_name):
+
+#     print(f"Sending ./data/{file_name}.nc")
+#     return dcc.send_file(f"./data/{file_name}.nc")
+
+
+# @app.callback(
+#     Output("geojson-download", "data"),
+#     Input("btn-geojson", "n_clicks"),
+#     Input("patches", "data"),
+#     prevent_initial_call=True,
+# )
+# def dl_geojson(n_clicks, patches):
+#     return None
+#     # return dcc.send_string(patches, "patches.geojson")
 
 
 @app.callback(
