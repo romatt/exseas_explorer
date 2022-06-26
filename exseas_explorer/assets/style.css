@@ -82,6 +82,17 @@ h6 {
     width:70%;
 }
 
+.cell-table {
+    text-align: left !important;
+    padding-left:5px !important;
+}
+
+.cell-table td, .cell-table th {
+    border-left: 0px !important;
+    border-right: 0px !important;
+    padding-left: 8px !important;
+}
+
 #download {
     display: flex;
     flex-direction: column;
