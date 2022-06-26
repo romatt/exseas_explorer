@@ -90,15 +90,11 @@ h6 {
     width:70%;
 }
 
-.cell-table {
-    text-align: left !important;
-    padding-left:5px !important;
-}
-
 .cell-table td, .cell-table th {
     border-left: 0px !important;
     border-right: 0px !important;
     padding-left: 8px !important;
+    text-align: left !important;
 }
 
 #download {
@@ -108,4 +104,15 @@ h6 {
 
 .btn-download {
     margin: 10px;
+}
+
+/* SMALL SCREENS */
+@media only screen and (max-width: 990px) {
+    .navbar-brand {
+        font-size:large !important;
+    }
+
+    #eth_logo {
+        display: none;
+    }
 }
