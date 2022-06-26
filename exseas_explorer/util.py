@@ -124,6 +124,7 @@ def generate_table(
     labels: list,
     criterion: int = 1,
     parameter: str = "T2M",
+    option: str = "ProbCold"
 ) -> pd.DataFrame:
     """
     Generate table for provided years
@@ -170,22 +171,34 @@ def generate_table(
     elif criterion == 3:
         df = df[["Label", "Year", "mean_ano"]]
         df["mean_ano"] = df["mean_ano"].round(2)
-        df = df.sort_values(by="mean_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="mean_ano", ascending=True)
+        else:
+            df = df.sort_values(by="mean_ano", ascending=False)
         df = df.rename(columns={"mean_ano": f"Mean Anom. ({units})"})
     elif criterion == 4:
         df = df[["Label", "Year", "land_mean_ano"]]
         df["land_mean_ano"] = df["land_mean_ano"].round(2)
-        df = df.sort_values(by="land_mean_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="land_mean_ano", ascending=True)
+        else:
+            df = df.sort_values(by="land_mean_ano", ascending=False)
         df = df.rename(columns={"land_mean_ano": f"Mean Land Anom. ({units})"})
     elif criterion == 5:
         df = df[["Label", "Year", "integrated_ano"]]
         df["integrated_ano"] = df["integrated_ano"].round(2)
-        df = df.sort_values(by="integrated_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="integrated_ano", ascending=True)
+        else:
+            df = df.sort_values(by="integrated_ano", ascending=False)
         df = df.rename(columns={"integrated_ano": f"Int. Anom. ({units})"})
     elif criterion == 6:
         df = df[["Label", "Year", "land_integrated_ano"]]
         df["land_integrated_ano"] = df["land_integrated_ano"].round(2)
-        df = df.sort_values(by="land_integrated_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="land_integrated_ano", ascending=True)
+        else:
+            df = df.sort_values(by="land_integrated_ano", ascending=False)
         df = df.rename(columns={"land_integrated_ano": f"Int. Land Anom. ({units})"})
 
     # Generate dict with colors for table
@@ -211,9 +224,7 @@ def generate_table(
     df = df.drop(columns=["Label"])
 
     table = dash_table.DataTable(
-        data=df.to_dict("records"),
-        style_data_conditional=list,
-        cell_selectable=False
+        data=df.to_dict("records"), style_data_conditional=list, cell_selectable=False
     )
 
     return table
