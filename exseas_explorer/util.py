@@ -212,8 +212,8 @@ def generate_table(
 
     table = dash_table.DataTable(
         data=df.to_dict("records"),
-        columns=[{"id": c, "name": c} for c in df.columns],
         style_data_conditional=list,
+        cell_selectable=False
     )
 
     return table
