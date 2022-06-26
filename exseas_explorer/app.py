@@ -1,6 +1,7 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+from curses.textpad import rectangle
 import os
 from datetime import date
 import re
@@ -11,7 +12,9 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
+from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import Namespace
+from importlib_metadata import NullFinder
 
 from util import (filter_patches, generate_cbar, generate_table, load_patches, generate_dl, generate_poly)
 
@@ -22,6 +25,8 @@ MIN_YEAR = 1950
 MAX_YEAR = 2020
 MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
+lon_range = [-180, 180]
+lat_range = [-90, 90]
 DATA_DIR = '/var/www/exseas_explorer/exseas_explorer/data/'
 DEFAULT_SETTING = 'patches_T2M_djf_ProbCold'
 PARAMETER_LIST = [
@@ -247,7 +252,7 @@ navbar = html.Div([
                                 90: "90",
                                 180: "180"
                             },
-                            value=[-180, 180],
+                            value=lon_range,
                             tooltip={
                                 "placement": "top",
                                 "always_visible": True
@@ -267,7 +272,7 @@ navbar = html.Div([
                                 45: "45",
                                 90: "90"
                             },
-                            value=[-90, 90],
+                            value=lat_range,
                             tooltip={
                                 "placement": "top",
                                 "always_visible": True
@@ -315,6 +320,8 @@ maprow = html.Div([
                                zoomSnap=0.25,
                                children=[
                                     dl.TileLayer(),
+                                    dl.GeoJSON(data = generate_poly(lon_range, lat_range), id="aio",
+                                               options=dict(fill=False, dashArray="7", color="gray", weight=2)),
                                     dl.GeoJSON(
                                        data=default_patches.__geo_interface__,
                                        id="patches",
@@ -400,6 +407,7 @@ def subset_region(region_value):
               Output('option-selector', 'options'),
               Output('option-selector', 'value'), Output('cbar', 'children'),
               Output('right-collapse', 'children'),
+              Output('aio', 'data'),
               Input('parameter-selector', 'value'),
               Input('option-selector', 'value'),
               Input('season-selector', 'value'), Input('nval-selector',
@@ -454,10 +462,9 @@ def draw_patches(parameter_value, parameter_option, season_value, nval_value,
     # Generate download buttons
     poly_download = generate_dl(patches, selected_patch)
 
-    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, [colorbar, aio], [
+    return patches.__geo_interface__, hideout_dict, parameter_options, option_selected, [colorbar], [
         poly_table, poly_download
-    ]
-
+    ], aio
 
 @app.callback(Output("map_column", "style"), Output("sidebar_column", "style"),
               Output("toggle-sidebar", "style"),
