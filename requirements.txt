@@ -22,6 +22,7 @@ flask-compress==1.11; python_version >= "3.6" and python_version < "4"
 flask==2.1.1; python_version >= "3.7" and python_version < "4"
 fonttools==4.32.0; python_version >= "3.7"
 geobuf==1.1.1
+geojson==2.5.0
 geopandas==0.10.2; python_version >= "3.7"
 importlib-metadata==4.11.3; python_version < "3.10" and python_version >= "3.7"
 itsdangerous==2.1.2; python_version >= "3.7"
