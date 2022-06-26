@@ -433,8 +433,7 @@ def subset_region(region_value):
     Input("ranking-selector", "value"),
     Input("longitude-selector", "value"),
     Input("latitude-selector", "value"),
-    Input("year-selector", "value"),
-    Input("patches", "click_feature"),
+    Input("year-selector", "value")
 )
 def draw_patches(
     parameter_value,
@@ -444,8 +443,7 @@ def draw_patches(
     ranking_option,
     longitude_values,
     latitude_values,
-    year_values,
-    feature,
+    year_values
 ):
 
     parameter_options = PARAMETER_OPTIONS[f"{parameter_value}"]["options"]
