@@ -201,6 +201,9 @@ def update_patches(
     # Combine polygons with same label
     patch_out = patch_out.dissolve(by="Label").reset_index(level=0)
 
+    # Remove geometries smaller than 100'000km^2
+    patch_out.drop(patch_out[patch_out["area"] < 100000].index, inplace=True)
+
     # Save geometries to file
     file_end = patch_file.replace("nc", "geojson")
     patch_out.to_file(os.path.join(work_dir, file_end), driver="GeoJSON", index=False)
