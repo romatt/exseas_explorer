@@ -6,12 +6,15 @@ import numpy as np
 import pandas as pd
 from dash import dash_table, html
 
-def filter_patches(df: geopandas.GeoDataFrame,
-                   criterion: int = 1,
-                   nvals: int = 10,
-                   lon_range: list = [-180, 180],
-                   lat_range: list = [-90, 90],
-                   year_range: list = [1950, 2020]) -> geopandas.GeoDataFrame:
+
+def filter_patches(
+    df: geopandas.GeoDataFrame,
+    criterion: int = 1,
+    nvals: int = 10,
+    lon_range: list = [-180, 180],
+    lat_range: list = [-90, 90],
+    year_range: list = [1950, 2020],
+) -> geopandas.GeoDataFrame:
     """
     Filter patches
 
@@ -33,37 +36,41 @@ def filter_patches(df: geopandas.GeoDataFrame,
     Returns
     -------
     df : GeoDataFrame
-        Filtered dataframe with the `nvals` most intense events 
+        Filtered dataframe with the `nvals` most intense events
     """
 
     # Filter for coordinate
-    df = df[(df['lonmean'] >= lon_range[0]) & (df['lonmean'] <= lon_range[1])]
-    df = df[(df['latmean'] >= lat_range[0]) & (df['latmean'] <= lat_range[1])]
+    df = df[(df["lonmean"] >= lon_range[0]) & (df["lonmean"] <= lon_range[1])]
+    df = df[(df["latmean"] >= lat_range[0]) & (df["latmean"] <= lat_range[1])]
 
     # Filter for years
-    df = df[(df['Year'] >= year_range[0]) & (df['Year'] <= year_range[1])]
+    df = df[(df["Year"] >= year_range[0]) & (df["Year"] <= year_range[1])]
 
     # Filter for criterion and number of values
     if criterion == 1:
-        df = df[df['area'] >= np.sort(df['area'])[-nvals]]
+        df = df[df["area"] >= np.sort(df["area"])[-nvals]]
     elif criterion == 2:
         # Remove instances where land_area is NAN
-        df = df[~np.isnan(df['land_area'])]
-        df = df[df['land_area'] >= np.sort(df['land_area'])[-nvals]]
+        df = df[~np.isnan(df["land_area"])]
+        df = df[df["land_area"] >= np.sort(df["land_area"])[-nvals]]
     elif criterion == 3:
-        df = df[
-            np.abs(df['mean_ano']) >= np.sort(np.abs(df['mean_ano']))[-nvals]]
+        df = df[np.abs(df["mean_ano"]) >= np.sort(np.abs(df["mean_ano"]))[-nvals]]
     elif criterion == 4:
-        df = df[~np.isnan(df['land_mean_ano'])]
-        df = df[np.abs(df['land_mean_ano']) >= np.sort(
-            np.abs(df['land_mean_ano']))[-nvals]]
+        df = df[~np.isnan(df["land_mean_ano"])]
+        df = df[
+            np.abs(df["land_mean_ano"]) >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
+        ]
     elif criterion == 5:
-        df = df[np.abs(df['integrated_ano']) >= np.sort(
-            np.abs(df['integrated_ano']))[-nvals]]
+        df = df[
+            np.abs(df["integrated_ano"])
+            >= np.sort(np.abs(df["integrated_ano"]))[-nvals]
+        ]
     elif criterion == 6:
-        df = df[~np.isnan(df['land_integrated_ano'])]
-        df = df[np.abs(df['land_integrated_ano']) >= np.sort(
-            np.abs(df['land_integrated_ano']))[-nvals]]
+        df = df[~np.isnan(df["land_integrated_ano"])]
+        df = df[
+            np.abs(df["land_integrated_ano"])
+            >= np.sort(np.abs(df["land_integrated_ano"]))[-nvals]
+        ]
 
     return df
 
@@ -76,7 +83,7 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
     ----------
     path : str
         Path to the GeoJSON file
-    
+
     Returns
     -------
     df : geopandas.GeoDataFrame
@@ -105,14 +112,18 @@ def generate_cbar(labels: list) -> dl.Colorbar:
 
     # Define colors
     cmap = plt.get_cmap("nipy_spectral", len(labels))
-    colors = [
-        matplotlib.colors.to_hex(cmap(x)) for x in np.arange(len(labels))
-    ]
+    colors = [matplotlib.colors.to_hex(cmap(x)) for x in np.arange(len(labels))]
 
     return colors
 
 
-def generate_table(df: pd.DataFrame, colors: list, labels: list, criterion: int = 1, parameter: str = 'T2M') -> pd.DataFrame:
+def generate_table(
+    df: pd.DataFrame,
+    colors: list,
+    labels: list,
+    criterion: int = 1,
+    parameter: str = "T2M",
+) -> pd.DataFrame:
     """
     Generate table for provided years
 
@@ -137,71 +148,72 @@ def generate_table(df: pd.DataFrame, colors: list, labels: list, criterion: int 
 
     pd.options.mode.chained_assignment = None
 
-    if parameter == 'T2M':
-        units = 'K'
-    elif parameter == 'RTOT':
-        units = 'm^3'
-    elif parameter == 'WG10':
-        units = 'm/s'
+    if parameter == "T2M":
+        units = "K"
+    elif parameter == "RTOT":
+        units = "m^3"
+    elif parameter == "WG10":
+        units = "m/s"
 
     # Only return relevant columns
     if criterion == 1:
-        df = df[['Label', 'Year', 'area']]
-        df['area'] = df['area'].round(2)
-        df = df.sort_values(by='area', ascending=False)
+        df = df[["Label", "Year", "area"]]
+        df["area"] = df["area"].round(2)
+        df = df.sort_values(by="area", ascending=False)
         df = df.rename(columns={"area": "Area (km^2)"})
     elif criterion == 2:
-        df = df[['Label', 'Year', 'land_area']]
-        df['land_area'] = df['land_area'].round(2)
-        df = df.sort_values(by='land_area', ascending=False)
+        df = df[["Label", "Year", "land_area"]]
+        df["land_area"] = df["land_area"].round(2)
+        df = df.sort_values(by="land_area", ascending=False)
         df = df.rename(columns={"land_area": "Land Area (km^2)"})
     elif criterion == 3:
-        df = df[['Label', 'Year', 'mean_ano']]
-        df['mean_ano'] = df['mean_ano'].round(2)
-        df = df.sort_values(by='mean_ano', ascending=False)
-        df = df.rename(columns={"mean_ano": f'Mean Anom. ({units})'})
+        df = df[["Label", "Year", "mean_ano"]]
+        df["mean_ano"] = df["mean_ano"].round(2)
+        df = df.sort_values(by="mean_ano", ascending=False)
+        df = df.rename(columns={"mean_ano": f"Mean Anom. ({units})"})
     elif criterion == 4:
-        df = df[['Label', 'Year', 'land_mean_ano']]
-        df['land_mean_ano'] = df['land_mean_ano'].round(2)
-        df = df.sort_values(by='land_mean_ano', ascending=False)
-        df = df.rename(columns={"land_mean_ano": f'Mean Land Anom. ({units})'})
+        df = df[["Label", "Year", "land_mean_ano"]]
+        df["land_mean_ano"] = df["land_mean_ano"].round(2)
+        df = df.sort_values(by="land_mean_ano", ascending=False)
+        df = df.rename(columns={"land_mean_ano": f"Mean Land Anom. ({units})"})
     elif criterion == 5:
-        df = df[['Label', 'Year', 'integrated_ano']]
-        df['integrated_ano'] = df['integrated_ano'].round(2)
-        df = df.sort_values(by='integrated_ano', ascending=False)
-        df = df.rename(columns={"integrated_ano": f'Int. Anom. ({units})'})
+        df = df[["Label", "Year", "integrated_ano"]]
+        df["integrated_ano"] = df["integrated_ano"].round(2)
+        df = df.sort_values(by="integrated_ano", ascending=False)
+        df = df.rename(columns={"integrated_ano": f"Int. Anom. ({units})"})
     elif criterion == 6:
-        df = df[['Label', 'Year', 'land_integrated_ano']]
-        df['land_integrated_ano'] = df['land_integrated_ano'].round(2)
-        df = df.sort_values(by='land_integrated_ano', ascending=False)
-        df = df.rename(columns={"land_integrated_ano": f'Int. Land Anom. ({units})'})
+        df = df[["Label", "Year", "land_integrated_ano"]]
+        df["land_integrated_ano"] = df["land_integrated_ano"].round(2)
+        df = df.sort_values(by="land_integrated_ano", ascending=False)
+        df = df.rename(columns={"land_integrated_ano": f"Int. Land Anom. ({units})"})
 
     # Generate dict with colors for table
     list = []
 
-    # Convert dataframe year to list    
-    df_label = df['Label'].tolist()
+    # Convert dataframe year to list
+    df_label = df["Label"].tolist()
 
     for ind, label in enumerate(labels):
         row = df_label.index(label)
-        list.append({
-            'if': {
-                'row_index': row,
-                'column_id': 'Year',
-            },
-            'backgroundColor': str(colors[ind]),
-            'color': 'white'
-        })
+        list.append(
+            {
+                "if": {
+                    "row_index": row,
+                    "column_id": "Year",
+                },
+                "backgroundColor": str(colors[ind]),
+                "color": "white",
+            }
+        )
 
     # Drop label column before showing
     df = df.drop(columns=["Label"])
 
-    table = dash_table.DataTable(data=df.to_dict('records'),
-                                 columns=[{
-                                     'id': c,
-                                     'name': c
-                                 } for c in df.columns],
-                                 style_data_conditional=list)
+    table = dash_table.DataTable(
+        data=df.to_dict("records"),
+        columns=[{"id": c, "name": c} for c in df.columns],
+        style_data_conditional=list,
+    )
 
     return table
 
@@ -211,9 +223,18 @@ def generate_poly(lon_range, lat_range):
     Generate a polygon with extensions of currently selected lon/lat restrictions
     """
 
-    polygon = dl.Polygon(positions=[[lat_range[0], lon_range[0]], [lat_range[0], lon_range[1]], [lat_range[1], lon_range[1]], [lat_range[1], lon_range[0]], [lat_range[0], lon_range[0]]])
+    polygon = dl.Polygon(
+        positions=[
+            [lat_range[0], lon_range[0]],
+            [lat_range[0], lon_range[1]],
+            [lat_range[1], lon_range[1]],
+            [lat_range[1], lon_range[0]],
+            [lat_range[0], lon_range[0]],
+        ]
+    )
 
     return polygon
+
 
 # def generate_details(df: pd.DataFrame):
 #     """
@@ -231,32 +252,47 @@ def generate_poly(lon_range, lat_range):
 
 #     return details
 
+
 def generate_details(feature: dict):
-    """
-    """
+    """ """
 
     if feature is not None:
-        if feature['properties']['Link'] is not None:
+        if feature["properties"]["Link"] is not None:
             literature = html.P(f"Literature")
         else:
             literature = html.P(f"No literature for this feature")
 
-        details = html.Div([
-            html.P(f"Statistics on patch {feature['id']}"),
-            html.P(f"Year {feature['properties']['Year']}"),
-            html.P(f"Area {feature['properties']['area']}"),
-            html.P(f"Land area {feature['properties']['land_area']}"),
-            literature
-        ])
+        details = html.Div(
+            [
+                html.P(f"Statistics on patch {feature['id']}"),
+                html.P(f"Year {feature['properties']['Year']}"),
+                html.P(f"Area {feature['properties']['area']}"),
+                html.P(f"Land area {feature['properties']['land_area']}"),
+                literature,
+            ]
+        )
     else:
         details = html.Div([html.P(f"You have not clicked on anything yet!")])
     return details
 
-def generate_dl(df: pd.DataFrame, patch_name: str):
-    """
-    """  
 
-    return html.Div([
-        html.A('DOWNLOAD GEOJSON', download=f'{patch_name}.geojson', href=f'./data/{patch_name}.geojson', className="btn btn-danger btn-download",),
-        html.A('DOWNLOAD NETCDF', download=f'{patch_name}.nc', href=f'./data/{patch_name}.nc', className="btn btn-danger btn-download")
-    ], id='download')
+def generate_dl(df: pd.DataFrame, patch_name: str):
+    """ """
+
+    return html.Div(
+        [
+            html.A(
+                "DOWNLOAD GEOJSON",
+                download=f"{patch_name}.geojson",
+                href=f"./data/{patch_name}.geojson",
+                className="btn btn-danger btn-download",
+            ),
+            html.A(
+                "DOWNLOAD NETCDF",
+                download=f"{patch_name}.nc",
+                href=f"./data/{patch_name}.nc",
+                className="btn btn-danger btn-download",
+            ),
+        ],
+        id="download",
+    )
