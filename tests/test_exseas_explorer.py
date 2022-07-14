@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+"""Tests for `exseas_explorer` package."""
+
 import pytest
 
 import exseas_explorer  # noqa: F401
