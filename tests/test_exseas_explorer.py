@@ -4,7 +4,6 @@
 
 import pytest
 
-
 import exseas_explorer
 
 
