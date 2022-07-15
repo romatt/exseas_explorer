@@ -258,9 +258,9 @@ def generate_details(feature: dict):
 
     if feature is not None:
         if feature["properties"]["Link"] is not None:
-            literature = html.P(f"Literature")
+            literature = html.P("Literature")
         else:
-            literature = html.P(f"No literature for this feature")
+            literature = html.P("No literature for this feature")
 
         details = html.Div(
             [
@@ -272,7 +272,7 @@ def generate_details(feature: dict):
             ]
         )
     else:
-        details = html.Div([html.P(f"You have not clicked on anything yet!")])
+        details = html.Div([html.P("You have not clicked on anything yet!")])
     return details
 
 
