@@ -40,7 +40,34 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
                 units = 'm/s';
                 int_units = 'm/s';
             }
-            layer.bindPopup("<h6>Patch " + patch + "</h6>Year: " + year + "<br>" + "Area: " + area + "km<sup>2</sup><br>" + "Land Area: " + land_area + "km<sup>2</sup><br>Mean Anomaly: " + mean_ano + units + "<br>Mean Anomaly over Land: " + land_mean_ano + units + "<br>Integrated Anomaly: " + integrated_ano + int_units + "<br>Integrated Anomaly over Land: " + land_integrated_ano + int_units);
+            let authors = [];
+            let urls = [];
+            let titles = [];
+            let lit_string = '';
+            if (props.Text !== null) {
+                for (const [key, value] of Object.entries(props.Text)) {
+                    authors.push(value)
+                  }
+                for (const [key, value] of Object.entries(props.Link)) {
+                    urls.push(value)
+                  }
+                for (const [key, value] of Object.entries(props.What)) {
+                    titles.push(value)
+                  }
+
+                lit_string = "<hr>"
+                for (var i = 0; i < authors.length; i++) {
+                    lit_string = lit_string + "<b>" + authors[i] + ":</b> " + titles[i] + " <a target='_blank' href ='" + urls[i] + "'>MORE</a><br>"
+                }
+            }
+
+            layer.bindPopup("<h6>Patch " + patch + "</h6>Year: " + year + "<br>\
+                            Area: " + area + "km<sup>2</sup><br>\
+                            Land Area: " + land_area + "km<sup>2</sup><br>\
+                            Mean Anomaly: " + mean_ano + units + "<br>\
+                            Mean Anomaly over Land: " + land_mean_ano + units + "<br>\
+                            Integrated Anomaly: " + integrated_ano + int_units + "<br>\
+                            Integrated Anomaly over Land: " + land_integrated_ano + int_units + lit_string);
         }
     }
 });
