@@ -1,6 +1,7 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+from curses.textpad import rectangle
 import os
 
 import dash_bootstrap_components as dbc
@@ -8,14 +9,17 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
+from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import Namespace
+from importlib_metadata import NullFinder
+
 from util import (
     filter_patches,
     generate_cbar,
-    generate_dl,
-    generate_poly,
     generate_table,
     load_patches,
+    generate_dl,
+    generate_poly,
 )
 
 ns = Namespace("myNamespace", "mySubNamespace")
@@ -25,6 +29,8 @@ MIN_YEAR = 1950
 MAX_YEAR = 2020
 MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
+lon_range = [-180, 180]
+lat_range = [-90, 90]
 DATA_DIR = "/var/www/exseas_explorer/exseas_explorer/data/"
 DEFAULT_SETTING = "patches_T2M_djf_ProbCold"
 PARAMETER_LIST = [
@@ -153,7 +159,7 @@ navbar = html.Div(
                 ),
                 dbc.Col(
                     [
-                        "Option:",
+                        "Type of extreme:",
                         dcc.Dropdown(
                             PARAMETER_OPTIONS["T2M"]["options"],
                             "ProbCold",
@@ -179,7 +185,7 @@ navbar = html.Div(
                 ),
                 dbc.Col(
                     [
-                        "Filter by:",
+                        "Sort by:",
                         dcc.Dropdown(
                             RANKING_LIST,
                             1,
@@ -205,7 +211,7 @@ navbar = html.Div(
                 ),
                 dbc.Col(
                     [
-                        "Numer of events:",
+                        "Number of events:",
                         html.Br(),
                         dcc.Input(
                             value=10,
@@ -236,7 +242,7 @@ navbar = html.Div(
                                 90: "90",
                                 180: "180",
                             },
-                            value=[-180, 180],
+                            value=lon_range,
                             tooltip={"placement": "top", "always_visible": True},
                             id="longitude-selector",
                         ),
@@ -251,7 +257,7 @@ navbar = html.Div(
                             max=90,
                             step=0.5,
                             marks={-90: "-90", -45: "-45", 0: "0", 45: "45", 90: "90"},
-                            value=[-90, 90],
+                            value=lat_range,
                             tooltip={"placement": "top", "always_visible": True},
                             id="latitude-selector",
                         ),
@@ -260,7 +266,7 @@ navbar = html.Div(
                 ),
                 dbc.Col(
                     [
-                        "Interval:",
+                        "Time period:",
                         dcc.RangeSlider(
                             min=1950,
                             max=2020,
@@ -305,6 +311,16 @@ maprow = html.Div(
                             children=[
                                 dl.TileLayer(),
                                 dl.GeoJSON(
+                                    data=generate_poly(lon_range, lat_range),
+                                    id="aio",
+                                    options=dict(
+                                        fill=False,
+                                        dashArray="7",
+                                        color="gray",
+                                        weight=2,
+                                    ),
+                                ),
+                                dl.GeoJSON(
                                     data=default_patches.__geo_interface__,
                                     id="patches",
                                     options=dict(
@@ -337,7 +353,35 @@ maprow = html.Div(
                     [
                         html.Div(
                             title="Polygon details",
-                            children=[poly_table, poly_download],
+                            children=[
+                                html.Div(
+                                    children=[poly_table],
+                                    id="polygon-table",
+                                    style={"height": "calc(100vh - 350px)"},
+                                ),
+                                html.Div(
+                                    [
+                                        html.A(
+                                            "Download NetCDF (all)",
+                                            className="btn btn-danger btn-download",
+                                            id="btn-netcdf",
+                                        ),
+                                        dcc.Download(id="netcdf-download"),
+                                    ],
+                                    className="download_button",
+                                ),
+                                html.Div(
+                                    [
+                                        html.A(
+                                            "Download GeoJSON (sel)",
+                                            className="btn btn-danger btn-download",
+                                            id="btn-geojson",
+                                        ),
+                                        dcc.Download(id="geojson-download"),
+                                    ],
+                                    className="download_button",
+                                ),
+                            ],
                             id="right-collapse",
                         )
                     ],
@@ -355,6 +399,8 @@ maprow = html.Div(
     ]
 )
 
+hidden = html.Div([html.Div(id="file_name", children=[], style=dict(display="none"))])
+
 # Definition of app layout
 app = Dash(
     __name__,
@@ -364,7 +410,7 @@ app = Dash(
     external_scripts=["assets/color.js"],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
 )
-app.layout = html.Div([header, navbar, maprow])
+app.layout = html.Div([header, navbar, maprow, hidden])
 
 
 @app.callback(
@@ -405,7 +451,9 @@ def subset_region(region_value):
     Output("option-selector", "options"),
     Output("option-selector", "value"),
     Output("cbar", "children"),
-    Output("right-collapse", "children"),
+    Output("polygon-table", "children"),
+    Output("aio", "data"),
+    Output("file_name", "children"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -414,7 +462,6 @@ def subset_region(region_value):
     Input("longitude-selector", "value"),
     Input("latitude-selector", "value"),
     Input("year-selector", "value"),
-    Input("patches", "click_feature"),
 )
 def draw_patches(
     parameter_value,
@@ -425,7 +472,6 @@ def draw_patches(
     longitude_values,
     latitude_values,
     year_values,
-    feature,
 ):
 
     parameter_options = PARAMETER_OPTIONS[f"{parameter_value}"]["options"]
@@ -467,25 +513,51 @@ def draw_patches(
     )
 
     hideout_dict = dict(
-        colorscale=colorscale, classes=classes, style=style, colorProp="Label"
+        colorscale=colorscale,
+        classes=classes,
+        style=style,
+        colorProp="Label",
+        parameter=parameter_value,
     )
 
     # Generate table
     poly_table = generate_table(
-        patches, colorscale, classes, ranking_option, parameter_value
+        patches, colorscale, classes, ranking_option, parameter_value, parameter_option
     )
-
-    # Generate download buttons
-    poly_download = generate_dl(patches, selected_patch)
 
     return (
         patches.__geo_interface__,
         hideout_dict,
         parameter_options,
         option_selected,
-        [colorbar, aio],
-        [poly_table, poly_download],
+        [colorbar],
+        poly_table,
+        aio,
+        selected_patch,
     )
+
+
+# @app.callback(
+#     Output("netcdf-download", "data"),
+#     Input("btn-netcdf", "n_clicks"),
+#     Input("file_name", "children"),
+#     prevent_initial_call=True,
+# )
+# def dl_netcdf(n_clicks, file_name):
+
+#     print(f"Sending ./data/{file_name}.nc")
+#     return dcc.send_file(f"./data/{file_name}.nc")
+
+
+# @app.callback(
+#     Output("geojson-download", "data"),
+#     Input("btn-geojson", "n_clicks"),
+#     Input("patches", "data"),
+#     prevent_initial_call=True,
+# )
+# def dl_geojson(n_clicks, patches):
+#     return None
+#     # return dcc.send_string(patches, "patches.geojson")
 
 
 @app.callback(

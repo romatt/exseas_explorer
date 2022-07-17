@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from dash import dash_table, html
+from geojson import Polygon, FeatureCollection, Feature
 
 
 def filter_patches(
@@ -123,6 +124,7 @@ def generate_table(
     labels: list,
     criterion: int = 1,
     parameter: str = "T2M",
+    option: str = "ProbCold",
 ) -> pd.DataFrame:
     """
     Generate table for provided years
@@ -169,22 +171,34 @@ def generate_table(
     elif criterion == 3:
         df = df[["Label", "Year", "mean_ano"]]
         df["mean_ano"] = df["mean_ano"].round(2)
-        df = df.sort_values(by="mean_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="mean_ano", ascending=True)
+        else:
+            df = df.sort_values(by="mean_ano", ascending=False)
         df = df.rename(columns={"mean_ano": f"Mean Anom. ({units})"})
     elif criterion == 4:
         df = df[["Label", "Year", "land_mean_ano"]]
         df["land_mean_ano"] = df["land_mean_ano"].round(2)
-        df = df.sort_values(by="land_mean_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="land_mean_ano", ascending=True)
+        else:
+            df = df.sort_values(by="land_mean_ano", ascending=False)
         df = df.rename(columns={"land_mean_ano": f"Mean Land Anom. ({units})"})
     elif criterion == 5:
         df = df[["Label", "Year", "integrated_ano"]]
         df["integrated_ano"] = df["integrated_ano"].round(2)
-        df = df.sort_values(by="integrated_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="integrated_ano", ascending=True)
+        else:
+            df = df.sort_values(by="integrated_ano", ascending=False)
         df = df.rename(columns={"integrated_ano": f"Int. Anom. ({units})"})
     elif criterion == 6:
         df = df[["Label", "Year", "land_integrated_ano"]]
         df["land_integrated_ano"] = df["land_integrated_ano"].round(2)
-        df = df.sort_values(by="land_integrated_ano", ascending=False)
+        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
+            df = df.sort_values(by="land_integrated_ano", ascending=True)
+        else:
+            df = df.sort_values(by="land_integrated_ano", ascending=False)
         df = df.rename(columns={"land_integrated_ano": f"Int. Land Anom. ({units})"})
 
     # Generate dict with colors for table
@@ -210,9 +224,7 @@ def generate_table(
     df = df.drop(columns=["Label"])
 
     table = dash_table.DataTable(
-        data=df.to_dict("records"),
-        columns=[{"id": c, "name": c} for c in df.columns],
-        style_data_conditional=list,
+        data=df.to_dict("records"), style_data_conditional=list, cell_selectable=False
     )
 
     return table
@@ -220,37 +232,29 @@ def generate_table(
 
 def generate_poly(lon_range, lat_range):
     """
-    Generate a polygon with extensions of currently selected lon/lat restrictions
+    Generate a GeoJSON polygon with extensions of currently selected lon/lat restrictions
     """
 
-    polygon = dl.Polygon(
-        positions=[
-            [lat_range[0], lon_range[0]],
-            [lat_range[0], lon_range[1]],
-            [lat_range[1], lon_range[1]],
-            [lat_range[1], lon_range[0]],
-            [lat_range[0], lon_range[0]],
+    rect = FeatureCollection(
+        [
+            Feature(
+                id="aio",
+                geometry=Polygon(
+                    [
+                        [
+                            (lon_range[0], lat_range[0]),
+                            (lon_range[0], lat_range[1]),
+                            (lon_range[1], lat_range[1]),
+                            (lon_range[1], lat_range[0]),
+                            (lon_range[0], lat_range[0]),
+                        ]
+                    ]
+                ),
+            )
         ]
     )
 
-    return polygon
-
-
-# def generate_details(df: pd.DataFrame):
-#     """
-#     """
-
-#     df = df[['area', 'latmean', 'lonmean']]
-
-#     # df = df.transpose()
-
-#     details = dash_table.DataTable(data=df.to_dict('records'),
-#                                    columns=[{
-#                                                 'id': c,
-#                                                 'name': c
-#                                             } for c in df.columns])
-
-#     return details
+    return rect
 
 
 def generate_details(feature: dict):
@@ -258,9 +262,9 @@ def generate_details(feature: dict):
 
     if feature is not None:
         if feature["properties"]["Link"] is not None:
-            literature = html.P("Literature")
+            literature = html.P(f"Literature")
         else:
-            literature = html.P("No literature for this feature")
+            literature = html.P(f"No literature for this feature")
 
         details = html.Div(
             [

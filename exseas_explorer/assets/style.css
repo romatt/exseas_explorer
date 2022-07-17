@@ -30,6 +30,14 @@ h6 {
     padding-top:40px !important;
 }
 
+#nval-selector {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    height: 36px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 #maprow {
     position:relative;
 }
@@ -60,7 +68,6 @@ h6 {
     background-color: #f4f4f4;
 }
 
-
 #sidebar_column {
     padding:0;
 }
@@ -82,11 +89,35 @@ h6 {
     width:70%;
 }
 
+.cell-table td, .cell-table th {
+    border-left: 0px !important;
+    border-right: 0px !important;
+    padding-left: 8px !important;
+    text-align: left !important;
+}
+
 #download {
     display: flex;
     flex-direction: column;
 }
 
 .btn-download {
-    margin: 10px;
+    margin: auto;
+    
+}
+
+.download_button {
+    text-align: center !important;
+    padding-top: 10px;
+}
+
+/* SMALL SCREENS */
+@media only screen and (max-width: 990px) {
+    .navbar-brand {
+        font-size:large !important;
+    }
+
+    #eth_logo {
+        display: none;
+    }
 }
