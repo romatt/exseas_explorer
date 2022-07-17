@@ -513,7 +513,11 @@ def draw_patches(
     )
 
     hideout_dict = dict(
-        colorscale=colorscale, classes=classes, style=style, colorProp="Label", parameter=parameter_value
+        colorscale=colorscale,
+        classes=classes,
+        style=style,
+        colorProp="Label",
+        parameter=parameter_value,
     )
 
     # Generate table

@@ -124,7 +124,7 @@ def generate_table(
     labels: list,
     criterion: int = 1,
     parameter: str = "T2M",
-    option: str = "ProbCold"
+    option: str = "ProbCold",
 ) -> pd.DataFrame:
     """
     Generate table for provided years
@@ -255,7 +255,6 @@ def generate_poly(lon_range, lat_range):
     )
 
     return rect
-
 
 
 def generate_details(feature: dict):
