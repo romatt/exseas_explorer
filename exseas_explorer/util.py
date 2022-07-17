@@ -257,6 +257,7 @@ def generate_poly(lon_range, lat_range):
     return rect
 
 
+
 def generate_details(feature: dict):
     """ """
 
@@ -276,7 +277,7 @@ def generate_details(feature: dict):
             ]
         )
     else:
-        details = html.Div([html.P(f"You have not clicked on anything yet!")])
+        details = html.Div([html.P("You have not clicked on anything yet!")])
     return details
 
 

@@ -3,10 +3,7 @@
 
 from curses.textpad import rectangle
 import os
-from datetime import date
-import re
 
-import dash
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
@@ -128,13 +125,11 @@ header = html.Div(
                             src="/assets/eth_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
-                            id="eth_logo",
                         ),
                         html.Img(
                             src="/assets/iac_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
-                            id="iac_logo",
                         ),
                     ]
                 ),
