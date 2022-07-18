@@ -1,8 +1,9 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+import importlib.resources as pkg_resources
+import pathlib
 from curses.textpad import rectangle
-import os
 
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
@@ -22,6 +23,14 @@ from util import (
     generate_poly,
 )
 
+# allow arbitrary locations if exseas_explorer is installed and
+# default to /var/www otherwise
+try:
+    DATA_DIR = pkg_resources.files("exseas_explorer") / "data"
+except ModuleNotFoundError:
+    DATA_DIR = pathlib.Path("/var/www/exseas_explorer/exseas_explorer/data/")
+
+
 ns = Namespace("myNamespace", "mySubNamespace")
 
 # OPTIONS
@@ -31,7 +40,6 @@ MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
 lon_range = [-180, 180]
 lat_range = [-90, 90]
-DATA_DIR = "/var/www/exseas_explorer/exseas_explorer/data/"
 DEFAULT_SETTING = "patches_T2M_djf_ProbCold"
 PARAMETER_LIST = [
     {"label": "2m Temperature", "value": "T2M"},
@@ -86,7 +94,7 @@ REGION_LIST = [
 ]
 
 # LOAD DEFAULT PATCHES
-default_patches = load_patches(os.path.join(DATA_DIR, f"{DEFAULT_SETTING}.geojson"))
+default_patches = load_patches(DATA_DIR / f"{DEFAULT_SETTING}.geojson")
 default_patches = filter_patches(default_patches)
 classes = list(default_patches["Label"])
 colorscale = generate_cbar(list(default_patches["Year"]))
@@ -485,7 +493,8 @@ def draw_patches(
 
     # Load patches
     selected_patch = f"patches_{parameter_value}_{season_value}_{option_selected}"
-    patches = load_patches(os.path.join(DATA_DIR, f"{selected_patch}.geojson"))
+    patches = load_patches(DATA_DIR / f"{selected_patch}.geojson")
+
     patches = filter_patches(
         patches,
         ranking_option,
