@@ -78,7 +78,7 @@ def filter_patches(
     return df
 
 
-@functools.lru_cache
+@functools.cache
 def load_patches(path: str) -> geopandas.GeoDataFrame:
     """
     Load selected patches and return geopandas object with patches
