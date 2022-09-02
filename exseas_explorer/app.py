@@ -3,24 +3,20 @@
 
 import importlib.resources as pkg_resources
 import pathlib
-from curses.textpad import rectangle
 
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
-from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import Namespace
-from importlib_metadata import NullFinder
-
 from util import (
     filter_patches,
     generate_cbar,
-    generate_table,
-    load_patches,
     generate_dl,
     generate_poly,
+    generate_table,
+    load_patches,
 )
 
 # allow arbitrary locations if exseas_explorer is installed and
