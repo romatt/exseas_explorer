@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from dash import dash_table, html
-from geojson import Polygon, FeatureCollection, Feature
+from geojson import Feature, FeatureCollection, Polygon
 
 
 def filter_patches(
@@ -265,9 +265,9 @@ def generate_details(feature: dict):
 
     if feature is not None:
         if feature["properties"]["Link"] is not None:
-            literature = html.P(f"Literature")
+            literature = html.P("Literature")
         else:
-            literature = html.P(f"No literature for this feature")
+            literature = html.P("No literature for this feature")
 
         details = html.Div(
             [
