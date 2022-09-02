@@ -128,7 +128,7 @@ def generate_table(
     criterion: int = 1,
     parameter: str = "T2M",
     option: str = "ProbCold",
-) -> pd.DataFrame:
+) -> dash_table.DataTable:
     """
     Generate table for provided years
 
@@ -160,49 +160,34 @@ def generate_table(
     elif parameter == "WG10":
         units = "m/s"
 
-    # Only return relevant columns
+    ascending = False
+    if option in ["ProbCold", "ProbDry", "ProbCalm"]:
+        ascending = True
+
     if criterion == 1:
-        df = df[["Label", "Year", "area"]]
-        df["area"] = df["area"].round(2)
-        df = df.sort_values(by="area", ascending=False)
-        df = df.rename(columns={"area": "Area (km^2)"})
+        column = "area"
+        long_name = "Area (km^2)"
     elif criterion == 2:
-        df = df[["Label", "Year", "land_area"]]
-        df["land_area"] = df["land_area"].round(2)
-        df = df.sort_values(by="land_area", ascending=False)
-        df = df.rename(columns={"land_area": "Land Area (km^2)"})
+        column = "land_area"
+        long_name = "Land Area (km^2)"
     elif criterion == 3:
-        df = df[["Label", "Year", "mean_ano"]]
-        df["mean_ano"] = df["mean_ano"].round(2)
-        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
-            df = df.sort_values(by="mean_ano", ascending=True)
-        else:
-            df = df.sort_values(by="mean_ano", ascending=False)
-        df = df.rename(columns={"mean_ano": f"Mean Anom. ({units})"})
+        column = "mean_ano"
+        long_name = f"Mean Anom. ({units})"
     elif criterion == 4:
-        df = df[["Label", "Year", "land_mean_ano"]]
-        df["land_mean_ano"] = df["land_mean_ano"].round(2)
-        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
-            df = df.sort_values(by="land_mean_ano", ascending=True)
-        else:
-            df = df.sort_values(by="land_mean_ano", ascending=False)
-        df = df.rename(columns={"land_mean_ano": f"Mean Land Anom. ({units})"})
+        column = "land_mean_ano"
+        long_name = f"Mean Land Anom. ({units})"
     elif criterion == 5:
-        df = df[["Label", "Year", "integrated_ano"]]
-        df["integrated_ano"] = df["integrated_ano"].round(2)
-        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
-            df = df.sort_values(by="integrated_ano", ascending=True)
-        else:
-            df = df.sort_values(by="integrated_ano", ascending=False)
-        df = df.rename(columns={"integrated_ano": f"Int. Anom. ({units})"})
+        column = "integrated_ano"
+        long_name = f"Int. Anom. ({units})"
     elif criterion == 6:
-        df = df[["Label", "Year", "land_integrated_ano"]]
-        df["land_integrated_ano"] = df["land_integrated_ano"].round(2)
-        if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
-            df = df.sort_values(by="land_integrated_ano", ascending=True)
-        else:
-            df = df.sort_values(by="land_integrated_ano", ascending=False)
-        df = df.rename(columns={"land_integrated_ano": f"Int. Land Anom. ({units})"})
+        column = "land_integrated_ano"
+        long_name = f"Int. Land Anom. ({units})"
+
+    # Only return relevant columns
+    df = df[["Label", "Year", column]]
+    df[column] = df[column].round(2)
+    df = df.sort_values(by=column, ascending=ascending)
+    df = df.rename(columns={column: long_name})
 
     # Generate dict with colors for table
     list = []
