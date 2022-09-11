@@ -166,10 +166,10 @@ def update_patches(
         skip_blank_lines=True,
         sep=";",
     )
-    lit_data = lit_data.astype({"Label": "int32", "Year": "int32"})
-    lit_data = lit_data.drop(columns=["Year", "Season"])
+    lit_data = lit_data.astype({"label": "int32", "year": "int32"})
+    lit_data = lit_data.drop(columns=["year", "season"])
     # Some labels have multiple citations, need to aggreate those into lists
-    lit_data = lit_data.groupby("Label").agg(dict)
+    lit_data = lit_data.groupby("label").agg(dict)
 
     # Expand domain and extract contours
     label = extend_domain(in_file.label)
@@ -177,10 +177,10 @@ def update_patches(
 
     # Merge contour data with geodataframe
     patch_out = patch.merge(patch_data, on="lab")
-    patch_out = patch_out.rename(columns={"lab": "Label", "key": "Year"})
+    patch_out = patch_out.rename(columns={"lab": "label", "key": "year"})
 
     # Merge literature data with DF
-    patch_out = patch_out.merge(lit_data, on="Label", how="left")
+    patch_out = patch_out.merge(lit_data, on="label", how="left")
 
     # Drop unused columns
     patch_out = patch_out.drop(
@@ -197,7 +197,7 @@ def update_patches(
     )
 
     # Combine polygons with same label
-    patch_out = patch_out.dissolve(by="Label").reset_index(level=0)
+    patch_out = patch_out.dissolve(by="label").reset_index(level=0)
 
     # Remove geometries smaller than 100'000km^2
     patch_out.drop(patch_out[patch_out["area"] < 100000].index, inplace=True)
