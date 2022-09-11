@@ -47,7 +47,7 @@ def filter_patches(
     df = df[(df["latmean"] >= lat_range[0]) & (df["latmean"] <= lat_range[1])]
 
     # Filter for years
-    df = df[(df["Year"] >= year_range[0]) & (df["Year"] <= year_range[1])]
+    df = df[(df["year"] >= year_range[0]) & (df["year"] <= year_range[1])]
 
     # Filter for criterion and number of values
     if criterion == 1:
@@ -162,17 +162,17 @@ def generate_table(
 
     # Only return relevant columns
     if criterion == 1:
-        df = df[["Label", "Year", "area"]]
+        df = df[["label", "year", "area"]]
         df["area"] = df["area"].round(2)
         df = df.sort_values(by="area", ascending=False)
         df = df.rename(columns={"area": "Area (km^2)"})
     elif criterion == 2:
-        df = df[["Label", "Year", "land_area"]]
+        df = df[["label", "year", "land_area"]]
         df["land_area"] = df["land_area"].round(2)
         df = df.sort_values(by="land_area", ascending=False)
         df = df.rename(columns={"land_area": "Land Area (km^2)"})
     elif criterion == 3:
-        df = df[["Label", "Year", "mean_ano"]]
+        df = df[["label", "year", "mean_ano"]]
         df["mean_ano"] = df["mean_ano"].round(2)
         if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
             df = df.sort_values(by="mean_ano", ascending=True)
@@ -180,7 +180,7 @@ def generate_table(
             df = df.sort_values(by="mean_ano", ascending=False)
         df = df.rename(columns={"mean_ano": f"Mean Anom. ({units})"})
     elif criterion == 4:
-        df = df[["Label", "Year", "land_mean_ano"]]
+        df = df[["label", "year", "land_mean_ano"]]
         df["land_mean_ano"] = df["land_mean_ano"].round(2)
         if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
             df = df.sort_values(by="land_mean_ano", ascending=True)
@@ -188,7 +188,7 @@ def generate_table(
             df = df.sort_values(by="land_mean_ano", ascending=False)
         df = df.rename(columns={"land_mean_ano": f"Mean Land Anom. ({units})"})
     elif criterion == 5:
-        df = df[["Label", "Year", "integrated_ano"]]
+        df = df[["label", "year", "integrated_ano"]]
         df["integrated_ano"] = df["integrated_ano"].round(2)
         if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
             df = df.sort_values(by="integrated_ano", ascending=True)
@@ -196,7 +196,7 @@ def generate_table(
             df = df.sort_values(by="integrated_ano", ascending=False)
         df = df.rename(columns={"integrated_ano": f"Int. Anom. ({units})"})
     elif criterion == 6:
-        df = df[["Label", "Year", "land_integrated_ano"]]
+        df = df[["label", "year", "land_integrated_ano"]]
         df["land_integrated_ano"] = df["land_integrated_ano"].round(2)
         if option == "ProbCold" or option == "ProbDry" or option == "ProbCalm":
             df = df.sort_values(by="land_integrated_ano", ascending=True)
@@ -208,7 +208,7 @@ def generate_table(
     list = []
 
     # Convert dataframe year to list
-    df_label = df["Label"].tolist()
+    df_label = df["label"].tolist()
 
     for ind, label in enumerate(labels):
         row = df_label.index(label)
@@ -216,7 +216,7 @@ def generate_table(
             {
                 "if": {
                     "row_index": row,
-                    "column_id": "Year",
+                    "column_id": "year",
                 },
                 "backgroundColor": str(colors[ind]),
                 "color": "white",
@@ -224,7 +224,7 @@ def generate_table(
         )
 
     # Drop label column before showing
-    df = df.drop(columns=["Label"])
+    df = df.drop(columns=["label"])
 
     table = dash_table.DataTable(
         data=df.to_dict("records"), style_data_conditional=list, cell_selectable=False
@@ -272,7 +272,7 @@ def generate_details(feature: dict):
         details = html.Div(
             [
                 html.P(f"Statistics on patch {feature['id']}"),
-                html.P(f"Year {feature['properties']['Year']}"),
+                html.P(f"Year {feature['properties']['year']}"),
                 html.P(f"Area {feature['properties']['area']}"),
                 html.P(f"Land area {feature['properties']['land_area']}"),
                 literature,
