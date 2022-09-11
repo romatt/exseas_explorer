@@ -20,8 +20,8 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
             const { parameter } = context.props.hideout;
             const props = feature.properties;
             delete props.cluster;
-            const patch = JSON.stringify(props.Label);
-            const year = JSON.stringify(props.Year);
+            const patch = JSON.stringify(props.label);
+            const year = JSON.stringify(props.year);
             const area = parseFloat(JSON.stringify(props.area)).toFixed(2);
             const land_area = parseFloat(JSON.stringify(props.land_area)).toFixed(2);
             const mean_ano = parseFloat(JSON.stringify(props.mean_ano)).toFixed(2);
@@ -44,14 +44,14 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
             let urls = [];
             let titles = [];
             let lit_string = '';
-            if (props.Text !== null) {
-                for (const [key, value] of Object.entries(props.Text)) {
+            if (props.what !== null) {
+                for (const [key, value] of Object.entries(props.author)) {
                     authors.push(value)
                   }
-                for (const [key, value] of Object.entries(props.Link)) {
+                for (const [key, value] of Object.entries(props.link)) {
                     urls.push(value)
                   }
-                for (const [key, value] of Object.entries(props.What)) {
+                for (const [key, value] of Object.entries(props.what)) {
                     titles.push(value)
                   }
 
