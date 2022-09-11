@@ -89,7 +89,7 @@ def extract_contours(array: xr.DataArray):
 
     # Convert list to GeoDataFrame
     gdf = GeoDataFrame(
-        data=polygons, columns=["lab", "geometry"], crs=CRS.from_epsg(4326)
+        data=polygons, columns=["label", "geometry"], crs=CRS.from_epsg(4326)
     )
 
     return gdf
@@ -155,15 +155,14 @@ def update_patches(
         patch_file.replace("patches", "list").replace(".nc", ".txt").replace("Prob", "")
     )
     patch_data = pd.read_csv(os.path.join(work_dir, list_file), na_values="-999.99")
-    patch_data = patch_data.astype({"lab": "int32", "key": "int32"})
+    patch_data = patch_data.astype({"label": "int32", "year": "int32"})
 
     # Expand domain and extract contours
     label = extend_domain(in_file.label)
     patch = extract_contours(label)
 
     # Merge contour data with geodataframe
-    patch_out = patch.merge(patch_data, on="lab")
-    patch_out = patch_out.rename(columns={"lab": "label", "key": "year"})
+    patch_out = patch.merge(patch_data, on="label")
 
     try:
         # Read dataframe with literature information
