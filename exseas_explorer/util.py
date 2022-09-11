@@ -272,7 +272,7 @@ def generate_details(feature: dict):
         details = html.Div(
             [
                 html.P(f"Statistics on patch {feature['id']}"),
-                html.P(f"Year {feature['properties']['Year']}"),
+                html.P(f"Year {feature['properties']['year']}"),
                 html.P(f"Area {feature['properties']['area']}"),
                 html.P(f"Land area {feature['properties']['land_area']}"),
                 literature,
