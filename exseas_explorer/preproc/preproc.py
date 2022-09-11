@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from geopandas import GeoDataFrame
+from pandas.errors import EmptyDataError
 from pyproj import CRS
 from rasterio import features
 from rasterio.transform import Affine
@@ -156,21 +157,6 @@ def update_patches(
     patch_data = pd.read_csv(os.path.join(work_dir, list_file), na_values="-999.99")
     patch_data = patch_data.astype({"lab": "int32", "key": "int32"})
 
-    # Read dataframe with literature information
-    lit_file = (
-        patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob", "")
-    )
-    lit_data = pd.read_csv(
-        os.path.join(work_dir, lit_file),
-        na_values="-999.99",
-        skip_blank_lines=True,
-        sep=";",
-    )
-    lit_data = lit_data.astype({"label": "int32", "year": "int32"})
-    lit_data = lit_data.drop(columns=["year", "season"])
-    # Some labels have multiple citations, need to aggreate those into lists
-    lit_data = lit_data.groupby("label").agg(dict)
-
     # Expand domain and extract contours
     label = extend_domain(in_file.label)
     patch = extract_contours(label)
@@ -179,8 +165,27 @@ def update_patches(
     patch_out = patch.merge(patch_data, on="lab")
     patch_out = patch_out.rename(columns={"lab": "label", "key": "year"})
 
-    # Merge literature data with DF
-    patch_out = patch_out.merge(lit_data, on="label", how="left")
+    try:
+        # Read dataframe with literature information
+        lit_file = (
+            patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob", "")
+        )
+        lit_data = pd.read_csv(
+            os.path.join(work_dir, lit_file),
+            na_values="-999.99",
+            skip_blank_lines=True,
+            sep=";",
+        )
+        lit_data = lit_data.astype({"label": "int32", "year": "int32"})
+        lit_data = lit_data.drop(columns=["year", "season"])
+        # Some labels have multiple citations, need to aggreate those into lists
+        lit_data = lit_data.groupby("label").agg(dict)
+
+        # Merge literature data with DF
+        patch_out = patch_out.merge(lit_data, on="label", how="left")
+
+    except EmptyDataError:
+        logger.info("No literature available for this extreme season")    
 
     # Drop unused columns
     patch_out = patch_out.drop(
