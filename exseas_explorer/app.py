@@ -92,15 +92,15 @@ REGION_LIST = [
 # LOAD DEFAULT PATCHES
 default_patches = load_patches(DATA_DIR / f"{DEFAULT_SETTING}.geojson")
 default_patches = filter_patches(default_patches)
-classes = list(default_patches["Label"])
-colorscale = generate_cbar(list(default_patches["Year"]))
+classes = list(default_patches["label"])
+colorscale = generate_cbar(list(default_patches["year"]))
 poly_table = generate_table(default_patches, colorscale, classes)
 poly_download = generate_dl(default_patches, DEFAULT_SETTING)
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
 hideout_dict = dict(
-    colorscale=colorscale, classes=classes, style=style, colorProp="Label"
+    colorscale=colorscale, classes=classes, style=style, colorProp="label"
 )
 
 # Header row
@@ -500,8 +500,8 @@ def draw_patches(
         year_values,
     )
 
-    classes = list(patches["Label"])
-    labels = list(patches["Year"])
+    classes = list(patches["label"])
+    labels = list(patches["year"])
 
     # Update area of interest
     aio = generate_poly(longitude_values, latitude_values)
@@ -521,7 +521,7 @@ def draw_patches(
         colorscale=colorscale,
         classes=classes,
         style=style,
-        colorProp="Label",
+        colorProp="label",
         parameter=parameter_value,
     )
 
