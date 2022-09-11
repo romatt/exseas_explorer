@@ -47,7 +47,7 @@ def filter_patches(
     df = df[(df["latmean"] >= lat_range[0]) & (df["latmean"] <= lat_range[1])]
 
     # Filter for years
-    df = df[(df["Year"] >= year_range[0]) & (df["Year"] <= year_range[1])]
+    df = df[(df["year"] >= year_range[0]) & (df["year"] <= year_range[1])]
 
     # Filter for criterion and number of values
     if criterion == 1:
