@@ -47,7 +47,7 @@ def filter_patches(
     df = df[(df["latmean"] >= lat_range[0]) & (df["latmean"] <= lat_range[1])]
 
     # Filter for years
-    df = df[(df["Year"] >= year_range[0]) & (df["Year"] <= year_range[1])]
+    df = df[(df["year"] >= year_range[0]) & (df["year"] <= year_range[1])]
 
     # Filter for criterion and number of values
     if criterion == 1:
@@ -184,7 +184,7 @@ def generate_table(
         long_name = f"Int. Land Anom. ({units})"
 
     # Only return relevant columns
-    df = df[["Label", "Year", column]]
+    df = df[["label", "year", column]]
     df[column] = df[column].round(2)
     df = df.sort_values(by=column, ascending=ascending)
     df = df.rename(columns={column: long_name})
@@ -193,7 +193,7 @@ def generate_table(
     list = []
 
     # Convert dataframe year to list
-    df_label = df["Label"].tolist()
+    df_label = df["label"].tolist()
 
     for ind, label in enumerate(labels):
         row = df_label.index(label)
@@ -201,7 +201,7 @@ def generate_table(
             {
                 "if": {
                     "row_index": row,
-                    "column_id": "Year",
+                    "column_id": "year",
                 },
                 "backgroundColor": str(colors[ind]),
                 "color": "white",
@@ -209,7 +209,7 @@ def generate_table(
         )
 
     # Drop label column before showing
-    df = df.drop(columns=["Label"])
+    df = df.drop(columns=["label"])
 
     table = dash_table.DataTable(
         data=df.to_dict("records"), style_data_conditional=list, cell_selectable=False
@@ -257,7 +257,7 @@ def generate_details(feature: dict):
         details = html.Div(
             [
                 html.P(f"Statistics on patch {feature['id']}"),
-                html.P(f"Year {feature['properties']['Year']}"),
+                html.P(f"Year {feature['properties']['year']}"),
                 html.P(f"Area {feature['properties']['area']}"),
                 html.P(f"Land area {feature['properties']['land_area']}"),
                 literature,
