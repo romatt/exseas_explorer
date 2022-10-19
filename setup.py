@@ -2,6 +2,8 @@
 
 """The setup script."""
 
+from __future__ import annotations
+
 from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
@@ -10,7 +12,7 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = []
+requirements: list = []
 
 test_requirements = [
     "pytest>=3",

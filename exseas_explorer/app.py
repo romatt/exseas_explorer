@@ -10,7 +10,8 @@ import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
-from util import (
+
+from .util import (
     filter_patches,
     generate_cbar,
     generate_dl,
@@ -90,7 +91,7 @@ REGION_LIST = [
 ]
 
 # LOAD DEFAULT PATCHES
-default_patches = load_patches(DATA_DIR / f"{DEFAULT_SETTING}.geojson")
+default_patches = load_patches(str(DATA_DIR / f"{DEFAULT_SETTING}.geojson"))
 default_patches = filter_patches(default_patches)
 classes = list(default_patches["label"])
 colorscale = generate_cbar(list(default_patches["year"]))

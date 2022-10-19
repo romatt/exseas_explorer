@@ -167,7 +167,9 @@ def update_patches(
     try:
         # Read dataframe with literature information
         lit_file = (
-            patch_file.replace("patches", "lit").replace(".nc", ".txt").replace("Prob", "")
+            patch_file.replace("patches", "lit")
+            .replace(".nc", ".txt")
+            .replace("Prob", "")
         )
         lit_data = pd.read_csv(
             os.path.join(work_dir, lit_file),
@@ -184,7 +186,7 @@ def update_patches(
         patch_out = patch_out.merge(lit_data, on="label", how="left")
 
     except EmptyDataError:
-        logger.info("No literature available for this extreme season")    
+        logger.info("No literature available for this extreme season")
 
     # Drop unused columns
     patch_out = patch_out.drop(

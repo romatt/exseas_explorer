@@ -151,7 +151,7 @@ def generate_table(
         Table with relevant columns
     """
 
-    pd.options.mode.chained_assignment = None
+    pd.options.mode.chained_assignment = None  # type: ignore[assignment]
 
     if parameter == "T2M":
         units = "K"
