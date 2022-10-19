@@ -2,8 +2,6 @@
 
 """The setup script."""
 
-from __future__ import annotations
-
 from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
