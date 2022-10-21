@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   mypy:
-    name: py${{ matrix.python-version }}
+    name: mypy (${{ matrix.python-version }})
 
     runs-on: ubuntu-latest
     strategy:
