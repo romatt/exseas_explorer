@@ -30,7 +30,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
-        python -m install mypy pandas-stubs
+        python -m pip install mypy pandas-stubs
         python -m pip install pytest -e .
     - name: mypy
       run: |
