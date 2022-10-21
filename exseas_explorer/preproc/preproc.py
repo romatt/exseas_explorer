@@ -23,7 +23,7 @@ logging.basicConfig(stream=sys.stdout, level=level, format=fmt)
 logger = logging.getLogger("__NAME__")
 
 
-def affine_transform(array) -> Affine:
+def affine_transform(array: xr.DataArray) -> Affine:
     """Returns the transform operator relating index coordinates to
     geographical coordinates of the dataset
 
@@ -43,7 +43,7 @@ def affine_transform(array) -> Affine:
     ) * Affine.scale(mean_grid_spacing, mean_grid_spacing)
 
 
-def extract_contours(array: xr.DataArray):
+def extract_contours(array: xr.DataArray) -> GeoDataFrame:
     """
     Extract contours
 
@@ -95,7 +95,7 @@ def extract_contours(array: xr.DataArray):
     return gdf
 
 
-def extend_domain(da: xr.DataArray):
+def extend_domain(da: xr.DataArray) -> xr.DataArray:
     """
     Extend domain both east and west by another 360 degrees to avoid polygons
     getting cut off at the date-line
@@ -123,8 +123,9 @@ def extend_domain(da: xr.DataArray):
 )
 @click.option("-p", "--patch_file", default="patches_40y_era5_RTOT_djf_ProbDry.nc")
 def update_patches(
-    work_dir="/ytpool/data/ETH/INTEXseas/", patch_file="patches_T2M_jja_ProbHot.nc"
-):
+    work_dir: str = "/ytpool/data/ETH/INTEXseas/",
+    patch_file: str = "patches_T2M_jja_ProbHot.nc",
+) -> GeoDataFrame:
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
 
@@ -145,7 +146,8 @@ def update_patches(
     logger.info(f"Processing {work_dir}{patch_file}")
 
     # Read NetCDF file
-    in_file = xr.open_dataset(os.path.join(work_dir, patch_file))
+    path = os.path.join(work_dir, patch_file)
+    in_file = xr.open_dataset(path)  # type: ignore[no-untyped-call]
 
     # Re-name key xarray and change data-type to work with shapes features
     in_file = in_file.rename({"time": "year"}).astype(np.float32)

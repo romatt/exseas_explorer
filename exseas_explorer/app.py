@@ -490,7 +490,7 @@ def draw_patches(
 
     # Load patches
     selected_patch = f"patches_{parameter_value}_{season_value}_{option_selected}"
-    patches = load_patches(DATA_DIR / f"{selected_patch}.geojson")
+    patches = load_patches(str(DATA_DIR / f"{selected_patch}.geojson"))
 
     patches = filter_patches(
         patches,
