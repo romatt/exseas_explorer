@@ -15,5 +15,5 @@ def default_patches():
 @pytest.fixture(scope="session")
 def test_file_netcdf():
     dir = os.path.abspath('tests/data')
-    patch_geojson = 'patches_T2M_jja_ProbHot_test.nc'
+    patch_geojson = 'patches_T2M_jja_ProbHot.nc'
     yield os.path.join(dir, patch_geojson)
