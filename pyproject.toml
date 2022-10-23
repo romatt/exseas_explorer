@@ -6,7 +6,7 @@ authors = ["Roman Attinger"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 click = "^8.1.2"
 geopandas = "^0.10.2"
 numpy = "^1.22.3"
