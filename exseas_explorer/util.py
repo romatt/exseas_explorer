@@ -167,9 +167,11 @@ def generate_table(
     if criterion == 1:
         column = "area"
         long_name = "Area (km^2)"
+        ascending = False
     elif criterion == 2:
         column = "land_area"
         long_name = "Land Area (km^2)"
+        ascending = False
     elif criterion == 3:
         column = "mean_ano"
         long_name = f"Mean Anom. ({units})"
