@@ -11,7 +11,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 
-from .util import (
+from exseas_explorer.util import (
     filter_patches,
     generate_cbar,
     generate_dl,
