@@ -15,9 +15,9 @@ def filter_patches(
     df: geopandas.GeoDataFrame,
     criterion: int = 1,
     nvals: int = 10,
-    lon_range: list[int] = [-180, 180],
-    lat_range: list[int] = [-90, 90],
-    year_range: list[int] = [1950, 2020],
+    lon_range: list[float] = [-180, 180],
+    lat_range: list[float] = [-90, 90],
+    year_range: list[float] = [1950, 2020],
 ) -> geopandas.GeoDataFrame:
     """
     Filter patches
