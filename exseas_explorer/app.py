@@ -35,8 +35,8 @@ MIN_YEAR = 1950
 MAX_YEAR = 2020
 MIN_NUM_EVENTS = 1
 MAX_NUM_EVENTS = 20
-lon_range = [-180, 180]
-lat_range = [-90, 90]
+lon_range: list[float] = [-180, 180]
+lat_range: list[float] = [-90, 90]
 DEFAULT_SETTING = "patches_T2M_djf_ProbCold"
 PARAMETER_LIST = [
     {"label": "2m Temperature", "value": "T2M"},
@@ -423,7 +423,7 @@ app.layout = html.Div([header, navbar, maprow, hidden])
     Output("latitude-selector", "value"),
     Input("region-selector", "value"),
 )
-def subset_region(region_value):
+def subset_region(region_value: str):
 
     if region_value == "world":
         longitude_range = [-180, 180]

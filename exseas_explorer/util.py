@@ -219,7 +219,7 @@ def generate_table(
     return table
 
 
-def generate_poly(lon_range, lat_range) -> FeatureCollection:
+def generate_poly(lon_range: list[float], lat_range: list[float]) -> FeatureCollection:
     """
     Generate a GeoJSON polygon with extensions of currently selected lon/lat restrictions
     """
