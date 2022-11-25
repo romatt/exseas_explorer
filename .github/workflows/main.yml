@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   mypy:
-    name: py${{ matrix.python-version }}
+    name: mypy (${{ matrix.python-version }})
 
     runs-on: ubuntu-latest
     strategy:
@@ -31,7 +31,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
         python -m pip install mypy pandas-stubs
-        python -m pip install pytest -e .
+        python -m pip install -e .
     - name: mypy
       run: |
         python -m mypy .
