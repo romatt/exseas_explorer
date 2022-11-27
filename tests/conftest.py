@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from exseas_explorer.util import filter_patches, load_patches
+from exseas_explorer.util import load_patches
 
 
 @pytest.fixture(scope="session")
