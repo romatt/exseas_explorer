@@ -10,7 +10,6 @@ h6 {
 .nav_column_top {
     margin:8px 0px 0px 12px;
     padding:0px;
-
 }
 
 .nav_column_bottom {
@@ -119,5 +118,37 @@ h6 {
 
     #eth_logo {
         display: none;
+    }
+
+    .col {
+        flex: 0 1 31%;
+    }
+
+    .title_column {
+        width:30%;
+    }
+
+    .logo_column {
+        flex: 1 0 0%;
+    }
+
+    @media only screen and (max-width: 550px) {
+        .col {
+            flex: 0 1 46%;
+        }
+        
+        .nav_column_bottom {
+            flex: 0 1 95%;
+        }
+
+        #iac_logo {
+            display: none;
+        }
+
+        @media only screen and (max-width: 320px) {
+            .col {
+                flex: 0 1 90%;
+            }
+        }
     }
 }

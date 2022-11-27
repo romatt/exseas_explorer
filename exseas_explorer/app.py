@@ -121,21 +121,25 @@ header = html.Div(
                                 "color": "white",
                             },
                         )
-                    ]
+                    ],
+                    className="title_column",
                 ),
                 dbc.Col(
                     [
                         html.Img(
+                            id="eth_logo",
                             src="/assets/eth_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
                         ),
                         html.Img(
+                            id="iac_logo",
                             src="/assets/iac_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
                         ),
-                    ]
+                    ],
+                    className="logo_column",
                 ),
             ],
         )
