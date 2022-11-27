@@ -2,15 +2,21 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import importlib.resources as pkg_resources
+import os
 import pathlib
+import uuid
 
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
+import flask
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
+from geojson import FeatureCollection, dump
+
 from exseas_explorer.util import (
+    build_download_button,
     filter_patches,
     generate_cbar,
     generate_dl,
@@ -40,7 +46,7 @@ DEFAULT_SETTING = "patches_T2M_djf_ProbCold"
 PARAMETER_LIST = [
     {"label": "2m Temperature", "value": "T2M"},
     {"label": "Total Precipitation", "value": "RTOT"},
-    {"label": "10m Win", "value": "WG10"},
+    {"label": "10m Wind", "value": "WG10"},
 ]
 PARAMETER_OPTIONS = {
     "T2M": {
@@ -365,29 +371,22 @@ maprow = html.Div(
                                 html.Div(
                                     children=[poly_table],
                                     id="polygon-table",
-                                    style={"height": "calc(100vh - 350px)"},
+                                    style={"height": "calc(100vh - 400px)"},
                                 ),
                                 html.Div(
                                     [
                                         html.A(
-                                            "Download NetCDF (all)",
-                                            className="btn btn-danger btn-download",
-                                            id="btn-netcdf",
+                                            "Info",
+                                            className="btn btn-info btn-info btn-download",
+                                            id="btn-info",
                                         ),
-                                        dcc.Download(id="netcdf-download"),
-                                    ],
-                                    className="download_button",
+                                    ]
                                 ),
                                 html.Div(
-                                    [
-                                        html.A(
-                                            "Download GeoJSON (sel)",
-                                            className="btn btn-danger btn-download",
-                                            id="btn-geojson",
-                                        ),
-                                        dcc.Download(id="geojson-download"),
-                                    ],
-                                    className="download_button",
+                                    id="download-netcdf", className="download_button", children=[]
+                                ),
+                                html.Div(
+                                    id="download-json", className="download_button", children=[]
                                 ),
                             ],
                             id="right-collapse",
@@ -463,6 +462,7 @@ def subset_region(region_value: str):
     Output("aio", "data"),
     Output("file_name", "children"),
     Output("nval-selector", "max"),
+    Output("download-json", "children"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -506,7 +506,7 @@ def draw_patches(
     )
 
     # Check if number of values was modified due to filtering
-    if len(patches)< nval_value:
+    if len(patches) < nval_value:
         max_events = len(patches)
     else:
         max_events = MAX_NUM_EVENTS
@@ -541,6 +541,15 @@ def draw_patches(
         patches, colorscale, classes, ranking_option, parameter_value, parameter_option
     )
 
+    # Generate download button for selection
+    filename = f"{uuid.uuid1()}.geojson"
+    path = f"data/{filename}"
+    out_file = patches.fillna('')
+    with open(path, "w") as file:
+        dump(out_file, file)
+    uri = path
+    dl_button = [build_download_button(uri, "Download current selection as GeoJSON")]
+
     return (
         patches.__geo_interface__,
         hideout_dict,
@@ -550,31 +559,26 @@ def draw_patches(
         poly_table,
         aio,
         selected_patch,
-        max_events
+        max_events,
+        dl_button,
     )
 
 
-# @app.callback(
-#     Output("netcdf-download", "data"),
-#     Input("btn-netcdf", "n_clicks"),
-#     Input("file_name", "children"),
-#     prevent_initial_call=True,
-# )
-# def dl_netcdf(n_clicks, file_name):
-
-#     print(f"Sending ./data/{file_name}.nc")
-#     return dcc.send_file(f"./data/{file_name}.nc")
-
-
-# @app.callback(
-#     Output("geojson-download", "data"),
-#     Input("btn-geojson", "n_clicks"),
-#     Input("patches", "data"),
-#     prevent_initial_call=True,
-# )
-# def dl_geojson(n_clicks, patches):
-#     return None
-#     # return dcc.send_string(patches, "patches.geojson")
+@app.callback(
+    Output("download-netcdf", "children"),
+    Input("parameter-selector", "value"),
+    Input("option-selector", "value"),
+    Input("season-selector", "value"),
+    prevent_initial_call=True,
+)
+def show_netcdf_download(
+    parameter_value,
+    parameter_option,
+    season_value,
+):
+    selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}"
+    uri = f"data/{selected_patch}.nc"
+    return [build_download_button(uri, "Download raw data as NetCDF")]
 
 
 @app.callback(
@@ -603,6 +607,12 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
         return map_style, sidebar_style, toggle_style, button
 
     return map_style, sidebar_style, toggle_style, button
+
+
+@app.server.route("/data/<path:path>")
+def serve_static(path):
+    root_dir = os.getcwd()
+    return flask.send_from_directory(os.path.join(root_dir, "data"), path)
 
 
 server = app.server
