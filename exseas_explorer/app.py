@@ -10,7 +10,6 @@ import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
-
 from exseas_explorer.util import (
     filter_patches,
     generate_cbar,
@@ -459,6 +458,7 @@ def subset_region(region_value: str):
     Output("polygon-table", "children"),
     Output("aio", "data"),
     Output("file_name", "children"),
+    Output("nval-selector", "max"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -501,6 +501,12 @@ def draw_patches(
         year_values,
     )
 
+    # Check if number of values was modified due to filtering
+    if len(patches)< nval_value:
+        max_events = len(patches)
+    else:
+        max_events = MAX_NUM_EVENTS
+
     classes = list(patches["label"])
     labels = list(patches["year"])
 
@@ -540,6 +546,7 @@ def draw_patches(
         poly_table,
         aio,
         selected_patch,
+        max_events
     )
 
 

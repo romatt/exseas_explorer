@@ -1,0 +1,4 @@
+label;year;season;author;link;visited on;what
+584;1988;jja;The Weather Channel, 13 January 2015;https://weather.com/safety/heat/news/historical-droughts-20120330;accessed on 25 August 2021;Dozens of stations across the central part of the nation, particularly the Midwest, recorded record high temperatures.
+584;1988;jja;Trenberth et al., 1988;https://pubmed.ncbi.nlm.nih.gov/17730574/;;Strong anticyclonic conditions and a northward displaced jet stream in the upper atmosphere over North America throughout this period
+584;1988;jja;NOAA National Centers for Environmental Information (NCEI) U.S. Billion-Dollar Weather and Climate Disasters, 2021;https://www.ncdc.noaa.gov/billions/events/US/1980-2017;accessed on 25 August 2021;severe U.S. drought and heatwave

@@ -50,6 +50,13 @@ def filter_patches(
     # Filter for years
     df = df[(df["year"] >= year_range[0]) & (df["year"] <= year_range[1])]
 
+    # Check if the resulting number of patches is still larger than nvals, otherwise change it
+    max_vals = len(df)
+    # print(df)
+    # print(max_vals)
+    if max_vals < nvals:
+        nvals = max_vals
+
     # Filter for criterion and number of values
     if criterion == 1:
         df = df[df["area"] >= np.sort(df["area"])[-nvals]]
