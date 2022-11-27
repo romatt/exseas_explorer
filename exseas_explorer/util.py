@@ -1,4 +1,5 @@
 import functools
+from typing import Any
 
 import dash_leaflet as dl
 import geopandas
@@ -14,9 +15,9 @@ def filter_patches(
     df: geopandas.GeoDataFrame,
     criterion: int = 1,
     nvals: int = 10,
-    lon_range: list = [-180, 180],
-    lat_range: list = [-90, 90],
-    year_range: list = [1950, 2020],
+    lon_range: list[float] = [-180, 180],
+    lat_range: list[float] = [-90, 90],
+    year_range: list[float] = [1950, 2020],
 ) -> geopandas.GeoDataFrame:
     """
     Filter patches
@@ -108,12 +109,12 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
     return df
 
 
-def generate_cbar(labels: list) -> dl.Colorbar:
+def generate_cbar(labels: list[int]) -> dl.Colorbar:
     """
     Generate colorbar for provided year labels
 
     Test years
-    labels = [1952,1963,1964,1966,1969,1971,1979,1983,1987,2010]
+    labels = [1952, 1963, 1964, 1966, 1969, 1971, 1979, 1983, 1987, 2010]
 
     Parameters
     ----------
@@ -131,7 +132,7 @@ def generate_cbar(labels: list) -> dl.Colorbar:
 def generate_table(
     df: pd.DataFrame,
     colors: list,
-    labels: list,
+    labels: list[int],
     criterion: int = 1,
     parameter: str = "T2M",
     option: str = "ProbCold",
@@ -158,7 +159,7 @@ def generate_table(
         Table with relevant columns
     """
 
-    pd.options.mode.chained_assignment = None
+    pd.options.mode.chained_assignment = None  # type: ignore[assignment]
 
     if parameter == "T2M":
         units = "K"
@@ -227,7 +228,7 @@ def generate_table(
     return table
 
 
-def generate_poly(lon_range, lat_range):
+def generate_poly(lon_range: list[float], lat_range: list[float]) -> FeatureCollection:
     """
     Generate a GeoJSON polygon with extensions of currently selected lon/lat restrictions
     """
@@ -254,7 +255,7 @@ def generate_poly(lon_range, lat_range):
     return rect
 
 
-def generate_details(feature: dict):
+def generate_details(feature: dict[str, Any]) -> html.Div:
     """ """
 
     if feature is not None:
@@ -277,7 +278,7 @@ def generate_details(feature: dict):
     return details
 
 
-def generate_dl(df: pd.DataFrame, patch_name: str):
+def generate_dl(df: pd.DataFrame, patch_name: str) -> html.Div:
     """ """
 
     return html.Div(
