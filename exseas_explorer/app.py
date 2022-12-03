@@ -15,9 +15,15 @@ from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 from geojson import FeatureCollection, dump
 
-from exseas_explorer.util import (build_download_button, filter_patches,
-                                  generate_cbar, generate_dl, generate_poly,
-                                  generate_table, load_patches)
+from exseas_explorer.util import (
+    build_download_button,
+    filter_patches,
+    generate_cbar,
+    generate_dl,
+    generate_poly,
+    generate_table,
+    load_patches,
+)
 
 # allow arbitrary locations if exseas_explorer is installed and
 # default to /var/www otherwise
@@ -364,14 +370,23 @@ maprow = html.Div(
                                 ),
                                 html.Div(
                                     [
-                                        dbc.Button("Information \u2753", id="open", n_clicks=0),
+                                        dbc.Button(
+                                            "Information \u2753", id="open", n_clicks=0
+                                        ),
                                         dbc.Modal(
                                             [
-                                                dbc.ModalHeader(dbc.ModalTitle("Header")),
-                                                dbc.ModalBody("This is the content of the modal"),
+                                                dbc.ModalHeader(
+                                                    dbc.ModalTitle("Header")
+                                                ),
+                                                dbc.ModalBody(
+                                                    "This is the content of the modal"
+                                                ),
                                                 dbc.ModalFooter(
                                                     dbc.Button(
-                                                        "Close", id="close", className="ms-auto", n_clicks=0
+                                                        "Close",
+                                                        id="close",
+                                                        className="ms-auto",
+                                                        n_clicks=0,
                                                     )
                                                 ),
                                             ],
@@ -381,10 +396,14 @@ maprow = html.Div(
                                     ]
                                 ),
                                 html.Div(
-                                    id="download-netcdf", className="download_button", children=[]
+                                    id="download-netcdf",
+                                    className="download_button",
+                                    children=[],
                                 ),
                                 html.Div(
-                                    id="download-json", className="download_button", children=[]
+                                    id="download-json",
+                                    className="download_button",
+                                    children=[],
                                 ),
                             ],
                             id="right-collapse",
@@ -509,7 +528,17 @@ def draw_patches(
 
     # Catch situations where no events remain
     if max_events == 0:
-        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update
+        return (
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+        )
 
     classes = list(patches["label"])
     labels = list(patches["year"])
@@ -544,9 +573,9 @@ def draw_patches(
     # Generate download button for selection
     filename = f"{uuid.uuid1()}.geojson"
     path = f"data/{filename}"
-    out_file = patches.fillna('')
-    with open(path, "w") as file:
-        dump(out_file, file)
+    out_file = patches.fillna("")
+    # with open(path, "w") as file:
+    #     dump(out_file, file)
     uri = path
     dl_button = [build_download_button(uri, "Download current selection as GeoJSON")]
 
@@ -560,7 +589,7 @@ def draw_patches(
         aio,
         max_events,
         dl_button,
-        event_title
+        event_title,
     )
 
 
@@ -603,6 +632,7 @@ def toggle_sidebar(n_clicks, sidebar_style, toggle_style, button):
         return sidebar_style, toggle_style, button
 
     return sidebar_style, toggle_style, button
+
 
 @app.callback(
     Output("modal", "is_open"),
