@@ -38,12 +38,32 @@ h6 {
     padding-right: 10px;
 }
 
+#open {
+    text-align: center;
+    width:100%;
+}
+
+#modal {
+    top:10%;
+}
+
+.modal-content {
+    border-radius: 12px;
+    border: 0px;
+    box-shadow: 0px 0px 12px 5px rgb(0 0 0 / 30%)
+}
+
 #maprow {
     position:relative;
 }
 
 #map_column {
     padding:0;
+    width: 100%;
+    height: calc(100vh - 240px);
+    display: block;
+    flex: none;
+    z-index: 0;
 }
 
 #toggle-sidebar {
@@ -70,6 +90,9 @@ h6 {
 
 #sidebar_column {
     padding:0;
+    z-index:1000;
+    position: fixed;
+    border-left: 1px solid rgb(211, 211, 211);
 }
 
 #ranking-selector .Select-menu-outer {

@@ -312,7 +312,7 @@ maprow = html.Div(
                     [
                         dl.Map(
                             center=[0, 0],
-                            zoom=2,
+                            zoom=2.5,
                             worldCopyJump=True,
                             minZoom=2,
                             zoomSnap=0.25,
@@ -343,12 +343,6 @@ maprow = html.Div(
                         )
                     ],
                     id="map_column",
-                    style={
-                        "width": "calc(100vw - 250px)",
-                        "height": "calc(100vh - 240px)",
-                        "display": "block",
-                        "flex": "none",
-                    },
                 ),
                 dbc.Button(
                     children=["❯"],
@@ -369,7 +363,7 @@ maprow = html.Div(
                                 ),
                                 html.Div(
                                     [
-                                        dbc.Button("Open modal", id="open", n_clicks=0),
+                                        dbc.Button("Information \u2753", id="open", n_clicks=0),
                                         dbc.Modal(
                                             [
                                                 dbc.ModalHeader(dbc.ModalTitle("Header")),
@@ -397,12 +391,12 @@ maprow = html.Div(
                     ],
                     id="sidebar_column",
                     style={
-                        "width": "250px",
+                        "width": "249px",
                         "display": "block",
                         "flex": "none",
-                        "position": "absolute",
                         "right": "0px",
                     },
+                    className="bg-light",
                 ),
             ],
         )
@@ -581,31 +575,27 @@ def show_netcdf_download(
 
 
 @app.callback(
-    Output("map_column", "style"),
     Output("sidebar_column", "style"),
     Output("toggle-sidebar", "style"),
     Output("toggle-sidebar", "children"),
     Input("toggle-sidebar", "n_clicks"),
-    Input("map_column", "style"),
     Input("sidebar_column", "style"),
     Input("toggle-sidebar", "style"),
     Input("toggle-sidebar", "children"),
 )
-def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
+def toggle_sidebar(n_clicks, sidebar_style, toggle_style, button):
     if n_clicks:
         if sidebar_style["display"] == "none":
             sidebar_style["display"] = "block"
             toggle_style["right"] = "260px"
-            map_style["width"] = "calc(100vw - 250px)"
             button = ["❯"]
         else:
             sidebar_style["display"] = "none"
             toggle_style["right"] = "10px"
-            map_style["width"] = "100%"
             button = ["❮"]
-        return map_style, sidebar_style, toggle_style, button
+        return sidebar_style, toggle_style, button
 
-    return map_style, sidebar_style, toggle_style, button
+    return sidebar_style, toggle_style, button
 
 @app.callback(
     Output("modal", "is_open"),
