@@ -60,8 +60,8 @@ def filter_patches(
         title = "Number of events:"
 
     # Catch situtations where no events remain
-    if nvals == 0 :
-        df = geopandas.GeoDataFrame()    
+    if nvals == 0:
+        df = geopandas.GeoDataFrame()
     else:
         # Filter for criterion and number of values
         if criterion == 1:
@@ -75,7 +75,8 @@ def filter_patches(
         elif criterion == 4:
             df = df[~np.isnan(df["land_mean_ano"])]
             df = df[
-                np.abs(df["land_mean_ano"]) >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
+                np.abs(df["land_mean_ano"])
+                >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
             ]
         elif criterion == 5:
             df = df[
@@ -166,6 +167,7 @@ def generate_table(
     """
 
     pd.options.mode.chained_assignment = None  # type: ignore[assignment]
+    df.rename(columns={"year": "Year"}, inplace=True)
 
     if parameter == "T2M":
         units = "K"
@@ -200,7 +202,7 @@ def generate_table(
         long_name = f"Int. Land Anom. ({units})"
 
     # Only return relevant columns
-    df = df[["label", "year", column]]
+    df = df[["label", "Year", column]]
     df[column] = df[column].round(2)
     df = df.sort_values(by=column, ascending=ascending)
     df = df.rename(columns={column: long_name})
@@ -217,7 +219,7 @@ def generate_table(
             {
                 "if": {
                     "row_index": row,
-                    "column_id": "year",
+                    "column_id": "Year",
                 },
                 "backgroundColor": str(colors[ind]),
                 "color": "white",
@@ -305,7 +307,8 @@ def generate_dl(df: pd.DataFrame, patch_name: str) -> html.Div:
         id="download",
     )
 
-def build_download_button(uri: str, title: str  = "DOWNLOAD") -> html.Form:
+
+def build_download_button(uri: str, title: str = "DOWNLOAD") -> html.Form:
     """Generates a download button for the resource"""
     button = html.Form(
         action=uri,
@@ -314,8 +317,8 @@ def build_download_button(uri: str, title: str  = "DOWNLOAD") -> html.Form:
             html.Button(
                 className="btn btn-success btn-download",
                 type="submit",
-                children=[title]
+                children=[title],
             )
-        ]
+        ],
     )
     return button
