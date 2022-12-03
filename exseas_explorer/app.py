@@ -10,20 +10,14 @@ import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import flask
-from dash import Dash, dcc, html
+from dash import Dash, Input, Output, State, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 from geojson import FeatureCollection, dump
 
-from exseas_explorer.util import (
-    build_download_button,
-    filter_patches,
-    generate_cbar,
-    generate_dl,
-    generate_poly,
-    generate_table,
-    load_patches,
-)
+from exseas_explorer.util import (build_download_button, filter_patches,
+                                  generate_cbar, generate_dl, generate_poly,
+                                  generate_table, load_patches)
 
 # allow arbitrary locations if exseas_explorer is installed and
 # default to /var/www otherwise
@@ -375,10 +369,19 @@ maprow = html.Div(
                                 ),
                                 html.Div(
                                     [
-                                        html.A(
-                                            "Info",
-                                            className="btn btn-info btn-info btn-download",
-                                            id="btn-info",
+                                        dbc.Button("Open modal", id="open", n_clicks=0),
+                                        dbc.Modal(
+                                            [
+                                                dbc.ModalHeader(dbc.ModalTitle("Header")),
+                                                dbc.ModalBody("This is the content of the modal"),
+                                                dbc.ModalFooter(
+                                                    dbc.Button(
+                                                        "Close", id="close", className="ms-auto", n_clicks=0
+                                                    )
+                                                ),
+                                            ],
+                                            id="modal",
+                                            is_open=False,
                                         ),
                                     ]
                                 ),
@@ -406,8 +409,6 @@ maprow = html.Div(
     ]
 )
 
-hidden = html.Div([html.Div(id="file_name", children=[], style=dict(display="none"))])
-
 # Definition of app layout
 app = Dash(
     __name__,
@@ -417,7 +418,7 @@ app = Dash(
     external_scripts=["assets/color.js"],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
 )
-app.layout = html.Div([header, navbar, maprow, hidden])
+app.layout = html.Div([header, navbar, maprow])
 
 
 @app.callback(
@@ -460,7 +461,6 @@ def subset_region(region_value: str):
     Output("cbar", "children"),
     Output("polygon-table", "children"),
     Output("aio", "data"),
-    Output("file_name", "children"),
     Output("nval-selector", "max"),
     Output("download-json", "children"),
     Input("parameter-selector", "value"),
@@ -558,7 +558,6 @@ def draw_patches(
         [colorbar],
         poly_table,
         aio,
-        selected_patch,
         max_events,
         dl_button,
     )
@@ -607,6 +606,16 @@ def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
         return map_style, sidebar_style, toggle_style, button
 
     return map_style, sidebar_style, toggle_style, button
+
+@app.callback(
+    Output("modal", "is_open"),
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
 
 
 @app.server.route("/data/<path:path>")
