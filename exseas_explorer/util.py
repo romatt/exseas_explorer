@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from dash import dash_table, html
 from geojson import Feature, FeatureCollection, Polygon
-
+from typing import Tuple
 
 def filter_patches(
     df: geopandas.GeoDataFrame,
@@ -18,7 +18,7 @@ def filter_patches(
     lon_range: list[float] = [-180, 180],
     lat_range: list[float] = [-90, 90],
     year_range: list[float] = [1950, 2020],
-) -> geopandas.GeoDataFrame:
+) -> Tuple[geopandas.GeoDataFrame, str]:
     """
     Filter patches
 
