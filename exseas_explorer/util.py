@@ -52,36 +52,39 @@ def filter_patches(
 
     # Check if the resulting number of patches is still larger than nvals, otherwise change it
     max_vals = len(df)
-    # print(df)
-    # print(max_vals)
+
     if max_vals < nvals:
         nvals = max_vals
 
-    # Filter for criterion and number of values
-    if criterion == 1:
-        df = df[df["area"] >= np.sort(df["area"])[-nvals]]
-    elif criterion == 2:
-        # Remove instances where land_area is NAN
-        df = df[~np.isnan(df["land_area"])]
-        df = df[df["land_area"] >= np.sort(df["land_area"])[-nvals]]
-    elif criterion == 3:
-        df = df[np.abs(df["mean_ano"]) >= np.sort(np.abs(df["mean_ano"]))[-nvals]]
-    elif criterion == 4:
-        df = df[~np.isnan(df["land_mean_ano"])]
-        df = df[
-            np.abs(df["land_mean_ano"]) >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
-        ]
-    elif criterion == 5:
-        df = df[
-            np.abs(df["integrated_ano"])
-            >= np.sort(np.abs(df["integrated_ano"]))[-nvals]
-        ]
-    elif criterion == 6:
-        df = df[~np.isnan(df["land_integrated_ano"])]
-        df = df[
-            np.abs(df["land_integrated_ano"])
-            >= np.sort(np.abs(df["land_integrated_ano"]))[-nvals]
-        ]
+    # Catch situtations where no events remain
+    if nvals == 0 :
+        df = geopandas.GeoDataFrame()    
+    else:
+        # Filter for criterion and number of values
+        if criterion == 1:
+            df = df[df["area"] >= np.sort(df["area"])[-nvals]]
+        elif criterion == 2:
+            # Remove instances where land_area is NAN
+            df = df[~np.isnan(df["land_area"])]
+            df = df[df["land_area"] >= np.sort(df["land_area"])[-nvals]]
+        elif criterion == 3:
+            df = df[np.abs(df["mean_ano"]) >= np.sort(np.abs(df["mean_ano"]))[-nvals]]
+        elif criterion == 4:
+            df = df[~np.isnan(df["land_mean_ano"])]
+            df = df[
+                np.abs(df["land_mean_ano"]) >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
+            ]
+        elif criterion == 5:
+            df = df[
+                np.abs(df["integrated_ano"])
+                >= np.sort(np.abs(df["integrated_ano"]))[-nvals]
+            ]
+        elif criterion == 6:
+            df = df[~np.isnan(df["land_integrated_ano"])]
+            df = df[
+                np.abs(df["land_integrated_ano"])
+                >= np.sort(np.abs(df["land_integrated_ano"]))[-nvals]
+            ]
 
     return df
 
