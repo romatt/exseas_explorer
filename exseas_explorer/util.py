@@ -50,11 +50,14 @@ def filter_patches(
     # Filter for years
     df = df[(df["year"] >= year_range[0]) & (df["year"] <= year_range[1])]
 
-    # Check if the resulting number of patches is still larger than nvals, otherwise change it
-    max_vals = len(df)
+    # Check if the resulting number of events is still larger than nvals, otherwise change it
+    available_events = len(df)
 
-    if max_vals < nvals:
-        nvals = max_vals
+    if available_events < nvals:
+        nvals = available_events
+        title = f"Only {available_events} events available for this selection!"
+    else:
+        title = "Number of events:"
 
     # Catch situtations where no events remain
     if nvals == 0 :
@@ -86,7 +89,7 @@ def filter_patches(
                 >= np.sort(np.abs(df["land_integrated_ano"]))[-nvals]
             ]
 
-    return df
+    return df, title
 
 
 @functools.cache

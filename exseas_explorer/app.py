@@ -91,7 +91,7 @@ REGION_LIST = [
 
 # LOAD DEFAULT PATCHES
 default_patches = load_patches(str(DATA_DIR / f"{DEFAULT_SETTING}.geojson"))
-default_patches = filter_patches(default_patches)
+default_patches, event_title = filter_patches(default_patches)
 classes = list(default_patches["label"])
 colorscale = generate_cbar(list(default_patches["year"]))
 poly_table = generate_table(default_patches, colorscale, classes)
@@ -219,8 +219,10 @@ navbar = html.Div(
                 ),
                 dbc.Col(
                     [
-                        "Number of events:",
-                        html.Br(),
+                        html.Div(
+                            children=["Number of events:"],
+                            id="event-title",
+                        ),
                         dcc.Input(
                             value=10,
                             id="nval-selector",
@@ -456,6 +458,7 @@ def subset_region(region_value: str):
     Output("aio", "data"),
     Output("nval-selector", "max"),
     Output("download-json", "children"),
+    Output("event-title", "children"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -489,7 +492,7 @@ def draw_patches(
     selected_patch = f"patches_{parameter_value}_{season_value}_{option_selected}"
     patches = load_patches(str(DATA_DIR / f"{selected_patch}.geojson"))
 
-    patches = filter_patches(
+    patches, event_title = filter_patches(
         patches,
         ranking_option,
         nval_value,
@@ -557,6 +560,7 @@ def draw_patches(
         aio,
         max_events,
         dl_button,
+        event_title
     )
 
 

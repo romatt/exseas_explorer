@@ -26,16 +26,24 @@ h6 {
     margin-bottom:2em;
 }
 
-#longitude-selector, #latitude-selector, #year-selector {
-    padding-top:40px !important;
-}
-
 #nval-selector {
     border-radius: 4px;
     border: 1px solid #ccc;
     height: 36px;
     padding-left: 10px;
     padding-right: 10px;
+    /* float:left; */
+}
+
+#event-warning {
+    color:red;
+    /* margin-left: -5px;
+    margin-top: -4px;
+    min-height: 45px; */
+}
+
+#longitude-selector, #latitude-selector, #year-selector {
+    padding-top:40px !important;
 }
 
 #open {
