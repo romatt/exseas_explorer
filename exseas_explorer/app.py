@@ -10,7 +10,7 @@ import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import flask
-from dash import Dash, Input, Output, State, dcc, html
+from dash import Dash, Input, Output, State, dcc, html, no_update
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
 from geojson import FeatureCollection, dump
@@ -359,7 +359,6 @@ maprow = html.Div(
                                 html.Div(
                                     children=[poly_table],
                                     id="polygon-table",
-                                    style={"height": "calc(100vh - 400px)"},
                                 ),
                                 html.Div(
                                     [
@@ -504,6 +503,10 @@ def draw_patches(
         max_events = len(patches)
     else:
         max_events = MAX_NUM_EVENTS
+
+    # Catch situations where no events remain
+    if max_events == 0:
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update
 
     classes = list(patches["label"])
     labels = list(patches["year"])

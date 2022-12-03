@@ -95,6 +95,10 @@ h6 {
     border-left: 1px solid rgb(211, 211, 211);
 }
 
+#polygon-table {
+    height: calc(100vh - 400px);
+}
+
 #ranking-selector .Select-menu-outer {
     height:300px;
 }
@@ -136,6 +140,15 @@ h6 {
 
 /* SMALL SCREENS */
 @media only screen and (max-width: 990px) {
+
+    #map_column {
+        height: calc(100vh - 307px);
+    }
+
+    #polygon-table {
+        height: calc(100vh - 465px);
+    }
+
     .navbar-brand {
         font-size:large !important;
     }
@@ -157,6 +170,14 @@ h6 {
     }
 
     @media only screen and (max-width: 550px) {
+        #map_column {
+            height: calc(100vh - 600px);
+        }
+
+        #polygon-table {
+            height: calc(100vh - 758px);
+        }
+
         .col {
             flex: 0 1 46%;
         }
