@@ -10,6 +10,7 @@ import dash_leaflet.express as dlx
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
+
 from exseas_explorer.util import (
     filter_patches,
     generate_cbar,
@@ -502,7 +503,7 @@ def draw_patches(
     )
 
     # Check if number of values was modified due to filtering
-    if len(patches)< nval_value:
+    if len(patches) < nval_value:
         max_events = len(patches)
     else:
         max_events = MAX_NUM_EVENTS
@@ -546,7 +547,7 @@ def draw_patches(
         poly_table,
         aio,
         selected_patch,
-        max_events
+        max_events,
     )
 
 

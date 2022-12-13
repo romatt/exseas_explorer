@@ -1,12 +1,12 @@
-import pytest
-import numpy as np
 import geojson
+import numpy as np
+import pytest
 
 from exseas_explorer.util import (
     filter_patches,
     generate_cbar,
-    generate_table,
     generate_poly,
+    generate_table,
 )
 
 
@@ -21,7 +21,7 @@ def test_filter_patches(default_patches):
     filtered_patches = filter_patches(default_patches, nvals=1)
     assert len(filtered_patches) == 1
     filtered_patches = filter_patches(default_patches, criterion=2)
-    assert any(np.isnan(filtered_patches["land_area"])) == False
+    assert not any(np.isnan(filtered_patches["land_area"]))
 
 
 @pytest.fixture
