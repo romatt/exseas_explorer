@@ -14,7 +14,7 @@ from dash_extensions.javascript import Namespace
 from exseas_explorer.util import (
     filter_patches,
     generate_cbar,
-    generate_dl,
+    generate_download,
     generate_poly,
     generate_table,
     load_patches,
@@ -96,7 +96,7 @@ default_patches = filter_patches(default_patches)
 classes = list(default_patches["label"])
 colorscale = generate_cbar(list(default_patches["year"]))
 poly_table = generate_table(default_patches, colorscale, classes)
-poly_download = generate_dl(default_patches, DEFAULT_SETTING)
+poly_download = generate_download(default_patches, DEFAULT_SETTING)
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
@@ -362,29 +362,11 @@ maprow = html.Div(
                                 html.Div(
                                     children=[poly_table],
                                     id="polygon-table",
-                                    style={"height": "calc(100vh - 350px)"},
+                                    style={"height": "calc(100vh - 400px)"},
                                 ),
                                 html.Div(
-                                    [
-                                        html.A(
-                                            "Download NetCDF (all)",
-                                            className="btn btn-danger btn-download",
-                                            id="btn-netcdf",
-                                        ),
-                                        dcc.Download(id="netcdf-download"),
-                                    ],
-                                    className="download_button",
-                                ),
-                                html.Div(
-                                    [
-                                        html.A(
-                                            "Download GeoJSON (sel)",
-                                            className="btn btn-danger btn-download",
-                                            id="btn-geojson",
-                                        ),
-                                        dcc.Download(id="geojson-download"),
-                                    ],
-                                    className="download_button",
+                                    children=[poly_download],
+                                    id="poylgon-download",
                                 ),
                             ],
                             id="right-collapse",
@@ -457,6 +439,7 @@ def subset_region(region_value: str):
     Output("option-selector", "value"),
     Output("cbar", "children"),
     Output("polygon-table", "children"),
+    Output("poylgon-download", "children"),
     Output("aio", "data"),
     Output("file_name", "children"),
     Output("nval-selector", "max"),
@@ -538,6 +521,9 @@ def draw_patches(
         patches, colorscale, classes, ranking_option, parameter_value, parameter_option
     )
 
+    # generate download buttons
+    poly_download = generate_download(patches, selected_patch)
+
     return (
         patches.__geo_interface__,
         hideout_dict,
@@ -545,6 +531,7 @@ def draw_patches(
         option_selected,
         [colorbar],
         poly_table,
+        poly_download,
         aio,
         selected_patch,
         max_events,
@@ -575,15 +562,15 @@ def draw_patches(
 
 
 @app.callback(
-    Output("map_column", "style"),
-    Output("sidebar_column", "style"),
-    Output("toggle-sidebar", "style"),
-    Output("toggle-sidebar", "children"),
-    Input("toggle-sidebar", "n_clicks"),
-    Input("map_column", "style"),
-    Input("sidebar_column", "style"),
-    Input("toggle-sidebar", "style"),
-    Input("toggle-sidebar", "children"),
+        Output("map_column", "style"),
+        Output("sidebar_column", "style"),
+        Output("toggle-sidebar", "style"),
+        Output("toggle-sidebar", "children"),
+        Input("toggle-sidebar", "n_clicks"),
+        Input("map_column", "style"),
+        Input("sidebar_column", "style"),
+        Input("toggle-sidebar", "style"),
+        Input("toggle-sidebar", "children"),
 )
 def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
     if n_clicks:

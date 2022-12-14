@@ -259,42 +259,53 @@ def generate_details(feature: dict[str, Any]) -> html.Div:
     """ """
 
     if feature is not None:
-        if feature["properties"]["Link"] is not None:
-            literature = html.P("Literature")
-        else:
-            literature = html.P("No literature for this feature")
+    if feature["properties"]["Link"] is not None:
+        literature = html.P("Literature")
+    else:
+        literature = html.P("No literature for this feature")
 
-        details = html.Div(
-            [
-                html.P(f"Statistics on patch {feature['id']}"),
-                html.P(f"Year {feature['properties']['year']}"),
-                html.P(f"Area {feature['properties']['area']}"),
-                html.P(f"Land area {feature['properties']['land_area']}"),
-                literature,
-            ]
-        )
+    details = html.Div(
+        [
+            html.P(f"Statistics on patch {feature['id']}"),
+            html.P(f"Year {feature['properties']['year']}"),
+            html.P(f"Area {feature['properties']['area']}"),
+            html.P(f"Land area {feature['properties']['land_area']}"),
+            literature,
+        ]
+    )
     else:
         details = html.Div([html.P("You have not clicked on anything yet!")])
     return details
 
 
-def generate_dl(df: pd.DataFrame, patch_name: str) -> html.Div:
+def generate_download(df: pd.DataFrame, patch_name: str) -> html.Div:
     """ """
 
     return html.Div(
-        [
-            html.A(
-                "DOWNLOAD GEOJSON",
-                download=f"{patch_name}.geojson",
-                href=f"./data/{patch_name}.geojson",
-                className="btn btn-danger btn-download",
+        children=[
+            html.Div(
+                html.A(
+                    ["Download GeoJSON", html.Br(), "(selected polygons)"],
+                    download=f"{patch_name}.geojson",
+                    href=f"./data/{patch_name}.geojson",
+                    className="btn btn-danger btn-download",
+                    style={
+                        "width": "200px",
+                    },
+                ),
+                className="download_button",
             ),
-            html.A(
-                "DOWNLOAD NETCDF",
-                download=f"{patch_name}.nc",
-                href=f"./data/{patch_name}.nc",
-                className="btn btn-danger btn-download",
+            html.Div(
+                html.A(
+                    ["Download NetCDF", html.Br(), "(all polygons)"],
+                    download=f"{patch_name}.nc",
+                    href=f"./data/{patch_name}.nc",
+                    className="btn btn-danger btn-download",
+                    style={
+                        "width": "200px",
+                    },
+                ),
+                className="download_button",
             ),
-        ],
-        id="download",
+        ]
     )
