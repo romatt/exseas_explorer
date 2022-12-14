@@ -562,15 +562,15 @@ def draw_patches(
 
 
 @app.callback(
-        Output("map_column", "style"),
-        Output("sidebar_column", "style"),
-        Output("toggle-sidebar", "style"),
-        Output("toggle-sidebar", "children"),
-        Input("toggle-sidebar", "n_clicks"),
-        Input("map_column", "style"),
-        Input("sidebar_column", "style"),
-        Input("toggle-sidebar", "style"),
-        Input("toggle-sidebar", "children"),
+    Output("map_column", "style"),
+    Output("sidebar_column", "style"),
+    Output("toggle-sidebar", "style"),
+    Output("toggle-sidebar", "children"),
+    Input("toggle-sidebar", "n_clicks"),
+    Input("map_column", "style"),
+    Input("sidebar_column", "style"),
+    Input("toggle-sidebar", "style"),
+    Input("toggle-sidebar", "children"),
 )
 def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
     if n_clicks:
