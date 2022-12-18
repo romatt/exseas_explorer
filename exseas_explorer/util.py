@@ -308,7 +308,7 @@ def generate_dl(df: pd.DataFrame, patch_name: str) -> html.Div:
     )
 
 
-def build_download_button(uri: str, title: str = "DOWNLOAD") -> html.Form:
+def build_download_button(uri: str, title: str) -> html.Form:
     """Generates a download button for the resource"""
     button = html.Form(
         action=uri,
