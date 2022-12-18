@@ -13,7 +13,6 @@ import flask
 from dash import Dash, Input, Output, State, dcc, html, no_update
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
-from geojson import FeatureCollection, dump
 
 from exseas_explorer.util import (
     build_download_button,
