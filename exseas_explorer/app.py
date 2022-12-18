@@ -63,7 +63,7 @@ PARAMETER_OPTIONS = {
     },
     "WG10": {
         "options": [
-            {"label": "Windy", "value": "ProbWindy"},
+            {"label": "Stormy", "value": "ProbWindy"},
             {"label": "Calm", "value": "ProbCalm"},
         ]
     },
@@ -93,6 +93,29 @@ REGION_LIST = [
     {"label": "Europe", "value": "europe"},
     {"label": "North America", "value": "na"},
     {"label": "Asia", "value": "asia"},
+]
+MODAL_TITLE = [html.P("Additional Information")]
+MODAL_CONTENT = [
+    html.P("This Web-Application was co-developed for the Publication 'The ERA5 extreme seasons explorer as a basis for research at the weather and climate interface' by M. Boettcher, M. Röthlisberger, R. Attinger, J. Rieder, H. Wernli (2022)"),
+    html.H5("This section describes the available filters"),
+    html.P("'Parameters' and 'Type of Extreme' sets one of the six available weather types"),
+    html.Li("'2m Temperature' is the de-trended 2-metre temperature for which there are 'Cold' and 'Hot' extreme events"),
+    html.Li("'Total Precipitation' is the total precipitation for which there are 'Wet' and 'Dry' extreme events"),
+    html.Li("'10m Wind' is the 10-metre wind speed for which there are 'Stormy' or 'Calm' extreme events"),
+    html.Br(),
+    html.P("Season"),
+    html.Li("'DJF' represents the period December-January-February"),
+    html.Li("'MAM' represents the period March-April-May"),
+    html.Li("'JJA' represents the period June-July-August"),
+    html.Li("'SON' represents the period September-October-November"),
+    html.Br(),
+    html.P("Sort by allows to sort extreme events by different criteria"),
+    html.Li("'Area' filters for the spatially largest events"),
+    html.Li("'Area over Land' also filters for the spatially largest events, but considers only the land-area"),
+    html.Li("'Mean Anomaly' filters for the mean anomaly of the event"),
+    html.Li("'Mean Anomaly over Land' also filter for the mean anomaly of the event, but considers only the part of the event that is over land"),
+    html.Li("'Integrated Anomaly'"),
+    html.Li("'Integrated Anomaly over Land'"),
 ]
 
 # LOAD DEFAULT PATCHES
@@ -376,11 +399,9 @@ maprow = html.Div(
                                         dbc.Modal(
                                             [
                                                 dbc.ModalHeader(
-                                                    dbc.ModalTitle("Header")
+                                                    dbc.ModalTitle(MODAL_TITLE)
                                                 ),
-                                                dbc.ModalBody(
-                                                    "This is the content of the modal"
-                                                ),
+                                                dbc.ModalBody(MODAL_CONTENT),
                                                 dbc.ModalFooter(
                                                     dbc.Button(
                                                         "Close",

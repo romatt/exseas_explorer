@@ -55,7 +55,7 @@ def filter_patches(
 
     if available_events < nvals:
         nvals = available_events
-        title = f"Only {available_events} events available for this selection:"
+        title = f"Only {available_events} events in this selection:"
     else:
         title = "Number of events:"
 
