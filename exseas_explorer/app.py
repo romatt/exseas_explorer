@@ -95,12 +95,22 @@ REGION_LIST = [
 ]
 MODAL_TITLE = [html.P("Additional Information")]
 MODAL_CONTENT = [
-    html.P("This Web-Application was co-developed for the Publication 'The ERA5 extreme seasons explorer as a basis for research at the weather and climate interface' by M. Boettcher, M. Röthlisberger, R. Attinger, J. Rieder, H. Wernli (2022)"),
+    html.P(
+        "This Web-Application was co-developed for the Publication 'The ERA5 extreme seasons explorer as a basis for research at the weather and climate interface' by M. Boettcher, M. Röthlisberger, R. Attinger, J. Rieder, H. Wernli (2022)"
+    ),
     html.H5("This section describes the available filters"),
-    html.P("'Parameters' and 'Type of Extreme' sets one of the six available weather types"),
-    html.Li("'2m Temperature' is the de-trended 2-metre temperature for which there are 'Cold' and 'Hot' extreme events"),
-    html.Li("'Total Precipitation' is the total precipitation for which there are 'Wet' and 'Dry' extreme events"),
-    html.Li("'10m Wind' is the 10-metre wind speed for which there are 'Stormy' or 'Calm' extreme events"),
+    html.P(
+        "'Parameters' and 'Type of Extreme' sets one of the six available weather types"
+    ),
+    html.Li(
+        "'2m Temperature' is the de-trended 2-metre temperature for which there are 'Cold' and 'Hot' extreme events"
+    ),
+    html.Li(
+        "'Total Precipitation' is the total precipitation for which there are 'Wet' and 'Dry' extreme events"
+    ),
+    html.Li(
+        "'10m Wind' is the 10-metre wind speed for which there are 'Stormy' or 'Calm' extreme events"
+    ),
     html.Br(),
     html.P("Season"),
     html.Li("'DJF' represents the period December-January-February"),
@@ -110,9 +120,13 @@ MODAL_CONTENT = [
     html.Br(),
     html.P("Sort by allows to sort extreme events by different criteria"),
     html.Li("'Area' filters for the spatially largest events"),
-    html.Li("'Area over Land' also filters for the spatially largest events, but considers only the land-area"),
+    html.Li(
+        "'Area over Land' also filters for the spatially largest events, but considers only the land-area"
+    ),
     html.Li("'Mean Anomaly' filters for the mean anomaly of the event"),
-    html.Li("'Mean Anomaly over Land' also filter for the mean anomaly of the event, but considers only the part of the event that is over land"),
+    html.Li(
+        "'Mean Anomaly over Land' also filter for the mean anomaly of the event, but considers only the part of the event that is over land"
+    ),
     html.Li("'Integrated Anomaly'"),
     html.Li("'Integrated Anomaly over Land'"),
 ]
@@ -496,7 +510,6 @@ def subset_region(region_value: str):
     Output("polygon-table", "children"),
     Output("aio", "data"),
     Output("nval-selector", "max"),
-    Output("download-json", "children"),
     Output("event-title", "children"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
@@ -590,15 +603,6 @@ def draw_patches(
         patches, colorscale, classes, ranking_option, parameter_value, parameter_option
     )
 
-    # Generate download button for selection
-    filename = f"{uuid.uuid1()}.geojson"
-    path = f"data/{filename}"
-    out_file = patches.fillna("")
-    # with open(path, "w") as file:
-    #     dump(out_file, file)
-    uri = path
-    dl_button = [build_download_button(uri, "Download current selection as GeoJSON")]
-
     return (
         patches.__geo_interface__,
         hideout_dict,
@@ -608,7 +612,6 @@ def draw_patches(
         poly_table,
         aio,
         max_events,
-        dl_button,
         event_title,
     )
 
@@ -628,6 +631,19 @@ def show_netcdf_download(
     selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}"
     uri = f"data/{selected_patch}.nc"
     return [build_download_button(uri, "Download raw data as NetCDF")]
+
+
+@app.callback(Output("download-json", "children"), Input("patches", "data"))
+def show_geojson_download(patches):
+    # Generate download button for selection
+    # filename = f"{uuid.uuid1()}.geojson"
+    # path = f"data/{filename}"
+    # out_file = patches.fillna("")
+    # with open(path, "w") as file:
+    #     dump(out_file, file)
+    # uri = path
+    uri = "lala"
+    return [build_download_button(uri, "Download current selection as GeoJSON")]
 
 
 @app.callback(
