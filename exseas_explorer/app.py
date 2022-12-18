@@ -2,6 +2,7 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import importlib.resources as pkg_resources
+import json
 import os
 import pathlib
 import uuid
@@ -13,6 +14,7 @@ import flask
 from dash import Dash, Input, Output, State, dcc, html, no_update
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
+from geojson import dump
 
 from exseas_explorer.util import (
     build_download_button,
@@ -633,17 +635,20 @@ def show_netcdf_download(
     return [build_download_button(uri, "Download raw data as NetCDF")]
 
 
-@app.callback(Output("download-json", "children"), Input("patches", "data"))
-def show_geojson_download(patches):
-    # Generate download button for selection
-    # filename = f"{uuid.uuid1()}.geojson"
-    # path = f"data/{filename}"
-    # out_file = patches.fillna("")
-    # with open(path, "w") as file:
-    #     dump(out_file, file)
-    # uri = path
-    uri = "lala"
-    return [build_download_button(uri, "Download current selection as GeoJSON")]
+@app.callback(
+    Output("download-json", "children"),
+    Input("patches", "data"),
+    Input("download-json", "n_clicks")
+)
+def write_geojson(patches, n_clicks):
+    filename = f"tmp_{uuid.uuid1()}.geojson"
+    uri = f"data/{filename}"
+    # WARNING!!
+    # This will make the /data/ folder flooded with temporary geojsons...
+    # Have to come up with a better implementation for this!
+    # with open(uri, "w") as file:
+    #     file.write(json.dumps(patches))   
+    return build_download_button('/', "Download current selection as GeoJSON")
 
 
 @app.callback(
