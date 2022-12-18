@@ -11,6 +11,7 @@ import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import flask
+import geopandas as gpd
 from dash import Dash, Input, Output, State, dcc, html, no_update
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
@@ -564,6 +565,7 @@ def draw_patches(
     # Catch situations where no events remain
     if max_events == 0:
         return (
+            {'type': 'FeatureCollection', 'features': []},
             no_update,
             no_update,
             no_update,
@@ -571,8 +573,7 @@ def draw_patches(
             no_update,
             no_update,
             no_update,
-            no_update,
-            no_update,
+            "NO EVENTS LEFT, PLEASE CHANGE SELECTION!",
         )
 
     classes = list(patches["label"])
@@ -638,7 +639,7 @@ def show_netcdf_download(
 @app.callback(
     Output("download-json", "children"),
     Input("patches", "data"),
-    Input("download-json", "n_clicks")
+    Input("download-json", "n_clicks"),
 )
 def write_geojson(patches, n_clicks):
     filename = f"tmp_{uuid.uuid1()}.geojson"
@@ -647,8 +648,8 @@ def write_geojson(patches, n_clicks):
     # This will make the /data/ folder flooded with temporary geojsons...
     # Have to come up with a better implementation for this!
     # with open(uri, "w") as file:
-    #     file.write(json.dumps(patches))   
-    return build_download_button('/', "Download current selection as GeoJSON")
+    #     file.write(json.dumps(patches))
+    return build_download_button("/", "Download current selection as GeoJSON")
 
 
 @app.callback(
