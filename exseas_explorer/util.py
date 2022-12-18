@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from dash import dash_table, html
 from geojson import Feature, FeatureCollection, Polygon
-
+from typing import Tuple
 
 def filter_patches(
     df: geopandas.GeoDataFrame,
@@ -18,7 +18,7 @@ def filter_patches(
     lon_range: list[float] = [-180, 180],
     lat_range: list[float] = [-90, 90],
     year_range: list[float] = [1950, 2020],
-) -> geopandas.GeoDataFrame:
+) -> Tuple[geopandas.GeoDataFrame, str]:
     """
     Filter patches
 
@@ -50,40 +50,47 @@ def filter_patches(
     # Filter for years
     df = df[(df["year"] >= year_range[0]) & (df["year"] <= year_range[1])]
 
-    # Check if the resulting number of patches is still larger than nvals, otherwise change it
-    max_vals = len(df)
-    # print(df)
-    # print(max_vals)
-    if max_vals < nvals:
-        nvals = max_vals
+    # Check if the resulting number of events is still larger than nvals, otherwise change it
+    available_events = len(df)
 
-    # Filter for criterion and number of values
-    if criterion == 1:
-        df = df[df["area"] >= np.sort(df["area"])[-nvals]]
-    elif criterion == 2:
-        # Remove instances where land_area is NAN
-        df = df[~np.isnan(df["land_area"])]
-        df = df[df["land_area"] >= np.sort(df["land_area"])[-nvals]]
-    elif criterion == 3:
-        df = df[np.abs(df["mean_ano"]) >= np.sort(np.abs(df["mean_ano"]))[-nvals]]
-    elif criterion == 4:
-        df = df[~np.isnan(df["land_mean_ano"])]
-        df = df[
-            np.abs(df["land_mean_ano"]) >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
-        ]
-    elif criterion == 5:
-        df = df[
-            np.abs(df["integrated_ano"])
-            >= np.sort(np.abs(df["integrated_ano"]))[-nvals]
-        ]
-    elif criterion == 6:
-        df = df[~np.isnan(df["land_integrated_ano"])]
-        df = df[
-            np.abs(df["land_integrated_ano"])
-            >= np.sort(np.abs(df["land_integrated_ano"]))[-nvals]
-        ]
+    if available_events < nvals:
+        nvals = available_events
+        title = f"Only {available_events} events in this selection:"
+    else:
+        title = "Number of events:"
 
-    return df
+    # Catch situtations where no events remain
+    if nvals == 0:
+        df = geopandas.GeoDataFrame()
+    else:
+        # Filter for criterion and number of values
+        if criterion == 1:
+            df = df[df["area"] >= np.sort(df["area"])[-nvals]]
+        elif criterion == 2:
+            # Remove instances where land_area is NAN
+            df = df[~np.isnan(df["land_area"])]
+            df = df[df["land_area"] >= np.sort(df["land_area"])[-nvals]]
+        elif criterion == 3:
+            df = df[np.abs(df["mean_ano"]) >= np.sort(np.abs(df["mean_ano"]))[-nvals]]
+        elif criterion == 4:
+            df = df[~np.isnan(df["land_mean_ano"])]
+            df = df[
+                np.abs(df["land_mean_ano"])
+                >= np.sort(np.abs(df["land_mean_ano"]))[-nvals]
+            ]
+        elif criterion == 5:
+            df = df[
+                np.abs(df["integrated_ano"])
+                >= np.sort(np.abs(df["integrated_ano"]))[-nvals]
+            ]
+        elif criterion == 6:
+            df = df[~np.isnan(df["land_integrated_ano"])]
+            df = df[
+                np.abs(df["land_integrated_ano"])
+                >= np.sort(np.abs(df["land_integrated_ano"]))[-nvals]
+            ]
+
+    return df, title
 
 
 @functools.cache
@@ -160,6 +167,7 @@ def generate_table(
     """
 
     pd.options.mode.chained_assignment = None  # type: ignore[assignment]
+    df.rename(columns={"year": "Year"}, inplace=True)
 
     if parameter == "T2M":
         units = "K"
@@ -194,7 +202,7 @@ def generate_table(
         long_name = f"Int. Land Anom. ({units})"
 
     # Only return relevant columns
-    df = df[["label", "year", column]]
+    df = df[["label", "Year", column]]
     df[column] = df[column].round(2)
     df = df.sort_values(by=column, ascending=ascending)
     df = df.rename(columns={column: long_name})
@@ -211,7 +219,7 @@ def generate_table(
             {
                 "if": {
                     "row_index": row,
-                    "column_id": "year",
+                    "column_id": "Year",
                 },
                 "backgroundColor": str(colors[ind]),
                 "color": "white",
@@ -298,3 +306,19 @@ def generate_dl(df: pd.DataFrame, patch_name: str) -> html.Div:
         ],
         id="download",
     )
+
+
+def build_download_button(uri: str, title: str) -> html.Form:
+    """Generates a download button for the resource"""
+    button = html.Form(
+        action=uri,
+        method="get",
+        children=[
+            html.Button(
+                className="btn btn-success btn-download",
+                type="submit",
+                children=[title],
+            )
+        ],
+    )
+    return button

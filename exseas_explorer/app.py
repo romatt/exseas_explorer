@@ -2,16 +2,23 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import importlib.resources as pkg_resources
+import json
+import os
 import pathlib
+import uuid
 
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
-from dash import Dash, dcc, html
+import flask
+import geopandas as gpd
+from dash import Dash, Input, Output, State, dcc, html, no_update
 from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
+from geojson import dump
 
 from exseas_explorer.util import (
+    build_download_button,
     filter_patches,
     generate_cbar,
     generate_dl,
@@ -41,7 +48,7 @@ DEFAULT_SETTING = "patches_T2M_djf_ProbCold"
 PARAMETER_LIST = [
     {"label": "2m Temperature", "value": "T2M"},
     {"label": "Total Precipitation", "value": "RTOT"},
-    {"label": "10m Win", "value": "WG10"},
+    {"label": "10m Wind", "value": "WG10"},
 ]
 PARAMETER_OPTIONS = {
     "T2M": {
@@ -58,7 +65,7 @@ PARAMETER_OPTIONS = {
     },
     "WG10": {
         "options": [
-            {"label": "Windy", "value": "ProbWindy"},
+            {"label": "Stormy", "value": "ProbWindy"},
             {"label": "Calm", "value": "ProbCalm"},
         ]
     },
@@ -89,10 +96,47 @@ REGION_LIST = [
     {"label": "North America", "value": "na"},
     {"label": "Asia", "value": "asia"},
 ]
+MODAL_TITLE = [html.P("Additional Information")]
+MODAL_CONTENT = [
+    html.P(
+        "This Web-Application was co-developed for the Publication 'The ERA5 extreme seasons explorer as a basis for research at the weather and climate interface' by M. Boettcher, M. Röthlisberger, R. Attinger, J. Rieder, H. Wernli (2022)"
+    ),
+    html.H5("This section describes the available filters"),
+    html.P(
+        "'Parameters' and 'Type of Extreme' sets one of the six available weather types"
+    ),
+    html.Li(
+        "'2m Temperature' is the de-trended 2-metre temperature for which there are 'Cold' and 'Hot' extreme events"
+    ),
+    html.Li(
+        "'Total Precipitation' is the total precipitation for which there are 'Wet' and 'Dry' extreme events"
+    ),
+    html.Li(
+        "'10m Wind' is the 10-metre wind speed for which there are 'Stormy' or 'Calm' extreme events"
+    ),
+    html.Br(),
+    html.P("Season"),
+    html.Li("'DJF' represents the period December-January-February"),
+    html.Li("'MAM' represents the period March-April-May"),
+    html.Li("'JJA' represents the period June-July-August"),
+    html.Li("'SON' represents the period September-October-November"),
+    html.Br(),
+    html.P("Sort by allows to sort extreme events by different criteria"),
+    html.Li("'Area' filters for the spatially largest events"),
+    html.Li(
+        "'Area over Land' also filters for the spatially largest events, but considers only the land-area"
+    ),
+    html.Li("'Mean Anomaly' filters for the mean anomaly of the event"),
+    html.Li(
+        "'Mean Anomaly over Land' also filter for the mean anomaly of the event, but considers only the part of the event that is over land"
+    ),
+    html.Li("'Integrated Anomaly'"),
+    html.Li("'Integrated Anomaly over Land'"),
+]
 
 # LOAD DEFAULT PATCHES
 default_patches = load_patches(str(DATA_DIR / f"{DEFAULT_SETTING}.geojson"))
-default_patches = filter_patches(default_patches)
+default_patches, event_title = filter_patches(default_patches)
 classes = list(default_patches["label"])
 colorscale = generate_cbar(list(default_patches["year"]))
 poly_table = generate_table(default_patches, colorscale, classes)
@@ -122,21 +166,25 @@ header = html.Div(
                                 "color": "white",
                             },
                         )
-                    ]
+                    ],
+                    className="title_column",
                 ),
                 dbc.Col(
                     [
                         html.Img(
+                            id="eth_logo",
                             src="/assets/eth_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
                         ),
                         html.Img(
+                            id="iac_logo",
                             src="/assets/iac_logo.png",
                             height="60px",
                             style={"padding": "10px", "float": "right"},
                         ),
-                    ]
+                    ],
+                    className="logo_column",
                 ),
             ],
         )
@@ -216,8 +264,10 @@ navbar = html.Div(
                 ),
                 dbc.Col(
                     [
-                        "Number of events:",
-                        html.Br(),
+                        html.Div(
+                            children=["Number of events:"],
+                            id="event-title",
+                        ),
                         dcc.Input(
                             value=10,
                             id="nval-selector",
@@ -309,7 +359,7 @@ maprow = html.Div(
                     [
                         dl.Map(
                             center=[0, 0],
-                            zoom=2,
+                            zoom=2.5,
                             worldCopyJump=True,
                             minZoom=2,
                             zoomSnap=0.25,
@@ -340,12 +390,6 @@ maprow = html.Div(
                         )
                     ],
                     id="map_column",
-                    style={
-                        "width": "calc(100vw - 250px)",
-                        "height": "calc(100vh - 240px)",
-                        "display": "block",
-                        "flex": "none",
-                    },
                 ),
                 dbc.Button(
                     children=["❯"],
@@ -362,29 +406,41 @@ maprow = html.Div(
                                 html.Div(
                                     children=[poly_table],
                                     id="polygon-table",
-                                    style={"height": "calc(100vh - 350px)"},
                                 ),
                                 html.Div(
                                     [
-                                        html.A(
-                                            "Download NetCDF (all)",
-                                            className="btn btn-danger btn-download",
-                                            id="btn-netcdf",
+                                        dbc.Button(
+                                            "Information \u2753", id="open", n_clicks=0
                                         ),
-                                        dcc.Download(id="netcdf-download"),
-                                    ],
-                                    className="download_button",
+                                        dbc.Modal(
+                                            [
+                                                dbc.ModalHeader(
+                                                    dbc.ModalTitle(MODAL_TITLE)
+                                                ),
+                                                dbc.ModalBody(MODAL_CONTENT),
+                                                dbc.ModalFooter(
+                                                    dbc.Button(
+                                                        "Close",
+                                                        id="close",
+                                                        className="ms-auto",
+                                                        n_clicks=0,
+                                                    )
+                                                ),
+                                            ],
+                                            id="modal",
+                                            is_open=False,
+                                        ),
+                                    ]
                                 ),
                                 html.Div(
-                                    [
-                                        html.A(
-                                            "Download GeoJSON (sel)",
-                                            className="btn btn-danger btn-download",
-                                            id="btn-geojson",
-                                        ),
-                                        dcc.Download(id="geojson-download"),
-                                    ],
+                                    id="download-netcdf",
                                     className="download_button",
+                                    children=[],
+                                ),
+                                html.Div(
+                                    id="download-json",
+                                    className="download_button",
+                                    children=[],
                                 ),
                             ],
                             id="right-collapse",
@@ -392,19 +448,17 @@ maprow = html.Div(
                     ],
                     id="sidebar_column",
                     style={
-                        "width": "250px",
+                        "width": "249px",
                         "display": "block",
                         "flex": "none",
-                        "position": "absolute",
                         "right": "0px",
                     },
+                    className="bg-light",
                 ),
             ],
         )
     ]
 )
-
-hidden = html.Div([html.Div(id="file_name", children=[], style=dict(display="none"))])
 
 # Definition of app layout
 app = Dash(
@@ -415,7 +469,7 @@ app = Dash(
     external_scripts=["assets/color.js"],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
 )
-app.layout = html.Div([header, navbar, maprow, hidden])
+app.layout = html.Div([header, navbar, maprow])
 
 
 @app.callback(
@@ -458,8 +512,8 @@ def subset_region(region_value: str):
     Output("cbar", "children"),
     Output("polygon-table", "children"),
     Output("aio", "data"),
-    Output("file_name", "children"),
     Output("nval-selector", "max"),
+    Output("event-title", "children"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -493,7 +547,7 @@ def draw_patches(
     selected_patch = f"patches_{parameter_value}_{season_value}_{option_selected}"
     patches = load_patches(str(DATA_DIR / f"{selected_patch}.geojson"))
 
-    patches = filter_patches(
+    patches, event_title = filter_patches(
         patches,
         ranking_option,
         nval_value,
@@ -507,6 +561,20 @@ def draw_patches(
         max_events = len(patches)
     else:
         max_events = MAX_NUM_EVENTS
+
+    # Catch situations where no events remain
+    if max_events == 0:
+        return (
+            {'type': 'FeatureCollection', 'features': []},
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            "NO EVENTS LEFT, PLEASE CHANGE SELECTION!",
+        )
 
     classes = list(patches["label"])
     labels = list(patches["year"])
@@ -546,60 +614,83 @@ def draw_patches(
         [colorbar],
         poly_table,
         aio,
-        selected_patch,
         max_events,
+        event_title,
     )
 
 
-# @app.callback(
-#     Output("netcdf-download", "data"),
-#     Input("btn-netcdf", "n_clicks"),
-#     Input("file_name", "children"),
-#     prevent_initial_call=True,
-# )
-# def dl_netcdf(n_clicks, file_name):
-
-#     print(f"Sending ./data/{file_name}.nc")
-#     return dcc.send_file(f"./data/{file_name}.nc")
-
-
-# @app.callback(
-#     Output("geojson-download", "data"),
-#     Input("btn-geojson", "n_clicks"),
-#     Input("patches", "data"),
-#     prevent_initial_call=True,
-# )
-# def dl_geojson(n_clicks, patches):
-#     return None
-#     # return dcc.send_string(patches, "patches.geojson")
+@app.callback(
+    Output("download-netcdf", "children"),
+    Input("parameter-selector", "value"),
+    Input("option-selector", "value"),
+    Input("season-selector", "value"),
+    prevent_initial_call=True,
+)
+def show_netcdf_download(
+    parameter_value,
+    parameter_option,
+    season_value,
+):
+    selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}"
+    uri = f"data/{selected_patch}.nc"
+    return [build_download_button(uri, "Download raw data as NetCDF")]
 
 
 @app.callback(
-    Output("map_column", "style"),
+    Output("download-json", "children"),
+    Input("patches", "data"),
+    Input("download-json", "n_clicks"),
+)
+def write_geojson(patches, n_clicks):
+    filename = f"tmp_{uuid.uuid1()}.geojson"
+    uri = f"data/{filename}"
+    # WARNING!!
+    # This will make the /data/ folder flooded with temporary geojsons...
+    # Have to come up with a better implementation for this!
+    # with open(uri, "w") as file:
+    #     file.write(json.dumps(patches))
+    return build_download_button("/", "Download current selection as GeoJSON")
+
+
+@app.callback(
     Output("sidebar_column", "style"),
     Output("toggle-sidebar", "style"),
     Output("toggle-sidebar", "children"),
     Input("toggle-sidebar", "n_clicks"),
-    Input("map_column", "style"),
     Input("sidebar_column", "style"),
     Input("toggle-sidebar", "style"),
     Input("toggle-sidebar", "children"),
 )
-def toggle_sidebar(n_clicks, map_style, sidebar_style, toggle_style, button):
+def toggle_sidebar(n_clicks, sidebar_style, toggle_style, button):
     if n_clicks:
         if sidebar_style["display"] == "none":
             sidebar_style["display"] = "block"
             toggle_style["right"] = "260px"
-            map_style["width"] = "calc(100vw - 250px)"
             button = ["❯"]
         else:
             sidebar_style["display"] = "none"
             toggle_style["right"] = "10px"
-            map_style["width"] = "100%"
             button = ["❮"]
-        return map_style, sidebar_style, toggle_style, button
+        return sidebar_style, toggle_style, button
 
-    return map_style, sidebar_style, toggle_style, button
+    return sidebar_style, toggle_style, button
+
+
+@app.callback(
+    Output("modal", "is_open"),
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+@app.server.route("/data/<path:path>")
+def serve_static(path):
+    root_dir = os.getcwd()
+    return flask.send_from_directory(os.path.join(root_dir, "data"), path)
 
 
 server = app.server
