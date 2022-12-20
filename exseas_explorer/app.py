@@ -2,7 +2,6 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import importlib.resources as pkg_resources
-import json
 import os
 import pathlib
 import uuid
@@ -11,11 +10,8 @@ import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import flask
-import geopandas as gpd
 from dash import Dash, Input, Output, State, dcc, html, no_update
-from dash.dependencies import Input, Output
 from dash_extensions.javascript import Namespace
-from geojson import dump
 
 from exseas_explorer.util import (
     build_download_button,
@@ -565,7 +561,7 @@ def draw_patches(
     # Catch situations where no events remain
     if max_events == 0:
         return (
-            {'type': 'FeatureCollection', 'features': []},
+            {"type": "FeatureCollection", "features": []},
             no_update,
             no_update,
             no_update,

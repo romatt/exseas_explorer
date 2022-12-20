@@ -1,5 +1,5 @@
 import functools
-from typing import Any
+from typing import Any, Tuple
 
 import dash_leaflet as dl
 import geopandas
@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from dash import dash_table, html
 from geojson import Feature, FeatureCollection, Polygon
-from typing import Tuple
+
 
 def filter_patches(
     df: geopandas.GeoDataFrame,
