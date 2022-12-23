@@ -95,11 +95,11 @@ REGION_LIST = [
 MODAL_TITLE = [html.P("Additional Information")]
 MODAL_CONTENT = [
     html.P(
-        "This Web-Application was co-developed for the Publication 'The ERA5 extreme seasons explorer as a basis for research at the weather and climate interface' by M. Boettcher, M. Röthlisberger, R. Attinger, J. Rieder, H. Wernli (2022)"
+        "This Web-Application allows visualizing and accessing the ERA5 extreme season catalogue of Böttcher et al., (2023). A very brief explanation of the available types of extreme seasons as well as filters for extreme season object selection is provided below. For a more in-depth documentation of the extreme season catalogue please refer to Böttcher et al., (2023) [coming-soon] as well as to their Supplemental Material [coming-soon]."
     ),
-    html.H5("This section describes the available filters"),
+    html.H5("Available filters"),
     html.P(
-        "'Parameters' and 'Type of Extreme' sets one of the six available weather types"
+        "'Parameters' and 'Type of Extreme' sets one of the six available types of extreme seasons"
     ),
     html.Li(
         "'2m Temperature' is the de-trended 2-metre temperature for which there are 'Cold' and 'Hot' extreme events"
@@ -111,13 +111,13 @@ MODAL_CONTENT = [
         "'10m Wind' is the 10-metre wind speed for which there are 'Stormy' or 'Calm' extreme events"
     ),
     html.Br(),
-    html.P("Season"),
-    html.Li("'DJF' represents the period December-January-February"),
-    html.Li("'MAM' represents the period March-April-May"),
-    html.Li("'JJA' represents the period June-July-August"),
-    html.Li("'SON' represents the period September-October-November"),
+    html.P("'Season'"),
+    html.Li("'DJF' represents the months December-January-February"),
+    html.Li("'MAM' represents the months March-April-May"),
+    html.Li("'JJA' represents the months June-July-August"),
+    html.Li("'SON' represents the months September-October-November"),
     html.Br(),
-    html.P("Sort by allows to sort extreme events by different criteria"),
+    html.P("'Sort by' allows to sort extreme events by different criteria"),
     html.Li("'Area' filters for the spatially largest events"),
     html.Li(
         "'Area over Land' also filters for the spatially largest events, but considers only the land-area"
@@ -126,8 +126,12 @@ MODAL_CONTENT = [
     html.Li(
         "'Mean Anomaly over Land' also filter for the mean anomaly of the event, but considers only the part of the event that is over land"
     ),
-    html.Li("'Integrated Anomaly'"),
-    html.Li("'Integrated Anomaly over Land'"),
+    html.Li(
+        "'Integrated Anomaly' filters for the area integrated anomaly of the respective variable"
+    ),
+    html.Li(
+        "'Integrated Anomaly over Land' filters for the area integrated anomaly of the respective variable but only considers the part of each object that covers a land area"
+    ),
 ]
 
 # LOAD DEFAULT PATCHES
