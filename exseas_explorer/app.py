@@ -126,8 +126,12 @@ MODAL_CONTENT = [
     html.Li(
         "'Mean Anomaly over Land' also filter for the mean anomaly of the event, but considers only the part of the event that is over land"
     ),
-    html.Li("'Integrated Anomaly' filters for the area integrated anomaly of the respective variable"),
-    html.Li("'Integrated Anomaly over Land' filters for the area integrated anomaly of the respective variable but only considers the part of each object that covers a land area"),
+    html.Li(
+        "'Integrated Anomaly' filters for the area integrated anomaly of the respective variable"
+    ),
+    html.Li(
+        "'Integrated Anomaly over Land' filters for the area integrated anomaly of the respective variable but only considers the part of each object that covers a land area"
+    ),
 ]
 
 # LOAD DEFAULT PATCHES
