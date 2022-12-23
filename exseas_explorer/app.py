@@ -632,7 +632,7 @@ def show_netcdf_download(
     season_value,
 ):
     selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}"
-    uri = f"{DATA_DIR}/{selected_patch}.nc"
+    uri = f"data/{selected_patch}.nc"
     return [build_download_button(uri, "Download raw data as NetCDF")]
 
 
