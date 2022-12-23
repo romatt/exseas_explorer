@@ -97,7 +97,7 @@ MODAL_CONTENT = [
     html.P(
         "This Web-Application allows visualizing and accessing the ERA5 extreme season catalogue of Böttcher et al., (2023). A very brief explanation of the available types of extreme seasons as well as filters for extreme season object selection is provided below. For a more in-depth documentation of the extreme season catalogue please refer to Böttcher et al., (2023) [coming-soon] as well as to their Supplemental Material [coming-soon]."
     ),
-    html.H5("This section describes the available filters"),
+    html.H5("Available filters"),
     html.P(
         "'Parameters' and 'Type of Extreme' sets one of the six available types of extreme seasons"
     ),
