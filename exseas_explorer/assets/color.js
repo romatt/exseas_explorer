@@ -21,7 +21,7 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
             const props = feature.properties;
             delete props.cluster;
             const patch = JSON.stringify(props.label);
-            const year = JSON.stringify(props.year);
+            const year = JSON.stringify(props.Year);
             const area = parseFloat(JSON.stringify(props.area)).toFixed(2);
             const land_area = parseFloat(JSON.stringify(props.land_area)).toFixed(2);
             const mean_ano = parseFloat(JSON.stringify(props.mean_ano)).toFixed(2);
@@ -61,7 +61,7 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
                 }
             }
 
-            layer.bindPopup("<h6>Patch " + patch + "</h6>Year: " + year + "<br>\
+            layer.bindPopup("<h6>Object " + patch + "</h6>Year: " + year + "<br>\
                             Area: " + area + "km<sup>2</sup><br>\
                             Land Area: " + land_area + "km<sup>2</sup><br>\
                             Mean Anomaly: " + mean_ano + units + "<br>\
