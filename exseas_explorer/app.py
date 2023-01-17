@@ -1,23 +1,22 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+import hashlib
 import importlib.resources as pkg_resources
 import os
 import pathlib
-import uuid
 
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import flask
+import geopandas
 from dash import Dash, Input, Output, State, dcc, html, no_update
 from dash_extensions.javascript import Namespace
 
 from exseas_explorer.util import (
-    build_download_button,
     filter_patches,
     generate_cbar,
-    generate_dl,
     generate_poly,
     generate_table,
     load_patches,
@@ -140,7 +139,6 @@ default_patches, event_title = filter_patches(default_patches)
 classes = list(default_patches["label"])
 colorscale = generate_cbar(list(default_patches["year"]))
 poly_table = generate_table(default_patches, colorscale, classes)
-poly_download = generate_dl(default_patches, DEFAULT_SETTING)
 
 # POLYGON STYLE DEFINITIONS
 style = dict(fillOpacity=0.5, weight=2)
@@ -435,12 +433,33 @@ maprow = html.Div(
                                 html.Div(
                                     id="download-netcdf",
                                     className="download_button",
-                                    children=[],
+                                    children=[
+                                        html.A(
+                                            "Download raw data as netCDF",
+                                            download=f"{DEFAULT_SETTING}.nc",
+                                            href=f"{DATA_DIR}/{DEFAULT_SETTING}.nc",
+                                            className="btn btn-success btn-download",
+                                            id="download-netcdf-anchor",
+                                        ),
+                                    ],
                                 ),
                                 html.Div(
                                     id="download-json",
                                     className="download_button",
-                                    children=[],
+                                    children=[
+                                        html.Div(
+                                            [
+                                                html.Button(
+                                                    "Download current selection as GeoJSON",
+                                                    id="btn-json-download",
+                                                    className="btn btn-success btn-download",
+                                                ),
+                                                dcc.Download(
+                                                    id="download-json-component"
+                                                ),
+                                            ]
+                                        )
+                                    ],
                                 ),
                             ],
                             id="right-collapse",
@@ -620,7 +639,8 @@ def draw_patches(
 
 
 @app.callback(
-    Output("download-netcdf", "children"),
+    Output("download-netcdf-anchor", "download"),
+    Output("download-netcdf-anchor", "href"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
     Input("season-selector", "value"),
@@ -631,25 +651,34 @@ def show_netcdf_download(
     parameter_option,
     season_value,
 ):
-    selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}"
-    uri = f"data/{selected_patch}.nc"
-    return [build_download_button(uri, "Download raw data as NetCDF")]
+    selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}.nc"
+    uri = f"{DATA_DIR}/{selected_patch}"
+    return selected_patch, uri
 
 
 @app.callback(
-    Output("download-json", "children"),
-    Input("patches", "data"),
+    Output("download-json-component", "data"),
+    State("patches", "data"),
+    State("parameter-selector", "value"),
+    State("option-selector", "value"),
+    State("season-selector", "value"),
     Input("download-json", "n_clicks"),
+    prevent_initial_call=True,
 )
-def write_geojson(patches, n_clicks):
-    filename = f"tmp_{uuid.uuid1()}.geojson"
-    uri = f"data/{filename}"
-    # WARNING!!
-    # This will make the /data/ folder flooded with temporary geojsons...
-    # Have to come up with a better implementation for this!
-    # with open(uri, "w") as file:
-    #     file.write(json.dumps(patches))
-    return build_download_button("/", "Download current selection as GeoJSON")
+def download_geojson(patches, parameter_value, parameter_option, season_value, _):
+
+    gdf = geopandas.GeoDataFrame.from_features(patches)
+    gdf = gdf.drop(columns=["visited on", "what"])
+    geojson = gdf.to_json()
+
+    # the filename should be the same, given the same patches
+    hash = hashlib.sha1(geojson.encode("utf-8")).hexdigest()[:8]
+
+    filename = (
+        f"patches_{parameter_value}_{season_value}_{parameter_option}_{hash}.geojson"
+    )
+
+    return dcc.send_string(geojson, filename=filename)
 
 
 @app.callback(
