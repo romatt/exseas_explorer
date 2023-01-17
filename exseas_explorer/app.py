@@ -1,10 +1,10 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+import hashlib
 import importlib.resources as pkg_resources
 import os
 import pathlib
-import uuid
 
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
@@ -659,17 +659,26 @@ def show_netcdf_download(
 @app.callback(
     Output("download-json-component", "data"),
     State("patches", "data"),
+    State("parameter-selector", "value"),
+    State("option-selector", "value"),
+    State("season-selector", "value"),
     Input("download-json", "n_clicks"),
     prevent_initial_call=True,
 )
-def write_geojson(patches, n_clicks):
-
-    filename = f"tmp_{uuid.uuid1()}.geojson"
+def download_geojson(patches, parameter_value, parameter_option, season_value, _):
 
     gdf = geopandas.GeoDataFrame.from_features(patches)
     gdf = gdf.drop(columns=["visited on", "what"])
+    geojson = gdf.to_json()
 
-    return dcc.send_string(gdf.to_json(), filename=filename)
+    # the filename should be the same, given the same patches
+    hash = hashlib.sha1(geojson.encode("utf-8")).hexdigest()[:8]
+
+    filename = (
+        f"patches_{parameter_value}_{season_value}_{parameter_option}_{hash}.geojson"
+    )
+
+    return dcc.send_string(geojson, filename=filename)
 
 
 @app.callback(
