@@ -94,7 +94,13 @@ REGION_LIST = [
 MODAL_TITLE = [html.P("Additional Information")]
 MODAL_CONTENT = [
     html.P(
-        "This Web-Application allows visualizing and accessing the ERA5 extreme season catalogue of Böttcher et al., (2023). A very brief explanation of the available types of extreme seasons as well as filters for extreme season object selection is provided below. For a more in-depth documentation of the extreme season catalogue please refer to Böttcher et al., (2023) [coming-soon] as well as to their Supplemental Material [coming-soon]."
+        [
+            "This Web-Application allows visualizing and accessing the ERA5 extreme season catalogue of Böttcher et al., (2023). A very brief explanation of the available types of extreme seasons as well as filters for extreme season object selection is provided below. For a more in-depth documentation of the extreme season catalogue please refer to ",
+            html.A("Böttcher et al. (2023)", target = "_blank", href = "https://journals.ametsoc.org/view/journals/bams/104/3/BAMS-D-21-0348.1.xml"),
+            " as well as to their ",
+            html.A("Supplemental Material", target = "_blank", href = "https://journals.ametsoc.org/supplemental/journals/bams/104/3/BAMS-D-21-0348.1.xml/10.1175_BAMS-D-21-0348.2.pdf?t:state:client=Db3o/0JSJOfoToVBJ4ILUV2f7FY=:H4sIAAAAAAAAAH2TsW8TMRTGnZSIVKkIjYo6ITEwXyYkEBM0rTj1CJESMbC9u3u5GHz28ey7JAuChQ4MLLAxMDD2X2FkYEMww4SE1An7UhpS9TKc5bN/+r7P79nHP1ljeokxtquJHSpKPMggmqBnIENtaH7L49IgSRCeRip4hNrbExylGSBpro2dHXAU8dAoggT9NBM3D3H+9ffu28s/To7qbCNgrUilmZIW9WPDOsFTKKArQCbdoSEuk7sB2xw7kT6k+Jy9YLWANTOrdvY/ywy7Eyk55klOEAq0c2ftoFDFc69QIk+Ra52jRrtt05yuGRUZthXlRJbvYWYmhu38L9XdW2jZCmy7ZJ5L5vl2LUHqfP/46c+ro9t1VvNZowCR44zY1SXXz9MQ6fXx++utd9/e1BmbZbacTLvYzA0bhrX1RE3vRbZ22rfO5V5j1e6+UgJBfr5BL798OPll7Z78s8tqK2LbpRgZHglcmC/k3Ni6wHdf2iIQGK5kCbqhvYJ1Sizmtma2c1NFsa4gtxw5cG2WY1XBNB3ja13ltr104yBG8wwrwJZtLpdgcKSiCmSzzEP2Vq4zeyQFlzjIw54VqzIrq5qbiaKqw7eWwauQaxHIAamEbKd5gT2uMwHzCridwuwBQmwfQHktz7DmOU0lBGQa+0o+BG4/Y057fkEAl3GIxFE/Lm9/ACGK9Z0K13aqh2PIhTlQlIKpAHfK4hXAhXtPC3T9FYrHAZfP1jLDPDTciKqGXXHMyAHnjvgXTbQg89MEAAA="),
+            "."
+        ]
     ),
     html.H5("Available filters"),
     html.P(
