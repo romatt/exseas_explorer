@@ -442,8 +442,7 @@ maprow = html.Div(
                                     children=[
                                         html.A(
                                             "Download raw data as netCDF",
-                                            download=f"{DEFAULT_SETTING}.nc",
-                                            href=f"{DATA_DIR}/{DEFAULT_SETTING}.nc",
+                                            href=f"data/{DEFAULT_SETTING}.nc",
                                             className="btn btn-success btn-download",
                                             id="download-netcdf-anchor",
                                         ),
@@ -645,7 +644,6 @@ def draw_patches(
 
 
 @app.callback(
-    Output("download-netcdf-anchor", "download"),
     Output("download-netcdf-anchor", "href"),
     Input("parameter-selector", "value"),
     Input("option-selector", "value"),
@@ -658,8 +656,9 @@ def show_netcdf_download(
     season_value,
 ):
     selected_patch = f"patches_{parameter_value}_{season_value}_{parameter_option}.nc"
+    # NOTE: this is a route (not a path)
     uri = f"data/{selected_patch}"
-    return selected_patch, uri
+    return uri
 
 
 @app.callback(
@@ -724,8 +723,7 @@ def toggle_modal(n1, n2, is_open):
 
 @app.server.route("/data/<path:path>")
 def serve_static(path):
-    root_dir = os.getcwd()
-    return flask.send_from_directory(os.path.join(root_dir, "data"), path)
+    return flask.send_from_directory(DATA_DIR, path)
 
 
 server = app.server
