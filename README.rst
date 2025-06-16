@@ -109,10 +109,11 @@ Clone Repository
 
 .. code-block:: console
 
-    $ pyenv install 3.9.12
-    $ pyenv global 3.9.12
+    $ pyenv install 3.12.8
+    $ pyenv global 3.12.8
+    $ poetry env use 3.12
     $ poetry shell
-    $ poetry install
+    $ poetry install --all-extras
     $ pytest
 
 Update requirements file needed for installing this library with pip
