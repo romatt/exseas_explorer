@@ -18,7 +18,7 @@ def test_load_patches(default_patches):
 def test_filter_patches(default_patches):
     filtered_patches, event_title = filter_patches(default_patches)
     assert len(filtered_patches) == 10
-    assert type(event_title) == str
+    assert type(event_title) is str
     # Constrained request resulting in no events left
     filtered_patches, event_title = filter_patches(
         default_patches, lon_range=[-180, -170], lat_range=[-90, -80], nvals=10
@@ -60,7 +60,7 @@ def test_generate_table(filtered_patches, colorscale):
 
 def test_generate_poly():
     polygon = generate_poly([-180, 180], [0, 90])
-    assert type(polygon) == geojson.feature.FeatureCollection
+    assert type(polygon) is geojson.feature.FeatureCollection
     assert len(polygon.features) == 1
     assert polygon.features[0].geometry.coordinates[0][0] == [-180, 0]
     assert len(polygon.features[0].geometry.coordinates[0]) == 5

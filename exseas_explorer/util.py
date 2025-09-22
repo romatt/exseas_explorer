@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Tuple
+from typing import Any
 
 import dash_leaflet as dl
 import geopandas
@@ -18,7 +18,7 @@ def filter_patches(
     lon_range: list[float] = [-180, 180],
     lat_range: list[float] = [-90, 90],
     year_range: list[float] = [1950, 2020],
-) -> Tuple[geopandas.GeoDataFrame, str]:
+) -> tuple[geopandas.GeoDataFrame, str]:
     """
     Filter patches
 
