@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Web application displaying areas associated with extreme weather events"
 authors = [{name = "Roman Attinger"}]
 license = "MIT"
-requires-python = "~3.12"
+requires-python = ">=3.12, <3.13"
 
 dependencies = [
   "click ~= 8.2.1",
@@ -57,3 +57,25 @@ module = [
   "shapely.*",
 ]
 
+[tool.ruff]
+
+[tool.ruff.lint]
+# E402: module level import not at top of file
+# E501: line too long - let the formatter worry about this
+# E731: do not assign a lambda expression, use a def
+ignore = [
+  "E402",
+  "E501",
+  "E731",
+]
+select = [
+  "E", # Pycodestyle
+  "F", # Pyflakes
+  "I", # isort
+  "TID",  # flake8-tidy-imports (absolute imports),
+  "UP", # Pyupgrade
+  "W", # warnings
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["exseas_explorer"]

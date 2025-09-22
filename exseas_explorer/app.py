@@ -3,7 +3,6 @@
 
 import hashlib
 import importlib.resources as pkg_resources
-import os
 import pathlib
 
 import dash_bootstrap_components as dbc
