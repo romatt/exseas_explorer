@@ -131,7 +131,7 @@ def generate_cbar(labels: list[int]) -> dl.Colorbar:
 
     # Define colors
     cmap = plt.get_cmap("nipy_spectral", len(labels))
-    colors = [matplotlib.colors.to_hex(cmap(x)) for x in np.arange(len(labels))]
+    colors = [matplotlib.colors.to_hex(cmap(x)) for x in range(len(labels))]
 
     return colors
 
