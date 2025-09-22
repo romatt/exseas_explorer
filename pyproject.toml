@@ -1,31 +1,32 @@
-[tool.poetry]
+[project]
 name = "exseas_explorer"
 version = "0.1.0"
 description = "Web application displaying areas associated with extreme weather events"
-authors = ["Roman Attinger"]
+authors = [{name = "Roman Attinger"}]
 license = "MIT"
+requires-python = "~3.12"
 
-[tool.poetry.dependencies]
-python = "~3.12"
-click = "^8.2.1"
-geopandas = "^0.14.4"
-numpy = "^2.2.6"
-pandas = "^2.2.3"
-xarray = "^2025.4.0"
-pyproj = "^3.7.1"
-rasterio = "^1.4.3"
-Shapely = "==1.8.1"
-dash = "^2.18.2"
-dash-bootstrap-components = "^1.6.0"
-dash-leaflet = "^0.1.28"
-matplotlib = "^3.10.3"
-dash-extensions = "^1.0.20"
-netCDF4 = "^1.7.2"
-geojson = "^3.2.0"
+dependencies = [
+  "click ~= 8.2.1",
+  "geopandas ~= 0.14.4",
+  "numpy ~= 2.2.6",
+  "pandas ~= 2.2.3",
+  "xarray ~= 2025.4.0",
+  "pyproj ~= 3.7.1",
+  "rasterio ~= 1.4.3",
+  "shapely ~= 1.8.1",
+  "dash ~= 2.18.2",
+  "dash-bootstrap-components ~= 1.6.0",
+  "dash-leaflet ~= 0.1.28",
+  "matplotlib ~= 3.10.3",
+  "dash-extensions ~= 1.0.20",
+  "netCDF4 ~= 1.7.2",
+  "geojson ~= 3.2.0",
+]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
-Sphinx = "^8.2.3"
+sphinx = "^8.2.3"
 ipykernel = "^6.29.5"
 sphinx-automodapi = "^0.19.0"
 pydata-sphinx-theme = "^0.16.1"
