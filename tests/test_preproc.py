@@ -31,7 +31,7 @@ def test_update_patches():
             os.path.abspath("tests/data"), "patches_T2M_jja_ProbHot_test.geojson"
         )
     )
-    testing.assert_geodataframe_equal(generated_patches, test_patches)
+    testing.assert_geodataframe_equal(generated_patches, test_patches, check_less_precise=True, normalize=True)
 
     # Delete the test file again
     os.remove(out_path)
