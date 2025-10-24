@@ -212,7 +212,9 @@ def update_patches(
 
     # Save geometries to file
     file_end = patch_file.replace("nc", "geojson")
-    patch_out.to_file(os.path.join(work_dir, file_end), driver="GeoJSON", index=False)
+    patch_out.to_file(
+        os.path.join(work_dir, file_end), driver="GeoJSON", index=False, engine="fiona"
+    )
 
 
 if __name__ == "__main__":
