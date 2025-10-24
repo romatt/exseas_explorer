@@ -67,4 +67,4 @@ jobs:
         python -m poetry sync
     - name: mypy
       run: |
-        poetry python -m mypy .
+        poetry run python -m mypy .
