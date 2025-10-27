@@ -374,13 +374,13 @@ maprow = html.Div(
                             worldCopyJump=True,
                             minZoom=2,
                             zoomSnap=0.25,
-                            style={"height": "50vh"},
+                            style={"height": "100%"},
                             children=[
                                 dl.TileLayer(),
                                 dl.GeoJSON(
                                     data=generate_poly(lon_range, lat_range),
                                     id="aio",
-                                    options=dict(
+                                    style=dict(
                                         fill=False,
                                         dashArray="7",
                                         color="gray",
