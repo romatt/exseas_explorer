@@ -171,9 +171,9 @@ header = html.Div(
                             "INTEXseas Extreme Season Explorer",
                             className="ml-1",
                             style={
-                                "font-size": "x-large",
+                                "fontSize": "x-large",
                                 "padding": "10px",
-                                "line-height": "60px",
+                                "lineHeight": "60px",
                                 "color": "white",
                             },
                         )
@@ -374,6 +374,7 @@ maprow = html.Div(
                             worldCopyJump=True,
                             minZoom=2,
                             zoomSnap=0.25,
+                            style={"height": "50vh"},
                             children=[
                                 dl.TileLayer(),
                                 dl.GeoJSON(

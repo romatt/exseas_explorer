@@ -6,18 +6,18 @@ window.myNamespace = Object.assign({}, window.myNamespace, {
                 colorscale,
                 style,
                 colorProp
-            } = context.props.hideout; // get props from hideout
+            } = context.hideout; // get props from hideout
             const value = feature.properties[colorProp]; // get value the determines the color
             for (let i = 0; i < classes.length; ++i) {
                 if (value == classes[i]) {
                     style.fillColor = colorscale[i]; // set the fill color according to the class
-                    style.color = colorscale[i]; // set the border color according to the class     
+                    style.color = colorscale[i]; // set the border color according to the class
                 }
             }
             return style;
         },
         bindPopup: function (feature, layer, context) {
-            const { parameter } = context.props.hideout;
+            const { parameter } = context.hideout;
             const props = feature.properties;
             delete props.cluster;
             const patch = JSON.stringify(props.label);
