@@ -45,24 +45,18 @@ PARAMETER_LIST = [
     {"label": "10m Wind", "value": "WG10"},
 ]
 PARAMETER_OPTIONS = {
-    "T2M": {
-        "options": [
-            {"label": "Hot", "value": "ProbHot"},
-            {"label": "Cold", "value": "ProbCold"},
-        ]
-    },
-    "RTOT": {
-        "options": [
-            {"label": "Wet", "value": "ProbWet"},
-            {"label": "Dry", "value": "ProbDry"},
-        ]
-    },
-    "WG10": {
-        "options": [
-            {"label": "Stormy", "value": "ProbWindy"},
-            {"label": "Calm", "value": "ProbCalm"},
-        ]
-    },
+    "T2M": [
+        {"label": "Hot", "value": "ProbHot"},
+        {"label": "Cold", "value": "ProbCold"},
+    ],
+    "RTOT": [
+        {"label": "Wet", "value": "ProbWet"},
+        {"label": "Dry", "value": "ProbDry"},
+    ],
+    "WG10": [
+        {"label": "Stormy", "value": "ProbWindy"},
+        {"label": "Calm", "value": "ProbCalm"},
+    ],
 }
 SEASON_LIST = [
     {"label": "DJF", "value": "djf"},
@@ -104,7 +98,7 @@ MODAL_CONTENT = [
             html.A(
                 "Supplemental Material",
                 target="_blank",
-                href="https://journals.ametsoc.org/supplemental/journals/bams/104/3/BAMS-D-21-0348.1.xml/10.1175_BAMS-D-21-0348.2.pdf?t:state:client=Db3o/0JSJOfoToVBJ4ILUV2f7FY=:H4sIAAAAAAAAAH2TsW8TMRTGnZSIVKkIjYo6ITEwXyYkEBM0rTj1CJESMbC9u3u5GHz28ey7JAuChQ4MLLAxMDD2X2FkYEMww4SE1An7UhpS9TKc5bN/+r7P79nHP1ljeokxtquJHSpKPMggmqBnIENtaH7L49IgSRCeRip4hNrbExylGSBpro2dHXAU8dAoggT9NBM3D3H+9ffu28s/To7qbCNgrUilmZIW9WPDOsFTKKArQCbdoSEuk7sB2xw7kT6k+Jy9YLWANTOrdvY/ywy7Eyk55klOEAq0c2ftoFDFc69QIk+Ra52jRrtt05yuGRUZthXlRJbvYWYmhu38L9XdW2jZCmy7ZJ5L5vl2LUHqfP/46c+ro9t1VvNZowCR44zY1SXXz9MQ6fXx++utd9/e1BmbZbacTLvYzA0bhrX1RE3vRbZ22rfO5V5j1e6+UgJBfr5BL798OPll7Z78s8tqK2LbpRgZHglcmC/k3Ni6wHdf2iIQGK5kCbqhvYJ1Sizmtma2c1NFsa4gtxw5cG2WY1XBNB3ja13ltr104yBG8wwrwJZtLpdgcKSiCmSzzEP2Vq4zeyQFlzjIw54VqzIrq5qbiaKqw7eWwauQaxHIAamEbKd5gT2uMwHzCridwuwBQmwfQHktz7DmOU0lBGQa+0o+BG4/Y057fkEAl3GIxFE/Lm9/ACGK9Z0K13aqh2PIhTlQlIKpAHfK4hXAhXtPC3T9FYrHAZfP1jLDPDTciKqGXXHMyAHnjvgXTbQg89MEAAA=",
+                href="https://journals.ametsoc.org/supplemental/journals/bams/104/3/BAMS-D-21-0348.1.xml/10.1175_BAMS-D-21-0348.2.pdf",
             ),
             ".",
         ]
@@ -171,9 +165,9 @@ header = html.Div(
                             "INTEXseas Extreme Season Explorer",
                             className="ml-1",
                             style={
-                                "font-size": "x-large",
+                                "fontSize": "x-large",
                                 "padding": "10px",
-                                "line-height": "60px",
+                                "lineHeight": "60px",
                                 "color": "white",
                             },
                         )
@@ -212,7 +206,8 @@ navbar = html.Div(
                     [
                         "Parameter:",
                         dcc.Dropdown(
-                            PARAMETER_LIST,
+                            # https://github.com/plotly/dash/issues/3487
+                            PARAMETER_LIST,  # type:ignore[arg-type]
                             "T2M",
                             id="parameter-selector",
                             clearable=False,
@@ -225,7 +220,7 @@ navbar = html.Div(
                     [
                         "Type of extreme:",
                         dcc.Dropdown(
-                            PARAMETER_OPTIONS["T2M"]["options"],
+                            PARAMETER_OPTIONS["T2M"],  # type:ignore[arg-type]
                             "ProbCold",
                             id="option-selector",
                             clearable=False,
@@ -238,7 +233,7 @@ navbar = html.Div(
                     [
                         "Season:",
                         dcc.Dropdown(
-                            SEASON_LIST,
+                            SEASON_LIST,  # type:ignore[arg-type]
                             "djf",
                             id="season-selector",
                             clearable=False,
@@ -251,7 +246,7 @@ navbar = html.Div(
                     [
                         "Sort by:",
                         dcc.Dropdown(
-                            RANKING_LIST,
+                            RANKING_LIST,  # type:ignore[arg-type]
                             1,
                             id="ranking-selector",
                             clearable=False,
@@ -264,7 +259,7 @@ navbar = html.Div(
                     [
                         "Region:",
                         dcc.Dropdown(
-                            REGION_LIST,
+                            REGION_LIST,  # type:ignore[arg-type]
                             "world",
                             id="region-selector",
                             clearable=False,
@@ -374,12 +369,13 @@ maprow = html.Div(
                             worldCopyJump=True,
                             minZoom=2,
                             zoomSnap=0.25,
+                            style={"height": "100%"},
                             children=[
                                 dl.TileLayer(),
                                 dl.GeoJSON(
                                     data=generate_poly(lon_range, lat_range),
                                     id="aio",
-                                    options=dict(
+                                    style=dict(
                                         fill=False,
                                         dashArray="7",
                                         color="gray",
@@ -495,7 +491,6 @@ maprow = html.Div(
 # Definition of app layout
 app = Dash(
     __name__,
-    update_title=None,
     title="INTEXseas Extreme Season Explorer",
     external_stylesheets=[dbc.themes.BOOTSTRAP, "assets/style.css"],
     external_scripts=["assets/color.js"],
@@ -564,7 +559,7 @@ def draw_patches(
     latitude_values,
     year_values,
 ):
-    parameter_options = PARAMETER_OPTIONS[f"{parameter_value}"]["options"]
+    parameter_options = PARAMETER_OPTIONS[parameter_value]
 
     # Check if parameter_option is contained in parameter_options
     if parameter_option in [d["value"] for d in parameter_options]:

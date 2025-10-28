@@ -1,13 +1,14 @@
 import functools
 from typing import Any
 
+import dash
 import dash_leaflet as dl
 import geopandas
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from dash import dash_table, html
+from dash import html
 from geojson import Feature, FeatureCollection, Polygon
 
 
@@ -143,7 +144,7 @@ def generate_table(
     criterion: int = 1,
     parameter: str = "T2M",
     option: str = "ProbCold",
-) -> dash_table.DataTable:
+):  # not typed - see below
     """
     Generate table for provided years
 
@@ -208,19 +209,16 @@ def generate_table(
     df = df.rename(columns={column: long_name})
 
     # Generate dict with colors for table
-    list = []
+    lst = []
 
     # Convert dataframe year to list
     df_label = df["label"].tolist()
 
     for ind, label in enumerate(labels):
         row = df_label.index(label)
-        list.append(
+        lst.append(
             {
-                "if": {
-                    "row_index": row,
-                    "column_id": "Year",
-                },
+                "if": {"row_index": row, "column_id": "Year"},
                 "backgroundColor": str(colors[ind]),
                 "color": "white",
             }
@@ -229,8 +227,15 @@ def generate_table(
     # Drop label column before showing
     df = df.drop(columns=["label"])
 
-    table = dash_table.DataTable(
-        data=df.to_dict("records"), style_data_conditional=list, cell_selectable=False
+    # DataTable
+    # - the class is defined in dash.dash_table.DataTable.DataTable but dash does some
+    #   dynamic imports (and it should be access at dash.dash_table.DataTable) which
+    #   confuses mypy
+    # - the input types are typed wrong (list[dict[...]], instead of dict[...])
+    # - it's scheduled to be removed (https://github.com/plotly/dash/issues/3436)
+
+    table = dash.dash_table.DataTable(  # type: ignore[attr-defined]
+        data=df.to_dict("records"), style_data_conditional=lst, cell_selectable=False
     )
 
     return table
