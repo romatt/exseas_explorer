@@ -26,7 +26,7 @@ from exseas_explorer.util import (
 try:
     DATA_DIR = pkg_resources.files("exseas_explorer") / "data"
 except ModuleNotFoundError:
-    DATA_DIR = pathlib.Path("/var/www/exseas_explorer/exseas_explorer/data/")
+    DATA_DIR = pathlib.Path("/data/exseas_explorer_data/")
 
 
 ns = Namespace("myNamespace", "mySubNamespace")
