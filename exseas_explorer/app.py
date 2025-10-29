@@ -388,80 +388,64 @@ maprow = html.Div(
                     style={"right": "260px"},
                 ),
                 dbc.Col(
-                    [
+                    children=[
                         html.Div(
-                            title="Polygon details",
-                            children=[
-                                html.Div(
-                                    children=[poly_table],
-                                    id="polygon-table",
-                                ),
-                                html.Div(
+                            children=[poly_table],
+                            id="polygon-table",
+                        ),
+                        # empty container to fill the space between table and buttons
+                        html.Div(style={"flex": "1 1 auto"}),
+                        html.Div(
+                            [
+                                dbc.Button("Information \u2753", id="open", n_clicks=0),
+                                dbc.Modal(
                                     [
-                                        dbc.Button(
-                                            "Information \u2753", id="open", n_clicks=0
-                                        ),
-                                        dbc.Modal(
-                                            [
-                                                dbc.ModalHeader(
-                                                    dbc.ModalTitle(MODAL_TITLE)
-                                                ),
-                                                dbc.ModalBody(MODAL_CONTENT),
-                                                dbc.ModalFooter(
-                                                    dbc.Button(
-                                                        "Close",
-                                                        id="close",
-                                                        className="ms-auto",
-                                                        n_clicks=0,
-                                                    )
-                                                ),
-                                            ],
-                                            id="modal",
-                                            is_open=False,
-                                        ),
-                                    ]
-                                ),
-                                html.Div(
-                                    id="download-netcdf",
-                                    className="download_button",
-                                    children=[
-                                        html.A(
-                                            "Download raw data as netCDF",
-                                            href=f"data/{DEFAULT_SETTING}.nc",
-                                            className="btn btn-success btn-download",
-                                            id="download-netcdf-anchor",
+                                        dbc.ModalHeader(dbc.ModalTitle(MODAL_TITLE)),
+                                        dbc.ModalBody(MODAL_CONTENT),
+                                        dbc.ModalFooter(
+                                            dbc.Button(
+                                                "Close",
+                                                id="close",
+                                                className="ms-auto",
+                                                n_clicks=0,
+                                            )
                                         ),
                                     ],
+                                    id="modal",
+                                    is_open=False,
                                 ),
-                                html.Div(
-                                    id="download-json",
-                                    className="download_button",
-                                    children=[
-                                        html.Div(
-                                            [
-                                                html.Button(
-                                                    "Download current selection as GeoJSON",
-                                                    id="btn-json-download",
-                                                    className="btn btn-success btn-download",
-                                                ),
-                                                dcc.Download(
-                                                    id="download-json-component"
-                                                ),
-                                            ]
-                                        )
-                                    ],
+                            ]
+                        ),
+                        html.Div(
+                            id="download-netcdf",
+                            className="download_button",
+                            children=[
+                                html.A(
+                                    "Download raw data as netCDF",
+                                    href=f"data/{DEFAULT_SETTING}.nc",
+                                    className="btn btn-success btn-download",
+                                    id="download-netcdf-anchor",
                                 ),
                             ],
-                            id="right-collapse",
-                        )
+                        ),
+                        html.Div(
+                            id="download-json",
+                            className="download_button",
+                            children=[
+                                html.Div(
+                                    [
+                                        html.Button(
+                                            "Download current selection as GeoJSON",
+                                            id="btn-json-download",
+                                            className="btn btn-success btn-download ",
+                                        ),
+                                        dcc.Download(id="download-json-component"),
+                                    ]
+                                )
+                            ],
+                        ),
                     ],
                     id="sidebar_column",
-                    style={
-                        "width": "249px",
-                        "display": "block",
-                        "flex": "none",
-                        "right": "0px",
-                    },
                     className="bg-light",
                 ),
             ],
