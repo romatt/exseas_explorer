@@ -23,11 +23,13 @@ from exseas_explorer.util import (
 
 # allow arbitrary locations if exseas_explorer is installed and
 # default to /var/www otherwise
-try:
-    DATA_DIR = pkg_resources.files("exseas_explorer") / "data"
-except ModuleNotFoundError:
-    DATA_DIR = pathlib.Path("/data/exseas_explorer_data/")
+DATA_DIR = pathlib.Path("/data/exseas_explorer_data/")
 
+if not DATA_DIR.is_dir():
+    try:
+        DATA_DIR = pkg_resources.files("exseas_explorer") / "data"  # type: ignore[assignment]
+    except ModuleNotFoundError as e:
+        raise ValueError("Install exseas_explorer or fix data path") from e
 
 ns = Namespace("myNamespace", "mySubNamespace")
 
