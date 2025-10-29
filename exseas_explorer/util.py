@@ -60,7 +60,7 @@ def filter_patches(
     else:
         title = "Number of events:"
 
-    # Catch situtations where no events remain
+    # Catch situations where no events remain
     if nvals == 0:
         df = geopandas.GeoDataFrame()
     else:
