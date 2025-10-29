@@ -61,7 +61,7 @@ def extract_contours(array: xr.DataArray) -> GeoDataFrame:
     # List holding all and land only contours
     polygons = []
 
-    # Compute affine transformer (relating x-y to coordiantes)
+    # Compute affine transformer (relating x-y to coordinates)
     affine = affine_transform(array)
 
     # Iterate over years
@@ -181,7 +181,7 @@ def update_patches(
         )
         lit_data = lit_data.astype({"label": "int32", "year": "int32"})
         lit_data = lit_data.drop(columns=["year", "season"])
-        # Some labels have multiple citations, need to aggreate those into lists
+        # Some labels have multiple citations, need to aggregate those into lists
         lit_data = lit_data.groupby("label").agg(dict)
 
         # Merge literature data with DF
