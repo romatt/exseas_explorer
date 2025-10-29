@@ -100,14 +100,20 @@ h6 {
 }
 
 #sidebar_column {
-    padding:0;
-    z-index:1000;
-    position: fixed;
+    padding:2px;
     border-left: 1px solid rgb(211, 211, 211);
+    position: fixed;
+    height: calc(100vh - 240px);
+    width: 249px;
+    right: 0px;
+    z-index:1000;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
 }
 
-#polygon-table {
-    height: calc(100vh - 400px);
+#map_column {
+    height: calc(100vh - 240px);
 }
 
 .cell-table {
@@ -148,6 +154,10 @@ h6 {
 /* SMALL SCREENS */
 @media only screen and (max-width: 990px) {
 
+    #sidebar_column {
+        height: calc(100vh - 307px);
+    }
+
     #map_column {
         height: calc(100vh - 307px);
     }
@@ -177,6 +187,10 @@ h6 {
     }
 
     @media only screen and (max-width: 550px) {
+        #sidebar_column {
+            height: calc(100vh - 600px);
+        }
+
         #map_column {
             height: calc(100vh - 600px);
         }
