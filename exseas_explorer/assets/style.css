@@ -107,7 +107,7 @@ h6 {
     width: 249px;
     right: 0px;
     z-index:1000;
-    display: flex;
+    /* display: flex; set inline -> required by toggle_sidebar callback */
     flex-flow: column nowrap;
     align-items: stretch;
 }
