@@ -447,6 +447,9 @@ maprow = html.Div(
                     ],
                     id="sidebar_column",
                     className="bg-light",
+                    style={ # required by toggle_sidebar callback
+                        "display": "flex",
+                    }
                 ),
             ],
         )
@@ -663,7 +666,7 @@ def download_geojson(patches, parameter_value, parameter_option, season_value, _
 def toggle_sidebar(n_clicks, sidebar_style, toggle_style, button):
     if n_clicks:
         if sidebar_style["display"] == "none":
-            sidebar_style["display"] = "block"
+            sidebar_style["display"] = "flex"
             toggle_style["right"] = "260px"
             button = ["❯"]
         else:
