@@ -122,7 +122,7 @@ or from poetry:
 
 .. code-block:: console
 
-    $ python exseas_explorer/app.py
+    $ poetry run python exseas_explorer/app.py
 
 Credits
 -------
