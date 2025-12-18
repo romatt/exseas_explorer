@@ -11,18 +11,18 @@ Setup for production
 
 1. Clone Repository directly to `/var/www/` or any directory that the web server has access to
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ cd /var/www/
-    $ git clone https://github.com/romatt/exseas_explorer.git
+       $ cd /var/www/
+       $ git clone https://github.com/romatt/exseas_explorer.git
 
 2. Set up permissions
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ cd /var/www/
-    $ sudo chown -R www-data:www-data exseas_explorer
-    $ cd exseas_explorer
+       $ cd /var/www/
+       $ sudo chown -R www-data:www-data exseas_explorer
+       $ cd exseas_explorer
 
 3. Manually copy the raw data into the /data sub-directory of the library
 
@@ -32,17 +32,17 @@ Setup for production
 
    NOTE: when using apache's _mod_wsgi_ the system python installation _must_ be used (however, a virtual environment is fine)
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ python3.12 -m venv /opt/venv/intexseas_py312
-    $ source /opt/venv/intexseas_py312/bin/activate
-    $ poetry sync --without=dev
+       $ python3.12 -m venv /opt/venv/intexseas_py312
+       $ source /opt/venv/intexseas_py312/bin/activate
+       $ poetry sync --without=dev
 
 5. Install the mod_wsgi Apache module for Python 3
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ sudo apt install libapache2-mod-wsgi-py3
+       $ sudo apt install libapache2-mod-wsgi-py3
 
 6. The apache configuration needs to contain the virtual environment directory
 
@@ -75,55 +75,55 @@ Setup for production
 
 7. Reload Apache
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ sudo service apache2 restart
+       $ sudo service apache2 restart
 
 Setup for development
 ---------------------
 
 Clone Repository
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ git clone https://github.com/romatt/exseas_explorer.git
-    $ cd exseas_explorer
+       $ git clone https://github.com/romatt/exseas_explorer.git
+       $ cd exseas_explorer
 
 **EITHER** set up a new python virtual environment using venv & pip
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ python3 -m venv <YOUR_VENV_DIR>
-    $ source <YOUR_VENV_DIR>/bin/activate
-    $ pip install -U tox-travis
-    $ python -m pip install -r requirements_dev.txt
-    $ pytest
+       $ python3 -m venv <YOUR_VENV_DIR>
+       $ source <YOUR_VENV_DIR>/bin/activate
+       $ pip install -U tox-travis
+       $ python -m pip install -r requirements_dev.txt
+       $ pytest
 
 **OR** Set up a new python virtual environment using pyenv & poetry
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ pyenv install 3.12.8
-    $ pyenv global 3.12.8
-    $ poetry env use 3.12
-    $ poetry shell
-    $ poetry install --all-extras
-    $ pytest
+       $ pyenv install 3.12.8
+       $ pyenv global 3.12.8
+       $ poetry env use 3.12
+       $ poetry shell
+       $ poetry install --all-extras
+       $ pytest
 
 Running dash application locally
 --------------------------------
 
 For testing purposes, the dash application can be run locally on port 8050. If port 8050 is not available, change the port specified at the very bottom of `exseas_explorer\app.py`.
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ python exseas_explorer/app.py
+       $ python exseas_explorer/app.py
 
 or from poetry:
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ poetry run python exseas_explorer/app.py
+       $ poetry run python exseas_explorer/app.py
 
 Credits
 -------
