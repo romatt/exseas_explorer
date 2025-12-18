@@ -2,126 +2,115 @@
 Extreme Seasons Explorer
 ========================
 
-.. image:: https://img.shields.io/pypi/v/exseas_explorer.svg
-        :target: https://pypi.python.org/pypi/exseas_explorer
-
-.. image:: https://img.shields.io/travis/romatt/exseas_explorer.svg
-        :target: https://travis-ci.com/romatt/exseas_explorer
-
-.. image:: https://readthedocs.org/projects/exseas-explorer/badge/?version=latest
-        :target: https://exseas-explorer.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
-
-
 INTEXseas Extreme Seasons Explorer
 
-
-* Free software: BSD license
-* Documentation: https://exseas-explorer.readthedocs.io.
+* Free software: MIT license
 
 Setup for production
 ---------------------
 
 1. Clone Repository directly to `/var/www/` or any directory that the web server has access to
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ cd /var/www/
-    $ git clone https://github.com/romatt/exseas_explorer.git
+       $ cd /var/www/
+       $ git clone https://github.com/romatt/exseas_explorer.git
 
 2. Set up permissions
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ cd /var/www/
-    $ sudo chown -R www-data:www-data exseas_explorer
-    $ cd exseas_explorer
+       $ cd /var/www/
+       $ sudo chown -R www-data:www-data exseas_explorer
+       $ cd exseas_explorer
 
 3. Manually copy the raw data into the /data sub-directory of the library
 
-4. Set up a new Python virtual environment where all required libraries are installed. Note that the system wide installed Python version must be used to avoid issues with shared libraries (i.e. don't use Python installed through pyenv or it will not work!).
+4. Ensure _poetry_ is installed.
 
-.. code-block:: console
+5. Set up a new Python virtual environment where all required libraries are installed.
 
-    $ python3 -m venv <YOUR_VENV_DIR>
-    $ source <YOUR_VENV_DIR>/bin/activate
-    $ pip install -U tox-travis
-    $ python -m pip install -r requirements.txt
+   NOTE: when using apache's _mod_wsgi_ the system python installation _must_ be used (however, a virtual environment is fine)
+
+   .. code-block:: console
+
+       $ python3.12 -m venv /opt/venv/intexseas_py312
+       $ source /opt/venv/intexseas_py312/bin/activate
+       $ poetry sync --without=dev
 
 5. Install the mod_wsgi Apache module for Python 3
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ sudo apt install libapache2-mod-wsgi-py3
+       $ sudo apt install libapache2-mod-wsgi-py3
 
 6. The apache configuration needs to contain the virtual environment directory
 
-.. code-block:: ApacheConf
+   .. code-block:: ApacheConf
 
-    <IfModule mod_ssl.c>
-            <VirtualHost *:443>
-                <VirtualHost *:443>
-                    ServerName <URL>
-                    SSLEngine On
-                    SSLProxyEngine On
+       VirtualHost *:80>
+               ServerName intexseas-explorer.ethz.ch
 
-                    SSLCertificateFile /etc/letsencrypt/live/<URL>/cert.pem
-                    SSLCertificateKeyFile /etc/letsencrypt/live/<URL>/privkey.pem
-                    SSLCertificateChainFile /etc/letsencrypt/live/<URL>/chain.pem
+               # commented because of LetsEncrypt bug uncomment in vhost.intexseas-explorer_ethz_ch-le-ssl.conf
+               #WSGIDaemonProcess intexseas processes=4 locale=en_US.UTF-8 python-home=/opt/venv/intexseas
+               #WSGIProcessGroup intexseas
+               #WSGIApplicationGroup %{GLOBAL}
 
-                    WSGIDaemonProcess intexseas processes=4 locale=en_US.UTF-8 python-home=<YOUR_VENV_DIR>
-                    WSGIProcessGroup intexseas
-                    WSGIApplicationGroup %{GLOBAL}
-                    WSGIScriptAlias / /var/www/exseas_explorer/exseas_explorer/FlaskApp.wsgi
-                    ErrorLog ${APACHE_LOG_DIR}/FlaskApp-error.log
-                    LogLevel warn
-                    CustomLog ${APACHE_LOG_DIR}/FlaskApp-access.log combined
-            </VirtualHost>
-    </IfModule>
+               #WSGIScriptAlias / /var/www/exseas_explorer/exseas_explorer/FlaskApp.wsgi
+
+               ErrorLog "logs/intexseas-explorer.ethz.ch-error_log"
+               LogLevel warn
+               CustomLog "logs/intexseas-explorer.ethz.ch-access.log" combined
+
+               #<Directory "/var/www/exseas_explorer/exseas_explorer">
+               #       Order allow,deny
+               #       Allow from all
+               #</Directory>
+
+               RewriteEngine on
+               RewriteCond %{SERVER_NAME} =intexseas-explorer.ethz.ch
+               RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+
+       </VirtualHost>
 
 7. Reload Apache
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ sudo service apache2 restart
+       $ sudo service apache2 restart
 
 Setup for development
 ---------------------
 
-Clone Repository
+1. Clone Repository
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ git clone https://github.com/romatt/exseas_explorer.git
-    $ cd exseas_explorer
+       $ git clone https://github.com/romatt/exseas_explorer.git
+       $ cd exseas_explorer
 
-**EITHER** set up a new python virtual environment using venv & pip
+2. Setup virtual environment
 
-.. code-block:: console
+   - **EITHER** set up a new python virtual environment using venv & pip
 
-    $ python3 -m venv <YOUR_VENV_DIR>
-    $ source <YOUR_VENV_DIR>/bin/activate
-    $ pip install -U tox-travis
-    $ python -m pip install -r requirements_dev.txt
-    $ pytest
+   .. code-block:: console
 
-**OR** Set up a new python virtual environment using pyenv & poetry
+       $ python3 -m venv <YOUR_VENV_DIR>
+       $ source <YOUR_VENV_DIR>/bin/activate
+       $ pip install -U tox-travis
+       $ python -m pip install -r requirements_dev.txt
+       $ pytest
 
-.. code-block:: console
+   - **OR** Set up a new python virtual environment using pyenv & poetry
 
-    $ pyenv install 3.12.8
-    $ pyenv global 3.12.8
-    $ poetry env use 3.12
-    $ poetry shell
-    $ poetry install --all-extras
-    $ pytest
+   .. code-block:: console
 
-Update requirements file needed for installing this library with pip
-
-.. code-block:: console
-
-    $ poetry export -f requirements.txt --output requirements.txt --without-hashes
-    $ poetry export -f requirements.txt --output requirements_dev.txt --without-hashes --dev
+       $ pyenv install 3.12.8
+       $ pyenv global 3.12.8
+       $ poetry env use 3.12
+       $ poetry shell
+       $ poetry install --all-extras
+       $ pytest
 
 Running dash application locally
 --------------------------------
@@ -132,13 +121,11 @@ For testing purposes, the dash application can be run locally on port 8050. If p
 
     $ python exseas_explorer/app.py
 
-Update documentation
-~~~~~~~~~~~~~~~~~~~~
+or from poetry:
 
 .. code-block:: console
 
-    $ cd doc
-    $ make html
+    $ poetry run python exseas_explorer/app.py
 
 Credits
 -------
