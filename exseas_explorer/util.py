@@ -181,6 +181,9 @@ def generate_table(
     if option in ["ProbCold", "ProbDry", "ProbCalm"]:
         ascending = True
 
+    # thousand-separator and no values after comma for large numbers
+    format_specifier = ",.0f"
+
     if criterion == 1:
         column = "area"
         long_name = "Area (km^2)"
@@ -192,9 +195,11 @@ def generate_table(
     elif criterion == 3:
         column = "mean_ano"
         long_name = f"Mean Anom. ({units})"
+        format_specifier = ",.2f"
     elif criterion == 4:
         column = "land_mean_ano"
         long_name = f"Mean Land Anom. ({units})"
+        format_specifier = ",.2f"
     elif criterion == 5:
         column = "integrated_ano"
         long_name = f"Int. Anom. ({units})"
@@ -230,6 +235,8 @@ def generate_table(
     # Drop label column before showing
     df = df.drop(columns=["label"])
 
+    locale = """d3.formatLocale({"thousands": "'", "grouping": [3]})"""
+
     columnDefs = [
         {
             "field": "Year",
@@ -240,6 +247,9 @@ def generate_table(
         {
             "field": df.columns[1],
             "type": "rightAligned",
+            "valueFormatter": {
+                "function": f"{locale}.format('{format_specifier}')(params.value)"
+            },
         },
     ]
 
