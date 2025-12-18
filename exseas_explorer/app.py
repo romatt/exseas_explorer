@@ -447,9 +447,9 @@ maprow = html.Div(
                     ],
                     id="sidebar_column",
                     className="bg-light",
-                    style={ # required by toggle_sidebar callback
+                    style={  # required by toggle_sidebar callback
                         "display": "flex",
-                    }
+                    },
                 ),
             ],
         )
