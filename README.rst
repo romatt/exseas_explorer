@@ -82,48 +82,50 @@ Setup for production
 Setup for development
 ---------------------
 
-Clone Repository
+1. Clone Repository
 
    .. code-block:: console
 
        $ git clone https://github.com/romatt/exseas_explorer.git
        $ cd exseas_explorer
 
-**EITHER** set up a new python virtual environment using venv & pip
+2. Setup virtual environment
 
-   .. code-block:: console
+   - **EITHER** set up a new python virtual environment using venv & pip
 
-       $ python3 -m venv <YOUR_VENV_DIR>
-       $ source <YOUR_VENV_DIR>/bin/activate
-       $ pip install -U tox-travis
-       $ python -m pip install -r requirements_dev.txt
-       $ pytest
+      .. code-block:: console
 
-**OR** Set up a new python virtual environment using pyenv & poetry
+          $ python3 -m venv <YOUR_VENV_DIR>
+          $ source <YOUR_VENV_DIR>/bin/activate
+          $ pip install -U tox-travis
+          $ python -m pip install -r requirements_dev.txt
+          $ pytest
 
-   .. code-block:: console
+   - **OR** Set up a new python virtual environment using pyenv & poetry
 
-       $ pyenv install 3.12.8
-       $ pyenv global 3.12.8
-       $ poetry env use 3.12
-       $ poetry shell
-       $ poetry install --all-extras
-       $ pytest
+      .. code-block:: console
+
+          $ pyenv install 3.12.8
+          $ pyenv global 3.12.8
+          $ poetry env use 3.12
+          $ poetry shell
+          $ poetry install --all-extras
+          $ pytest
 
 Running dash application locally
 --------------------------------
 
 For testing purposes, the dash application can be run locally on port 8050. If port 8050 is not available, change the port specified at the very bottom of `exseas_explorer\app.py`.
 
-   .. code-block:: console
+.. code-block:: console
 
-       $ python exseas_explorer/app.py
+    $ python exseas_explorer/app.py
 
 or from poetry:
 
-   .. code-block:: console
+.. code-block:: console
 
-       $ poetry run python exseas_explorer/app.py
+    $ poetry run python exseas_explorer/app.py
 
 Credits
 -------
