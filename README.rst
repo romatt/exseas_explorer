@@ -93,24 +93,24 @@ Setup for development
 
    - **EITHER** set up a new python virtual environment using venv & pip
 
-      .. code-block:: console
+   .. code-block:: console
 
-          $ python3 -m venv <YOUR_VENV_DIR>
-          $ source <YOUR_VENV_DIR>/bin/activate
-          $ pip install -U tox-travis
-          $ python -m pip install -r requirements_dev.txt
-          $ pytest
+       $ python3 -m venv <YOUR_VENV_DIR>
+       $ source <YOUR_VENV_DIR>/bin/activate
+       $ pip install -U tox-travis
+       $ python -m pip install -r requirements_dev.txt
+       $ pytest
 
    - **OR** Set up a new python virtual environment using pyenv & poetry
 
-      .. code-block:: console
+   .. code-block:: console
 
-          $ pyenv install 3.12.8
-          $ pyenv global 3.12.8
-          $ poetry env use 3.12
-          $ poetry shell
-          $ poetry install --all-extras
-          $ pytest
+       $ pyenv install 3.12.8
+       $ pyenv global 3.12.8
+       $ poetry env use 3.12
+       $ poetry shell
+       $ poetry install --all-extras
+       $ pytest
 
 Running dash application locally
 --------------------------------
