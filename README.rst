@@ -46,32 +46,32 @@ Setup for production
 
 6. The apache configuration needs to contain the virtual environment directory
 
-.. code-block:: ApacheConf
+   .. code-block:: ApacheConf
 
-    VirtualHost *:80>
-            ServerName intexseas-explorer.ethz.ch
+       VirtualHost *:80>
+               ServerName intexseas-explorer.ethz.ch
 
-            # commented because of LetsEncrypt bug uncomment in vhost.intexseas-explorer_ethz_ch-le-ssl.conf
-            #WSGIDaemonProcess intexseas processes=4 locale=en_US.UTF-8 python-home=/opt/venv/intexseas
-            #WSGIProcessGroup intexseas
-            #WSGIApplicationGroup %{GLOBAL}
+               # commented because of LetsEncrypt bug uncomment in vhost.intexseas-explorer_ethz_ch-le-ssl.conf
+               #WSGIDaemonProcess intexseas processes=4 locale=en_US.UTF-8 python-home=/opt/venv/intexseas
+               #WSGIProcessGroup intexseas
+               #WSGIApplicationGroup %{GLOBAL}
 
-            #WSGIScriptAlias / /var/www/exseas_explorer/exseas_explorer/FlaskApp.wsgi
+               #WSGIScriptAlias / /var/www/exseas_explorer/exseas_explorer/FlaskApp.wsgi
 
-            ErrorLog "logs/intexseas-explorer.ethz.ch-error_log"
-            LogLevel warn
-            CustomLog "logs/intexseas-explorer.ethz.ch-access.log" combined
+               ErrorLog "logs/intexseas-explorer.ethz.ch-error_log"
+               LogLevel warn
+               CustomLog "logs/intexseas-explorer.ethz.ch-access.log" combined
 
-            #<Directory "/var/www/exseas_explorer/exseas_explorer">
-            #       Order allow,deny
-            #       Allow from all
-            #</Directory>
+               #<Directory "/var/www/exseas_explorer/exseas_explorer">
+               #       Order allow,deny
+               #       Allow from all
+               #</Directory>
 
-            RewriteEngine on
-            RewriteCond %{SERVER_NAME} =intexseas-explorer.ethz.ch
-            RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+               RewriteEngine on
+               RewriteCond %{SERVER_NAME} =intexseas-explorer.ethz.ch
+               RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 
-    </VirtualHost>
+       </VirtualHost>
 
 7. Reload Apache
 
