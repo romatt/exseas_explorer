@@ -51,6 +51,7 @@ Setup for production
     VirtualHost *:80>
             ServerName intexseas-explorer.ethz.ch
 
+            # commented because of LetsEncrypt bug uncomment in vhost.intexseas-explorer_ethz_ch-le-ssl.conf
             #WSGIDaemonProcess intexseas processes=4 locale=en_US.UTF-8 python-home=/opt/venv/intexseas
             #WSGIProcessGroup intexseas
             #WSGIApplicationGroup %{GLOBAL}
