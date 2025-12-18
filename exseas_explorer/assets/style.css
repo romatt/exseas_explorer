@@ -116,24 +116,9 @@ h6 {
     height: calc(100vh - 240px);
 }
 
-.cell-table {
-    font-family: 'Roboto', sans-serif !important;
-    font-size: 14px !important;
-}
-
-.cell-table .column-0 {
-    width:30%;
-}
-
-.cell-table .column-1 {
-    width:70%;
-}
-
-.cell-table td, .cell-table th {
-    border-left: 0px !important;
-    border-right: 0px !important;
-    padding-left: 8px !important;
-    text-align: left !important;
+/* for dash_ag_grid */
+.ag-theme-alpine.compact {
+    --ag-cell-horizontal-padding: 6px;
 }
 
 #download {
