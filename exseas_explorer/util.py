@@ -1,7 +1,7 @@
 import functools
 from typing import Any
 
-import dash_ag_grid as dag
+import dash_ag_grid
 import dash_leaflet as dl
 import geopandas
 import matplotlib
@@ -144,7 +144,7 @@ def generate_table(
     criterion: int = 1,
     parameter: str = "T2M",
     option: str = "ProbCold",
-) -> dag.AgGrid:
+) -> dash_ag_grid.AgGrid:
     """
     Generate table for provided years
 
@@ -245,7 +245,7 @@ def generate_table(
 
     defaultColDef = {"resizable": False, "suppressMovable": True}
 
-    table = dag.AgGrid(
+    table = dash_ag_grid.AgGrid(
         rowData=df.to_dict("records"),
         columnDefs=columnDefs,
         defaultColDef=defaultColDef,
