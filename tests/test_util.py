@@ -54,8 +54,8 @@ def test_generate_table(filtered_patches, colorscale):
     poly_table = generate_table(
         filtered_patches, colorscale, list(filtered_patches["label"])
     )
-    assert poly_table.data[0] == {"Year": 1988, "Area (km^2)": 7957515.04}
-    assert poly_table.data[-1] == {"Year": 1988, "Area (km^2)": 617857.55}
+    assert poly_table.rowData[0] == {"Year": 1988, "Area (km^2)": 7957515.04}
+    assert poly_table.rowData[-1] == {"Year": 1988, "Area (km^2)": 617857.55}
 
 
 def test_generate_poly():

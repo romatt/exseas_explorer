@@ -1,7 +1,7 @@
 import functools
 from typing import Any
 
-import dash
+import dash_ag_grid
 import dash_leaflet as dl
 import geopandas
 import matplotlib
@@ -144,7 +144,7 @@ def generate_table(
     criterion: int = 1,
     parameter: str = "T2M",
     option: str = "ProbCold",
-):  # not typed - see below
+) -> dash_ag_grid.AgGrid:
     """
     Generate table for provided years
 
@@ -209,35 +209,58 @@ def generate_table(
     df = df.rename(columns={column: long_name})
 
     # Generate dict with colors for table
-    lst = []
+    style = []
 
     # Convert dataframe year to list
     df_label = df["label"].tolist()
 
     for ind, label in enumerate(labels):
         row = df_label.index(label)
-        lst.append(
-            {
-                "if": {"row_index": row, "column_id": "Year"},
+
+        cond = {
+            "condition": f"params.rowIndex == {row}",
+            "style": {
                 "backgroundColor": str(colors[ind]),
                 "color": "white",
-            }
-        )
+            },
+        }
+
+        style.append(cond)
 
     # Drop label column before showing
     df = df.drop(columns=["label"])
 
-    # DataTable
-    # - the class is defined in dash.dash_table.DataTable.DataTable but dash does some
-    #   dynamic imports (and it should be access at dash.dash_table.DataTable) which
-    #   confuses mypy
-    # - the input types are typed wrong (list[dict[...]], instead of dict[...])
-    # - it's scheduled to be removed (https://github.com/plotly/dash/issues/3436)
+    columnDefs = [
+        {
+            "field": "Year",
+            "cellStyle": {
+                "styleConditions": style,
+            },
+        },
+        {
+            "field": df.columns[1],
+            "type": "rightAligned",
+        },
+    ]
 
-    table = dash.dash_table.DataTable(  # type: ignore[attr-defined]
-        data=df.to_dict("records"), style_data_conditional=lst, cell_selectable=False
+    defaultColDef = {"resizable": False, "suppressMovable": True}
+
+    table = dash_ag_grid.AgGrid(
+        rowData=df.to_dict("records"),
+        columnDefs=columnDefs,
+        defaultColDef=defaultColDef,
+        columnSize="autoSize",
+        dashGridOptions={
+            # together with height: None -> no vertical scroling
+            "domLayout": "autoHeight",
+            # otherwise cannot have . in column name
+            "suppressFieldDotNotation": True,
+            "animateRows": False,
+        },
+        style={"height": None},
+        # compact to reduce padding
+        className="ag-theme-alpine compact",
     )
-
     return table
 
 
