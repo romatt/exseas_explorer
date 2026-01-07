@@ -392,9 +392,8 @@ maprow = html.Div(
                         html.Div(
                             children=[poly_table],
                             id="polygon-table",
+                            style={"flex": "1 1 auto"},
                         ),
-                        # empty container to fill the space between table and buttons
-                        html.Div(style={"flex": "1 1 auto"}),
                         html.Div(
                             [
                                 dbc.Button("Information \u2753", id="open", n_clicks=0),
@@ -414,7 +413,8 @@ maprow = html.Div(
                                     id="modal",
                                     is_open=False,
                                 ),
-                            ]
+                            ],
+                            style={"margin-top": "10px"},
                         ),
                         html.Div(
                             id="download-netcdf",
