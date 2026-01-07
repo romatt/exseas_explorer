@@ -261,14 +261,12 @@ def generate_table(
         defaultColDef=defaultColDef,
         columnSize="autoSize",
         dashGridOptions={
-            # together with height: None -> no vertical scroling
-            "domLayout": "autoHeight",
             # otherwise cannot have . in column name
             "suppressFieldDotNotation": True,
             "animateRows": False,
             "rowHeight": 30,
         },
-        style={"height": None},
+        style={"height": "100%"},
         # compact to reduce padding
         className="ag-theme-alpine compact",
     )
