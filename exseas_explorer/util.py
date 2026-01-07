@@ -266,6 +266,7 @@ def generate_table(
             # otherwise cannot have . in column name
             "suppressFieldDotNotation": True,
             "animateRows": False,
+            "rowHeight": 30,
         },
         style={"height": None},
         # compact to reduce padding
