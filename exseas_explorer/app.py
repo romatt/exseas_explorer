@@ -187,8 +187,7 @@ navbar = html.Div(
                     [
                         "Parameter:",
                         dcc.Dropdown(
-                            # https://github.com/plotly/dash/issues/3487
-                            PARAMETER_LIST,  # type:ignore[arg-type]
+                            PARAMETER_LIST,
                             "T2M",
                             id="parameter-selector",
                             clearable=False,
@@ -201,7 +200,7 @@ navbar = html.Div(
                     [
                         "Type of extreme:",
                         dcc.Dropdown(
-                            PARAMETER_OPTIONS["T2M"],  # type:ignore[arg-type]
+                            PARAMETER_OPTIONS["T2M"],
                             "ProbCold",
                             id="option-selector",
                             clearable=False,
@@ -214,7 +213,7 @@ navbar = html.Div(
                     [
                         "Season:",
                         dcc.Dropdown(
-                            SEASON_LIST,  # type:ignore[arg-type]
+                            SEASON_LIST,
                             "djf",
                             id="season-selector",
                             clearable=False,
@@ -227,7 +226,7 @@ navbar = html.Div(
                     [
                         "Sort by:",
                         dcc.Dropdown(
-                            RANKING_LIST,  # type:ignore[arg-type]
+                            RANKING_LIST,
                             1,
                             id="ranking-selector",
                             clearable=False,
@@ -240,7 +239,7 @@ navbar = html.Div(
                     [
                         "Region:",
                         dcc.Dropdown(
-                            REGION_LIST,  # type:ignore[arg-type]
+                            REGION_LIST,
                             "world",
                             id="region-selector",
                             clearable=False,
