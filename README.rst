@@ -127,6 +127,22 @@ or from poetry:
 
     $ poetry run python exseas_explorer/app.py
 
+
+update on iacvis
+----------------
+
+After merging the dep updates on https://github.com/romatt/exseas_explorer
+
+.. code-block:: console
+
+   cd /var/www/exseas_explorer/
+   git pull origin main
+   source /opt/venv/intexseas_py312/bin/activate
+   poetry sync --without=dev
+   systemctl restart httpd.service
+
+See also https://wiki.iac.ethz.ch/IT/ServerIacvis#exseas_explorer
+
 Credits
 -------
 
