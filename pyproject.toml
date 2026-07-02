@@ -7,8 +7,8 @@ license = "MIT"
 requires-python = ">=3.12, <3.13"
 
 dependencies = [
-  "click >=8.4.1",
-  "dash >=4.2.0",
+  "click >=8.4.2",
+  "dash >=4.3.0",
   "dash-ag-grid >=35.2.0",
   "dash-bootstrap-components >=2.0.4",
   "dash-extensions >=2.0.4",
@@ -16,10 +16,10 @@ dependencies = [
   "fiona >=1.10.1",
   "flask >=3.1.2",
   "geojson >=3.3.0",
-  "geopandas >=1.1.1",
-  "matplotlib >=3.10.9",
-  "netCDF4 >=1.7.3",
-  "numpy >=2.4.6",
+  "geopandas >=1.1.4",
+  "matplotlib >=3.11.0",
+  "netCDF4 >=1.7.4",
+  "numpy >=2.5.0",
   "pandas >=3.0.3",
   "pyproj >=3.7.2",
   "rasterio >=1.4.3",
