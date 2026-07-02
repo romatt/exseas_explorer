@@ -29,12 +29,12 @@ dependencies = [
 
 [tool.poetry.group.dev.dependencies]
 black = "^26.5.1"
-ipykernel = "^7.2.0"
+ipykernel = "^7.3.0"
 mypy = "^2.1.0"
 pandas-stubs = "^3.0.3.260530"
-pytest = "^9.0.3"
+pytest = "^9.1.1"
 pytest-cov = "^7.1.0"
-ruff = "^0.15.15"
+ruff = "^0.15.20"
 
 [build-system]
 requires = ["poetry-core>=2.2", "setuptools>=42"]
