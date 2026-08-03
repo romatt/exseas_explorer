@@ -25,9 +25,9 @@ def test_update_patches():
     assert out_file.is_file()
 
     # Check if file is same as test file
-    generated_patches = gpd.read_file(out_path, engine="fiona")
+    generated_patches = gpd.read_file(out_path)
     expected_path = os.path.join(test_path, "patches_T2M_jja_ProbHot_test.geojson")
-    test_patches = gpd.read_file(expected_path, engine="fiona")
+    test_patches = gpd.read_file(expected_path)
     testing.assert_geodataframe_equal(generated_patches, test_patches)
 
     # Delete the test file again
