@@ -147,7 +147,7 @@ def update_patches(
 
     # Read NetCDF file
     path = os.path.join(work_dir, patch_file)
-    in_file = xr.open_dataset(path)  # type: ignore[no-untyped-call]
+    in_file = xr.open_dataset(path)
 
     # Re-name key xarray and change data-type to work with shapes features
     in_file = in_file.rename({"time": "year"}).astype(np.float32)

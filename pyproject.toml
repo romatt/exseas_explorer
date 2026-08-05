@@ -42,7 +42,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
 files = "exseas_explorer"
+
 show_error_codes = true
+allow_redefinition = true
+show_error_context = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
@@ -57,7 +63,6 @@ module = [
   "matplotlib.*",
   "pytest.*",
   "rasterio.*",
-  "setuptools",
   "shapely.*",
 ]
 

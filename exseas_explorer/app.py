@@ -27,7 +27,7 @@ DATA_DIR = pathlib.Path("/data/exseas_explorer_data/")
 
 if not DATA_DIR.is_dir():
     try:
-        DATA_DIR = pkg_resources.files("exseas_explorer") / "data"  # type: ignore[assignment]
+        DATA_DIR = pkg_resources.files("exseas_explorer") / "data"
     except ModuleNotFoundError as e:
         raise ValueError("Install exseas_explorer or fix data path") from e
 

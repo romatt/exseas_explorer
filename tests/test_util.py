@@ -1,6 +1,7 @@
 import geojson
 import numpy as np
 import pytest
+import geopandas
 
 from exseas_explorer.util import (
     filter_patches,
@@ -10,12 +11,12 @@ from exseas_explorer.util import (
 )
 
 
-def test_load_patches(default_patches):
+def test_load_patches(default_patches) -> None:
     assert len(default_patches) == 19
     assert default_patches["year"].unique()[0] == 1988
 
 
-def test_filter_patches(default_patches):
+def test_filter_patches(default_patches) -> None:
     filtered_patches, event_title = filter_patches(default_patches)
     assert len(filtered_patches) == 10
     assert type(event_title) is str
@@ -37,7 +38,7 @@ def filtered_patches(default_patches):
     yield filtered_patches
 
 
-def test_generate_cbar(filtered_patches):
+def test_generate_cbar(filtered_patches) -> None:
     colorscale = generate_cbar(list(filtered_patches["year"]))
     assert len(colorscale) == 10
     assert colorscale[0] == "#000000"
@@ -50,7 +51,7 @@ def colorscale(filtered_patches):
     yield colorscale
 
 
-def test_generate_table(filtered_patches, colorscale):
+def test_generate_table(filtered_patches, colorscale) -> None:
     poly_table = generate_table(
         filtered_patches, colorscale, list(filtered_patches["label"])
     )
@@ -58,7 +59,7 @@ def test_generate_table(filtered_patches, colorscale):
     assert poly_table.rowData[-1] == {"Year": 1988, "Area (km^2)": 617857.55}
 
 
-def test_generate_poly():
+def test_generate_poly() -> None:
     polygon = generate_poly([-180, 180], [0, 90])
     assert type(polygon) is geojson.feature.FeatureCollection
     assert len(polygon.features) == 1
