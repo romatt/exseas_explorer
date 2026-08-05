@@ -8,7 +8,7 @@ from geopandas import testing
 from exseas_explorer.preproc.preproc import update_patches
 
 
-def test_update_patches():
+def test_update_patches() -> None:
 
     test_path = os.path.abspath("tests/data")
 

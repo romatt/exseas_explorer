@@ -167,7 +167,7 @@ def generate_table(
         Table with relevant columns
     """
 
-    pd.options.mode.chained_assignment = None  # type: ignore[assignment]
+    pd.options.mode.chained_assignment = None
     df.rename(columns={"year": "Year"}, inplace=True)
 
     if parameter == "T2M":
