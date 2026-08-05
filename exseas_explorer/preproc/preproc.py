@@ -125,7 +125,7 @@ def extend_domain(da: xr.DataArray) -> xr.DataArray:
 def update_patches(
     work_dir: str = "/ytpool/data/ETH/INTEXseas/",
     patch_file: str = "patches_T2M_jja_ProbHot.nc",
-):
+) -> None:
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
 
