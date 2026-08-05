@@ -1,7 +1,6 @@
 import geojson
 import numpy as np
 import pytest
-import geopandas
 
 from exseas_explorer.util import (
     filter_patches,
