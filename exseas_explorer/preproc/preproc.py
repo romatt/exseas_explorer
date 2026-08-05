@@ -125,7 +125,7 @@ def extend_domain(da: xr.DataArray) -> xr.DataArray:
 def update_patches(
     work_dir: str = "/ytpool/data/ETH/INTEXseas/",
     patch_file: str = "patches_T2M_jja_ProbHot.nc",
-) -> GeoDataFrame:
+) -> None:
     """Read extreme season patches from NetCDF file, convert to polygons, and
     save as GeoJSON files
 
@@ -181,6 +181,9 @@ def update_patches(
         )
         lit_data = lit_data.astype({"label": "int32", "year": "int32"})
         lit_data = lit_data.drop(columns=["year", "season"])
+        # pyogrio only serializes dict as json if there are no int keys
+        # https://github.com/geopandas/pyogrio/issues/689
+        lit_data = lit_data.set_index(lit_data.index.astype(str))
         # Some labels have multiple citations, need to aggregate those into lists
         lit_data = lit_data.groupby("label").agg(dict)
 
@@ -212,9 +215,7 @@ def update_patches(
 
     # Save geometries to file
     file_end = patch_file.replace("nc", "geojson")
-    patch_out.to_file(
-        os.path.join(work_dir, file_end), driver="GeoJSON", index=False, engine="fiona"
-    )
+    patch_out.to_file(os.path.join(work_dir, file_end), driver="GeoJSON", index=False)
 
 
 if __name__ == "__main__":

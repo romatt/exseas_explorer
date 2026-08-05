@@ -112,7 +112,7 @@ def load_patches(path: str) -> geopandas.GeoDataFrame:
 
     # Load data
     in_file = open(path)
-    df = geopandas.read_file(in_file, engine="fiona")
+    df = geopandas.read_file(in_file)
 
     return df
 
