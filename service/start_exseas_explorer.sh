@@ -17,5 +17,5 @@ if [ -d "$APP_DIR/.venv" ]; then
 fi
 
 cd ${APP_DIR}
-exec "$VENV/bin/gunicorn" exseas_explorer:app --bind 127.0.0.1:8002 --workers 4 --forwarded-allow-ips 127.0.0.1
+exec "$VENV/bin/gunicorn" exseas_explorer.app:app --bind 127.0.0.1:8002 --workers 4 --forwarded-allow-ips 127.0.0.1
 

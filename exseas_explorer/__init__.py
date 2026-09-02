@@ -4,7 +4,3 @@ __author__ = """Roman Attinger"""
 __email__ = "roman.attinger@env.ethz.ch"
 __version__ = "0.1.0"
 
-
-from exseas_explorer.app import app
-
-__all__ = ["app"]
