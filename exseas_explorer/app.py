@@ -693,7 +693,5 @@ def serve_static(path):
     return flask.send_from_directory(DATA_DIR, path)
 
 
-server = app.server
-
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
