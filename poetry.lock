@@ -1180,26 +1180,6 @@ all = ["GeoAlchemy2", "SQLAlchemy (>=2.0)", "folium", "geopy", "mapclassify (>=2
 dev = ["codecov", "pre-commit", "pytest (>=3.1.0)", "pytest-cov", "pytest-xdist", "ruff"]
 
 [[package]]
-name = "gunicorn"
-version = "26.2.0"
-description = "WSGI HTTP Server for UNIX"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "gunicorn-26.2.0-py3-none-any.whl", hash = "sha256:bd249d0b3f7972f7432f0a6b6ff3b3ee2d129f70cd1ff6c09a9dd9e29a2b88e3"},
-    {file = "gunicorn-26.2.0.tar.gz", hash = "sha256:62b864895d9ebff0b2f9867ba04fe811c93121596540830c9c916d0769668447"},
-]
-
-[package.extras]
-fast = ["gunicorn_h1c (>=0.6.9)"]
-gevent = ["gevent (>=24.10.1)", "packaging"]
-http2 = ["h2 (>=4.4.1)"]
-setproctitle = ["setproctitle"]
-testing = ["coverage", "gevent (>=24.10.1)", "h2 (>=4.4.1)", "httpx[http2] (>=0.23.0)", "inotify (>=0.2.10) ; sys_platform == \"linux\"", "packaging", "pytest (>=9.0.3)", "pytest-asyncio", "pytest-cov", "uvloop (>=0.19.0)"]
-tornado = ["tornado (>=6.5.7)"]
-
-[[package]]
 name = "idna"
 version = "3.11"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -3536,4 +3516,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <3.13"
-content-hash = "1c556201e35560979bec06587ce6894abb6720aa49508292fec293bb8250dc36"
+content-hash = "7c55d5cafd0ae239bf1c1f903700229e2e24c7b07ad4325739044c3ecf86c820"
