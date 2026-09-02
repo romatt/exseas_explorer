@@ -4,9 +4,9 @@ set -euo pipefail
 BASE_DIR=/opt/exseas_explorer
 APP_DIR=${BASE_DIR}/exseas_explorer
 
-VENV=${BASE_DIR}/venv
+VENV=$(poetry env info --path)
 
-if [ ! -x "$VENV/bin/uvicorn" ]; then
+if [ ! -x "$VENV/bin/gunicorn" ]; then
     echo "venv not usable at $VENV — run deploy first" >&2
     exit 1
 fi
