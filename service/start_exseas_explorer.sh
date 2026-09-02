@@ -16,5 +16,8 @@ if [ -d "$APP_DIR/.venv" ]; then
 fi
 
 cd ${APP_DIR}
-exec "$VENV_DIR/bin/gunicorn" exseas_explorer.app:app --bind 127.0.0.1:8002 --workers 4 --forwarded-allow-ips 127.0.0.1
+
+export MPLCONFIGDIR=/tmp/mpl # this is duplicated with the service file - for testing
+# gunicorn wants to write --control-socket into ~ if not specified
+exec "$VENV_DIR/bin/gunicorn" exseas_explorer.app:app --bind 127.0.0.1:8002 --workers 4 --forwarded-allow-ips 127.0.0.1 --control-socket /tmp/.gunicorn/gunicorn.ctl
 
