@@ -11,6 +11,9 @@ cd "$APP_DIR"
 git fetch origin --tags
 git reset --hard origin/main
 
+# fix path of python executable
+poetry env use /usr/bin/python3.12
+
 poetry sync --without=dev --compile
 
 restorecon -Rv ${BASE_DIR}
