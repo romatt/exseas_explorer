@@ -4,15 +4,20 @@ set -euo pipefail
 BASE_DIR=/opt/exseas_explorer
 
 APP_DIR=${BASE_DIR}/exseas_explorer
-export POETRY_VIRTUALENVS_PATH=${BASE_DIR}/venv
+VENV_DIR=${BASE_DIR}/venv
+
+# create fixed venv dir - only once (poetry uses a variable name)
+if [ ! -d "${VENV_DIR}" ]; then
+    python3.12 -m venv "${VENV_DIR}"
+fi
 
 cd "$APP_DIR"
 
 git fetch origin --tags
 git reset --hard origin/main
 
-# fix path of python executable
-poetry env use /usr/bin/python3.12
+# activate environment
+source "${VENV_DIR}/bin/activate"
 
 poetry sync --without=dev --compile
 
