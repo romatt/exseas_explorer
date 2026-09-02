@@ -7,6 +7,7 @@ license = "MIT"
 requires-python = ">=3.12, <3.13"
 
 dependencies = [
+  "affine >=3.0.1",
   "click >=8.5.0",
   "dash >=4.4.1",
   "dash-ag-grid >=35.3.0",

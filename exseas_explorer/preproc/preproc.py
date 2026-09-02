@@ -10,11 +10,11 @@ import click
 import numpy as np
 import pandas as pd
 import xarray as xr
+from affine import Affine
 from geopandas import GeoDataFrame
 from pandas.errors import EmptyDataError
 from pyproj import CRS
 from rasterio import features
-from rasterio.transform import Affine
 from shapely.geometry import shape
 
 level = logging.INFO
@@ -37,10 +37,13 @@ def affine_transform(array: xr.DataArray) -> Affine:
         np.gradient(array.lon).mean() + np.gradient(array.lat).mean()
     ) / 2
 
-    return Affine.translation(
+    trans = Affine.translation(
         array.lon.values[0] - 0.5 * mean_grid_spacing,
         array.lat.values[0] - 0.5 * mean_grid_spacing,
-    ) * Affine.scale(mean_grid_spacing, mean_grid_spacing)
+    )
+    scale = Affine.scale(mean_grid_spacing, mean_grid_spacing)
+
+    return trans @ scale
 
 
 def extract_contours(array: xr.DataArray) -> GeoDataFrame:
