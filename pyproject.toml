@@ -16,6 +16,7 @@ dependencies = [
   "flask >=3.1.2",
   "geojson >=3.3.0",
   "geopandas >=1.1.4",
+  "gunicorn >=26.2.0",
   "matplotlib >=3.11.1",
   "netCDF4 >=1.7.4",
   "numpy >=2.5.1",

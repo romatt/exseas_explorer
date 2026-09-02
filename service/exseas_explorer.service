@@ -1,0 +1,26 @@
+[Unit]
+Description=Extreme Seasons Explorer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=exseas_explorer
+Group=exseas_explorer
+ExecStart=/opt/exseas_explorer/exseas_explorer/service/start_exseas_explorer.sh
+Restart=on-failure
+RestartSec=5
+KillMode=mixed
+TimeoutStopSec=30
+
+# sandboxing
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=yes
+
+# matplotlib cache dir (as there is no home)
+Environment=MPLCONFIGDIR=/tmp/mpl
+
+[Install]
+WantedBy=multi-user.target
