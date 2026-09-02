@@ -40,7 +40,7 @@ def affine_transform(array: xr.DataArray) -> Affine:
     return Affine.translation(
         array.lon.values[0] - 0.5 * mean_grid_spacing,
         array.lat.values[0] - 0.5 * mean_grid_spacing,
-    ) * Affine.scale(mean_grid_spacing, mean_grid_spacing)
+    ) @ Affine.scale(mean_grid_spacing, mean_grid_spacing)
 
 
 def extract_contours(array: xr.DataArray) -> GeoDataFrame:
