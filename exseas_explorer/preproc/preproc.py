@@ -214,7 +214,7 @@ def update_patches(
     patch_out = patch_out.dissolve(by="label").reset_index(level=0)
 
     # Remove geometries smaller than 100'000km^2
-    patch_out.drop(patch_out[patch_out["area"] < 100000].index, inplace=True)
+    patch_out = patch_out.drop(patch_out[patch_out["area"] < 100000].index)
 
     # Save geometries to file
     file_end = patch_file.replace("nc", "geojson")
