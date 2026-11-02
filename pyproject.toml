@@ -9,7 +9,7 @@ requires-python = ">=3.12, <3.13"
 dependencies = [
   "affine >=3.0.1",
   "click >=8.5.0",
-  "dash >=4.4.1",
+  "dash >=4.5.0",
   "dash-ag-grid >=35.3.0",
   "dash-bootstrap-components >=2.0.4",
   "dash-extensions >=2.0.6",
@@ -19,14 +19,14 @@ dependencies = [
   "geopandas >=1.2.0",
   "gunicorn >=26.2.0",
   "matplotlib >=3.11.2",
-  "netCDF4 >=1.7.4",
-  "numpy >=2.5.3",
-  "pandas >=3.0.6",
+  "netCDF4 >=1.7.5.1.post1",
+  "numpy >=2.5.4",
+  "pandas >=3.1.0",
   "pyogrio >=0.13.0",
   "pyproj >=3.8.0",
-  "rasterio >=1.5.1",
-  "shapely >=2.1.2",
-  "xarray >=2026.7.0",
+  "rasterio >=1.5.2",
+  "shapely >=2.2.0",
+  "xarray >=2026.9.0",
 ]
 
 [tool.poetry.group.dev.dependencies]
